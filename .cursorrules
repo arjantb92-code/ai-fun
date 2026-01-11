@@ -1,0 +1,9 @@
+# AI Project Rules
+
+This is an AI project with Gemini API integration and AI-free input processing.
+
+When helping with git commits:
+- Generate concise, descriptive commit messages
+- Follow conventional commit format when appropriate
+- Review changes before committing
+- Use clear, actionable commit messages
