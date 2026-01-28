@@ -6,6 +6,11 @@ from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 from dotenv import load_dotenv
 from werkzeug.security import generate_password_hash, check_password_hash
+
+# Force PBKDF2 as specified in requirements
+def hash_password(password):
+    """Hash password using PBKDF2-SHA256 as required"""
+    return generate_password_hash(password, method='pbkdf2:sha256', salt_length=16)
 from werkzeug.utils import secure_filename
 from models import db, User, Transaction, TransactionSplit, SettlementSession, HistoricalSettlement
 from ocr import get_ocr_service
@@ -67,7 +72,7 @@ def seed_db():
         if User.query.first():
             return jsonify({"message": "Database already seeded"}), 200
             
-        pw = generate_password_hash('wbw2026')
+        pw = hash_password('wbw2026')  # PBKDF2-SHA256
         
         m1 = User(); m1.name='Arjan'; m1.email='arjan@example.com'; m1.avatar_url='http://127.0.0.1:5000/static/user_1_1636579358798.jpeg'; m1.is_group_member=True; m1.password_hash=pw
         m2 = User(); m2.name='Emma'; m2.email='emma@example.com'; m2.avatar_url='https://i.pravatar.cc/150?u=emma'; m2.is_group_member=True; m2.password_hash=pw
