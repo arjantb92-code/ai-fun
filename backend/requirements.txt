@@ -1,8 +1,11 @@
 flask
 flask-sqlalchemy
 flask-cors
+flask-migrate
 psycopg2-binary
 python-dotenv
 pandas
 easyocr
 requests
+PyJWT
+werkzeug

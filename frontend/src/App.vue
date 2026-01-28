@@ -76,7 +76,7 @@ const myBalance = computed(() => {
 
 // --- Methods ---
 const fetchData = async () => {
-  if (!token.value) { isLoginModalOpen.value = true; return }
+  if (!token.value) { return } // Restricted Access screen auto-triggers
   try {
     const [uR, bR, tR, sS, sH] = await Promise.all([
       apiFetch('/users'), 
@@ -111,14 +111,20 @@ const performLogin = async () => {
     })
     const data = await res.json()
     if (res.ok) {
-      token.value = data.token; currentUser.value = data.user
+      token.value = data.token
+      currentUser.value = data.user
       localStorage.setItem('wbw_token', data.token)
       localStorage.setItem('wbw_user', JSON.stringify(data.user))
-      isLoginModalOpen.value = false; loginCredentials.value = { username: '', password: '' }
-      newAvatarUrl.value = data.user.avatar_url; newEmail.value = data.user.email
+      loginCredentials.value = { username: '', password: '' }
+      newAvatarUrl.value = data.user.avatar_url
+      newEmail.value = data.user.email
       await fetchData()
-    } else { loginError.value = data.message }
-  } catch { loginError.value = 'Server Offline' }
+    } else { 
+      loginError.value = data.message || 'Invalid credentials' 
+    }
+  } catch { 
+    loginError.value = 'Server Offline - Backend unavailable' 
+  }
 }
 
 const updateProfile = async () => {
@@ -165,7 +171,11 @@ const commitSettlement = async () => {
 }
 
 const logout = () => {
-  token.value = null; currentUser.value = null; localStorage.removeItem('wbw_token'); localStorage.removeItem('wbw_user'); isLoginModalOpen.value = true
+  token.value = null
+  currentUser.value = null
+  localStorage.removeItem('wbw_token')
+  localStorage.removeItem('wbw_user')
+  // Restricted Access screen auto-triggers when token is null
 }
 
 const openTransaction = (t) => { selectedTransaction.value = JSON.parse(JSON.stringify(t)); isEditModalOpen.value = true }
@@ -426,18 +436,72 @@ onMounted(fetchData)
       </div>
     </Transition>
 
+    <!-- RESTRICTED ACCESS SCREEN - Shows when not authenticated -->
     <Transition name="fade">
-      <div v-if="isLoginModalOpen" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
-        <div class="absolute inset-0 bg-black/98 backdrop-blur-xl"></div>
-        <div class="bg-industrial-gray w-full max-w-md border border-zinc-800 shadow-2xl relative p-12">
-           <div class="text-center mb-10 text-brand-red font-black uppercase italic text-3xl tracking-tighter">Better WBW</div>
-           <form @submit.prevent="performLogin" class="space-y-6">
-              <input v-model="loginCredentials.username" type="text" class="w-full bg-black border border-zinc-800 p-4 font-black uppercase outline-none focus:border-brand-red italic text-white" placeholder="Gebruikersnaam / Email">
-              <input v-model="loginCredentials.password" type="password" class="w-full bg-black border border-zinc-800 p-4 font-black uppercase outline-none focus:border-brand-red italic text-white" placeholder="Wachtwoord">
-              <p v-if="loginError" class="text-brand-red text-center font-black uppercase italic text-[10px]">{{ loginError }}</p>
-              <button type="submit" class="w-full bg-brand-red py-5 font-black uppercase tracking-[0.3em] hover:bg-white hover:text-black transition-all transform active:scale-95 italic text-xl shadow-xl">Inloggen</button>
-           </form>
-           <p class="mt-8 text-center text-[8px] text-zinc-600 font-black uppercase tracking-widest italic">Default pass: wbw2026</p>
+      <div v-if="!currentUser && !token" class="fixed inset-0 z-[100] bg-black">
+        <div class="min-h-screen flex flex-col items-center justify-center p-4">
+          <!-- Animated Background Grid -->
+          <div class="absolute inset-0 opacity-5">
+            <div class="absolute inset-0" style="background-image: repeating-linear-gradient(0deg, transparent, transparent 50px, #E30613 50px, #E30613 51px), repeating-linear-gradient(90deg, transparent, transparent 50px, #E30613 50px, #E30613 51px);"></div>
+          </div>
+          
+          <!-- Restricted Access Content -->
+          <div class="relative z-10 text-center mb-12">
+            <div class="w-24 h-24 mx-auto mb-8 border-4 border-brand-red flex items-center justify-center animate-pulse">
+              <span class="text-5xl">🔒</span>
+            </div>
+            <h1 class="text-6xl md:text-8xl font-black uppercase italic tracking-tighter text-brand-red text-shadow-glow mb-4">
+              Restricted
+            </h1>
+            <h2 class="text-2xl md:text-3xl font-black uppercase italic tracking-[0.3em] text-zinc-600">
+              Access Denied
+            </h2>
+            <p class="mt-6 text-zinc-700 font-black uppercase text-xs tracking-widest">
+              Authentication required to continue
+            </p>
+          </div>
+          
+          <!-- Login Form -->
+          <div class="relative z-10 bg-industrial-gray w-full max-w-md border border-zinc-800 shadow-2xl p-10">
+            <div class="h-1 bg-brand-red absolute top-0 left-0 right-0 shadow-[0_0_20px_rgba(227,6,19,0.5)]"></div>
+            <div class="text-center mb-8">
+              <span class="text-brand-red font-black uppercase italic text-2xl tracking-tighter">Better WBW</span>
+              <p class="text-[10px] text-zinc-600 font-black uppercase tracking-widest mt-2 italic">Secure Login Portal</p>
+            </div>
+            <form @submit.prevent="performLogin" class="space-y-5">
+              <div class="relative">
+                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-600 text-sm">👤</span>
+                <input v-model="loginCredentials.username" type="text" 
+                       class="w-full bg-black border border-zinc-800 p-4 pl-12 font-black uppercase outline-none focus:border-brand-red italic text-white text-sm" 
+                       placeholder="Gebruikersnaam / Email" autocomplete="username">
+              </div>
+              <div class="relative">
+                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-600 text-sm">🔑</span>
+                <input v-model="loginCredentials.password" type="password" 
+                       class="w-full bg-black border border-zinc-800 p-4 pl-12 font-black uppercase outline-none focus:border-brand-red italic text-white text-sm" 
+                       placeholder="Wachtwoord" autocomplete="current-password">
+              </div>
+              <Transition name="fade">
+                <p v-if="loginError" class="text-brand-red text-center font-black uppercase italic text-[10px] bg-brand-red/10 py-2 border border-brand-red/30">
+                  ⚠️ {{ loginError }}
+                </p>
+              </Transition>
+              <button type="submit" 
+                      class="w-full bg-brand-red py-5 font-black uppercase tracking-[0.3em] hover:bg-white hover:text-black transition-all transform active:scale-95 italic text-lg shadow-[0_0_30px_rgba(227,6,19,0.3)]">
+                Authenticate
+              </button>
+            </form>
+            <div class="mt-8 pt-6 border-t border-zinc-800 text-center">
+              <p class="text-[8px] text-zinc-600 font-black uppercase tracking-widest italic">Default credentials: wbw2026</p>
+            </div>
+          </div>
+          
+          <!-- Footer -->
+          <div class="relative z-10 mt-12 text-center">
+            <p class="text-[8px] text-zinc-800 font-black uppercase tracking-[0.4em]">
+              Protected by JWT · PBKDF2 Encryption
+            </p>
+          </div>
         </div>
       </div>
     </Transition>
