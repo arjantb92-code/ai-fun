@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ai-project"
+version = "0.1.0"
+description = "AI project with Gemini API and AI-free input processing"
+dependencies = [
+    "google-genai>=1.26.0",
+    "python-dotenv>=1.1.1",
+    "requests>=2.32.4",
+]
+
+[project.optional-dependencies]
+ai-free = [
+    "numpy>=2.0.2",
+    "scipy>=1.11.0",
+    "pandas>=2.0.0",
+    "openpyxl>=3.1.0",
+    "beautifulsoup4>=4.12.0",
+    "lxml>=4.9.0",
+    "watchdog>=3.0.0",
+    "regex>=2023.0.0",
+    "nltk>=3.8.0",
+]

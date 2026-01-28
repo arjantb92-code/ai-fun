@@ -1,0 +1,26 @@
+ * Serving Flask app 'app'
+ * Debug mode: on
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+[33mPress CTRL+C to quit[0m
+ * Restarting with watchdog (fsevents)
+ * Debugger is active!
+ * Debugger PIN: 131-359-949
+127.0.0.1 - - [28/Jan/2026 21:47:00] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:47:09] "POST /login HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:47:09] "[31m[1mPOST /transactions HTTP/1.1[0m" 401 -
+127.0.0.1 - - [28/Jan/2026 21:47:09] "[31m[1mPOST /transactions HTTP/1.1[0m" 401 -
+127.0.0.1 - - [28/Jan/2026 21:47:09] "[31m[1mPOST /transactions HTTP/1.1[0m" 401 -
+ * Detected change in '/Users/arjantebrake/projects/own_projects/Ai/backend/reseed_simple.py', reloading
+ * Detected change in '/Users/arjantebrake/projects/own_projects/Ai/backend/reseed_simple.py', reloading
+ * Restarting with watchdog (fsevents)
+ * Debugger is active!
+ * Debugger PIN: 131-359-949
+127.0.0.1 - - [28/Jan/2026 21:47:37] "POST /login HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:47:37] "POST /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:47:37] "POST /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:47:38] "POST /transactions HTTP/1.1" 200 -
+/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/multiprocessing/resource_tracker.py:216: UserWarning: resource_tracker: There appear to be 1 leaked semaphore objects to clean up at shutdown
+  warnings.warn('resource_tracker: There appear to be %d '
+/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/multiprocessing/resource_tracker.py:216: UserWarning: resource_tracker: There appear to be 1 leaked semaphore objects to clean up at shutdown
+  warnings.warn('resource_tracker: There appear to be %d '

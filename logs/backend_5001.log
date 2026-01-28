@@ -1,0 +1,748 @@
+ * Serving Flask app 'app'
+ * Debug mode: on
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5001
+[33mPress CTRL+C to quit[0m
+ * Restarting with watchdog (fsevents)
+ * Debugger is active!
+ * Debugger PIN: 131-359-949
+127.0.0.1 - - [28/Jan/2026 21:13:56] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:13:56] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:13:57] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:13:58] "GET /users HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:13:58] "GET /settlements HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:13:58] "GET /users HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:13:58] "GET /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:13:58] "GET /balances HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:13:58] "GET /balances HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:13:58] "GET /settlements HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:13:58] "GET /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:13:58] "GET /users HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:13:58] "GET /balances HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:13:58] "GET /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:13:58] "GET /settlements HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:14:10] "POST /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:14:10] "POST /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:14:10] "POST /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:14:45] "GET /users HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:14:45] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:14:45] "GET /balances HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:14:45] "GET /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:14:45] "GET /settlements HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:14:59] "OPTIONS /transactions/1 HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:14:59] "PUT /transactions/1 HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:14:59] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:14:59] "GET /users HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:14:59] "GET /balances HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:14:59] "GET /settlements HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:14:59] "GET /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:15:10] "OPTIONS /transactions/1 HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:15:10] "PUT /transactions/1 HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:15:10] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:15:10] "GET /users HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:15:10] "GET /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:15:10] "GET /balances HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:15:10] "GET /settlements HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:15:17] "OPTIONS /transactions/1 HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:15:17] "PUT /transactions/1 HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:15:17] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:15:17] "GET /users HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:15:17] "GET /balances HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:15:17] "GET /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:15:17] "GET /settlements HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:15:26] "OPTIONS /transactions/2 HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:15:26] "PUT /transactions/2 HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:15:26] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:15:26] "GET /users HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:15:26] "GET /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:15:26] "GET /balances HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:15:26] "GET /settlements HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:15:39] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:15:39] "GET /users HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:15:39] "GET /users HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:15:39] "GET /settlements HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:15:39] "GET /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:15:39] "GET /balances HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:15:39] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:15:39] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:15:39] "GET /settlements HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:15:39] "GET /users HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:15:39] "GET /settlements HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:15:39] "GET /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:15:39] "GET /balances HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:15:39] "GET /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:15:39] "GET /balances HTTP/1.1" 200 -
+ * Detected change in '/Users/arjantebrake/projects/own_projects/Ai/backend/models.py', reloading
+ * Restarting with watchdog (fsevents)
+ * Debugger is active!
+ * Debugger PIN: 131-359-949
+127.0.0.1 - - [28/Jan/2026 21:19:37] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:19:37] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:19:38] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:19:38] "GET /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:19:38] "GET /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:19:38] "GET /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:19:38] "[35m[1mGET /users HTTP/1.1[0m" 500 -
+127.0.0.1 - - [28/Jan/2026 21:19:38] "[35m[1mGET /settlements HTTP/1.1[0m" 500 -
+Traceback (most recent call last):
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+psycopg2.errors.UndefinedColumn: column users.password_hash does not exist
+LINE 1: ..., users.is_group_member AS users_is_group_member, users.pass...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask/app.py", line 1536, in __call__
+    return self.wsgi_app(environ, start_response)
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask/app.py", line 1514, in wsgi_app
+    response = self.handle_exception(e)
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask_cors/extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask_cors/extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/Users/arjantebrake/projects/own_projects/Ai/backend/app.py", line 186, in get_suggested_settlements
+    users = User.query.all()
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/orm/query.py", line 2704, in all
+    return self._iter().all()  # type: ignore
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/orm/query.py", line 2857, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/orm/session.py", line 2351, in execute
+    return self._execute_internal(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/orm/session.py", line 2249, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/orm/context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1419, in execute
+    return meth(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/sql/elements.py", line 527, in _execute_on_connection
+    return connection._execute_clauseelement(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.ProgrammingError: (psycopg2.errors.UndefinedColumn) column users.password_hash does not exist
+LINE 1: ..., users.is_group_member AS users_is_group_member, users.pass...
+                                                             ^
+
+[SQL: SELECT users.id AS users_id, users.name AS users_name, users.avatar_url AS users_avatar_url, users.is_group_member AS users_is_group_member, users.password_hash AS users_password_hash, users.created_at AS users_created_at 
+FROM users]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+Traceback (most recent call last):
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+psycopg2.errors.UndefinedColumn: column users.password_hash does not exist
+LINE 1: ..., users.is_group_member AS users_is_group_member, users.pass...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask/app.py", line 1536, in __call__
+    return self.wsgi_app(environ, start_response)
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask/app.py", line 1514, in wsgi_app
+    response = self.handle_exception(e)
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask_cors/extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask_cors/extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/Users/arjantebrake/projects/own_projects/Ai/backend/app.py", line 75, in get_users
+    users = User.query.all()
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/orm/query.py", line 2704, in all
+    return self._iter().all()  # type: ignore
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/orm/query.py", line 2857, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/orm/session.py", line 2351, in execute
+    return self._execute_internal(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/orm/session.py", line 2249, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/orm/context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1419, in execute
+    return meth(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/sql/elements.py", line 527, in _execute_on_connection
+    return connection._execute_clauseelement(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.ProgrammingError: (psycopg2.errors.UndefinedColumn) column users.password_hash does not exist
+LINE 1: ..., users.is_group_member AS users_is_group_member, users.pass...
+                                                             ^
+
+[SQL: SELECT users.id AS users_id, users.name AS users_name, users.avatar_url AS users_avatar_url, users.is_group_member AS users_is_group_member, users.password_hash AS users_password_hash, users.created_at AS users_created_at 
+FROM users]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+127.0.0.1 - - [28/Jan/2026 21:19:38] "[35m[1mGET /users HTTP/1.1[0m" 500 -
+127.0.0.1 - - [28/Jan/2026 21:19:38] "[35m[1mGET /balances HTTP/1.1[0m" 500 -
+Traceback (most recent call last):
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+psycopg2.errors.UndefinedColumn: column users.password_hash does not exist
+LINE 1: ..., users.is_group_member AS users_is_group_member, users.pass...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask/app.py", line 1536, in __call__
+    return self.wsgi_app(environ, start_response)
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask/app.py", line 1514, in wsgi_app
+    response = self.handle_exception(e)
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask_cors/extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask_cors/extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/Users/arjantebrake/projects/own_projects/Ai/backend/app.py", line 75, in get_users
+    users = User.query.all()
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/orm/query.py", line 2704, in all
+    return self._iter().all()  # type: ignore
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/orm/query.py", line 2857, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/orm/session.py", line 2351, in execute
+    return self._execute_internal(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/orm/session.py", line 2249, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/orm/context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1419, in execute
+    return meth(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/sql/elements.py", line 527, in _execute_on_connection
+    return connection._execute_clauseelement(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.ProgrammingError: (psycopg2.errors.UndefinedColumn) column users.password_hash does not exist
+LINE 1: ..., users.is_group_member AS users_is_group_member, users.pass...
+                                                             ^
+
+[SQL: SELECT users.id AS users_id, users.name AS users_name, users.avatar_url AS users_avatar_url, users.is_group_member AS users_is_group_member, users.password_hash AS users_password_hash, users.created_at AS users_created_at 
+FROM users]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+Traceback (most recent call last):
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+psycopg2.errors.UndefinedColumn: column users.password_hash does not exist
+LINE 1: ..., users.is_group_member AS users_is_group_member, users.pass...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask/app.py", line 1536, in __call__
+    return self.wsgi_app(environ, start_response)
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask/app.py", line 1514, in wsgi_app
+    response = self.handle_exception(e)
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask_cors/extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask_cors/extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/Users/arjantebrake/projects/own_projects/Ai/backend/app.py", line 85, in get_balances
+    users = User.query.all()
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/orm/query.py", line 2704, in all
+    return self._iter().all()  # type: ignore
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/orm/query.py", line 2857, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/orm/session.py", line 2351, in execute
+    return self._execute_internal(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/orm/session.py", line 2249, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/orm/context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1419, in execute
+    return meth(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/sql/elements.py", line 527, in _execute_on_connection
+    return connection._execute_clauseelement(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.ProgrammingError: (psycopg2.errors.UndefinedColumn) column users.password_hash does not exist
+LINE 1: ..., users.is_group_member AS users_is_group_member, users.pass...
+                                                             ^
+
+[SQL: SELECT users.id AS users_id, users.name AS users_name, users.avatar_url AS users_avatar_url, users.is_group_member AS users_is_group_member, users.password_hash AS users_password_hash, users.created_at AS users_created_at 
+FROM users]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+127.0.0.1 - - [28/Jan/2026 21:19:38] "[35m[1mGET /balances HTTP/1.1[0m" 500 -
+127.0.0.1 - - [28/Jan/2026 21:19:38] "[35m[1mGET /settlements HTTP/1.1[0m" 500 -
+Traceback (most recent call last):
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+psycopg2.errors.UndefinedColumn: column users.password_hash does not exist
+LINE 1: ..., users.is_group_member AS users_is_group_member, users.pass...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask/app.py", line 1536, in __call__
+    return self.wsgi_app(environ, start_response)
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask/app.py", line 1514, in wsgi_app
+    response = self.handle_exception(e)
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask_cors/extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask_cors/extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/Users/arjantebrake/projects/own_projects/Ai/backend/app.py", line 85, in get_balances
+    users = User.query.all()
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/orm/query.py", line 2704, in all
+    return self._iter().all()  # type: ignore
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/orm/query.py", line 2857, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/orm/session.py", line 2351, in execute
+    return self._execute_internal(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/orm/session.py", line 2249, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/orm/context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1419, in execute
+    return meth(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/sql/elements.py", line 527, in _execute_on_connection
+    return connection._execute_clauseelement(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.ProgrammingError: (psycopg2.errors.UndefinedColumn) column users.password_hash does not exist
+LINE 1: ..., users.is_group_member AS users_is_group_member, users.pass...
+                                                             ^
+
+[SQL: SELECT users.id AS users_id, users.name AS users_name, users.avatar_url AS users_avatar_url, users.is_group_member AS users_is_group_member, users.password_hash AS users_password_hash, users.created_at AS users_created_at 
+FROM users]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+Traceback (most recent call last):
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+psycopg2.errors.UndefinedColumn: column users.password_hash does not exist
+LINE 1: ..., users.is_group_member AS users_is_group_member, users.pass...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask/app.py", line 1536, in __call__
+    return self.wsgi_app(environ, start_response)
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask/app.py", line 1514, in wsgi_app
+    response = self.handle_exception(e)
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask_cors/extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask_cors/extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/Users/arjantebrake/projects/own_projects/Ai/backend/app.py", line 186, in get_suggested_settlements
+    users = User.query.all()
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/orm/query.py", line 2704, in all
+    return self._iter().all()  # type: ignore
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/orm/query.py", line 2857, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/orm/session.py", line 2351, in execute
+    return self._execute_internal(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/orm/session.py", line 2249, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/orm/context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1419, in execute
+    return meth(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/sql/elements.py", line 527, in _execute_on_connection
+    return connection._execute_clauseelement(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.ProgrammingError: (psycopg2.errors.UndefinedColumn) column users.password_hash does not exist
+LINE 1: ..., users.is_group_member AS users_is_group_member, users.pass...
+                                                             ^
+
+[SQL: SELECT users.id AS users_id, users.name AS users_name, users.avatar_url AS users_avatar_url, users.is_group_member AS users_is_group_member, users.password_hash AS users_password_hash, users.created_at AS users_created_at 
+FROM users]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+127.0.0.1 - - [28/Jan/2026 21:19:38] "[35m[1mGET /users HTTP/1.1[0m" 500 -
+Traceback (most recent call last):
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+psycopg2.errors.UndefinedColumn: column users.password_hash does not exist
+LINE 1: ..., users.is_group_member AS users_is_group_member, users.pass...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask/app.py", line 1536, in __call__
+    return self.wsgi_app(environ, start_response)
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask/app.py", line 1514, in wsgi_app
+    response = self.handle_exception(e)
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask_cors/extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask_cors/extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/Users/arjantebrake/projects/own_projects/Ai/backend/app.py", line 75, in get_users
+    users = User.query.all()
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/orm/query.py", line 2704, in all
+    return self._iter().all()  # type: ignore
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/orm/query.py", line 2857, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/orm/session.py", line 2351, in execute
+    return self._execute_internal(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/orm/session.py", line 2249, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/orm/context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1419, in execute
+    return meth(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/sql/elements.py", line 527, in _execute_on_connection
+    return connection._execute_clauseelement(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.ProgrammingError: (psycopg2.errors.UndefinedColumn) column users.password_hash does not exist
+LINE 1: ..., users.is_group_member AS users_is_group_member, users.pass...
+                                                             ^
+
+[SQL: SELECT users.id AS users_id, users.name AS users_name, users.avatar_url AS users_avatar_url, users.is_group_member AS users_is_group_member, users.password_hash AS users_password_hash, users.created_at AS users_created_at 
+FROM users]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+127.0.0.1 - - [28/Jan/2026 21:19:38] "[35m[1mGET /balances HTTP/1.1[0m" 500 -
+Traceback (most recent call last):
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+psycopg2.errors.UndefinedColumn: column users.password_hash does not exist
+LINE 1: ..., users.is_group_member AS users_is_group_member, users.pass...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask/app.py", line 1536, in __call__
+    return self.wsgi_app(environ, start_response)
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask/app.py", line 1514, in wsgi_app
+    response = self.handle_exception(e)
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask_cors/extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask_cors/extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/Users/arjantebrake/projects/own_projects/Ai/backend/app.py", line 85, in get_balances
+    users = User.query.all()
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/orm/query.py", line 2704, in all
+    return self._iter().all()  # type: ignore
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/orm/query.py", line 2857, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/orm/session.py", line 2351, in execute
+    return self._execute_internal(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/orm/session.py", line 2249, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/orm/context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1419, in execute
+    return meth(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/sql/elements.py", line 527, in _execute_on_connection
+    return connection._execute_clauseelement(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.ProgrammingError: (psycopg2.errors.UndefinedColumn) column users.password_hash does not exist
+LINE 1: ..., users.is_group_member AS users_is_group_member, users.pass...
+                                                             ^
+
+[SQL: SELECT users.id AS users_id, users.name AS users_name, users.avatar_url AS users_avatar_url, users.is_group_member AS users_is_group_member, users.password_hash AS users_password_hash, users.created_at AS users_created_at 
+FROM users]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+127.0.0.1 - - [28/Jan/2026 21:19:38] "[35m[1mGET /settlements HTTP/1.1[0m" 500 -
+Traceback (most recent call last):
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+psycopg2.errors.UndefinedColumn: column users.password_hash does not exist
+LINE 1: ..., users.is_group_member AS users_is_group_member, users.pass...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask/app.py", line 1536, in __call__
+    return self.wsgi_app(environ, start_response)
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask/app.py", line 1514, in wsgi_app
+    response = self.handle_exception(e)
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask_cors/extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask_cors/extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/Users/arjantebrake/projects/own_projects/Ai/backend/app.py", line 186, in get_suggested_settlements
+    users = User.query.all()
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/orm/query.py", line 2704, in all
+    return self._iter().all()  # type: ignore
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/orm/query.py", line 2857, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/orm/session.py", line 2351, in execute
+    return self._execute_internal(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/orm/session.py", line 2249, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/orm/context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1419, in execute
+    return meth(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/sql/elements.py", line 527, in _execute_on_connection
+    return connection._execute_clauseelement(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.ProgrammingError: (psycopg2.errors.UndefinedColumn) column users.password_hash does not exist
+LINE 1: ..., users.is_group_member AS users_is_group_member, users.pass...
+                                                             ^
+
+[SQL: SELECT users.id AS users_id, users.name AS users_name, users.avatar_url AS users_avatar_url, users.is_group_member AS users_is_group_member, users.password_hash AS users_password_hash, users.created_at AS users_created_at 
+FROM users]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+127.0.0.1 - - [28/Jan/2026 21:19:49] "[31m[1mPOST /init-db HTTP/1.1[0m" 405 -
+127.0.0.1 - - [28/Jan/2026 21:19:53] "GET /init-db HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:19:58] "POST /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:19:58] "POST /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:19:58] "POST /transactions HTTP/1.1" 200 -
+ * Detected change in '/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/jwt/__init__.py', reloading
+ * Detected change in '/Users/arjantebrake/projects/own_projects/Ai/venv/lib/python3.9/site-packages/jwt/__init__.py', reloading
+ * Restarting with watchdog (fsevents)
+ * Debugger is active!
+ * Debugger PIN: 131-359-949
+ * Detected change in '/Users/arjantebrake/projects/own_projects/Ai/backend/app.py', reloading
+ * Restarting with watchdog (fsevents)
+ * Debugger is active!
+ * Debugger PIN: 131-359-949
+ * Detected change in '/Users/arjantebrake/projects/own_projects/Ai/backend/app.py', reloading
+ * Restarting with watchdog (fsevents)
+ * Debugger is active!
+ * Debugger PIN: 131-359-949
+ * Detected change in '/Users/arjantebrake/projects/own_projects/Ai/backend/app.py', reloading
+ * Restarting with watchdog (fsevents)
+ * Debugger is active!
+ * Debugger PIN: 131-359-949
+ * Detected change in '/Users/arjantebrake/projects/own_projects/Ai/backend/app.py', reloading
+ * Restarting with watchdog (fsevents)
+ * Debugger is active!
+ * Debugger PIN: 131-359-949
+ * Detected change in '/Users/arjantebrake/projects/own_projects/Ai/backend/models.py', reloading
+ * Restarting with watchdog (fsevents)
+ * Debugger is active!
+ * Debugger PIN: 131-359-949
+ * Detected change in '/Users/arjantebrake/projects/own_projects/Ai/backend/app.py', reloading
+ * Restarting with watchdog (fsevents)
+ * Debugger is active!
+ * Debugger PIN: 131-359-949
+127.0.0.1 - - [28/Jan/2026 21:27:54] "GET /init-db HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:27:55] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+127.0.0.1 - - [28/Jan/2026 21:27:55] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+127.0.0.1 - - [28/Jan/2026 21:28:48] "OPTIONS /login HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:28:48] "POST /login HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:28:48] "OPTIONS /users HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:28:48] "OPTIONS /balances HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:28:48] "OPTIONS /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:28:48] "OPTIONS /settlements HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:28:49] "GET /users HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:28:49] "POST /login HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:28:49] "GET /users HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:28:49] "GET /balances HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:28:49] "GET /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:28:49] "GET /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:28:49] "GET /balances HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:28:49] "GET /settlements HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:28:49] "GET /settlements HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:29:04] "OPTIONS /login HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:29:04] "[31m[1mPOST /login HTTP/1.1[0m" 401 -
+127.0.0.1 - - [28/Jan/2026 21:29:08] "[31m[1mPOST /login HTTP/1.1[0m" 401 -
+127.0.0.1 - - [28/Jan/2026 21:29:12] "OPTIONS /login HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:29:12] "[31m[1mPOST /login HTTP/1.1[0m" 401 -
+127.0.0.1 - - [28/Jan/2026 21:29:16] "[31m[1mPOST /login HTTP/1.1[0m" 401 -
+127.0.0.1 - - [28/Jan/2026 21:29:21] "OPTIONS /login HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:29:22] "[31m[1mPOST /login HTTP/1.1[0m" 401 -
+127.0.0.1 - - [28/Jan/2026 21:29:25] "POST /login HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:29:25] "OPTIONS /balances HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:29:25] "OPTIONS /users HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:29:25] "OPTIONS /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:29:25] "OPTIONS /settlements HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:29:25] "GET /users HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:29:25] "GET /settlements HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:29:25] "GET /balances HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 21:29:25] "GET /transactions HTTP/1.1" 200 -
+ * Detected change in '/Users/arjantebrake/projects/own_projects/Ai/backend/app.py', reloading
+ * Restarting with watchdog (fsevents)
+ * Debugger is active!
+ * Debugger PIN: 131-359-949
+ * Detected change in '/Users/arjantebrake/projects/own_projects/Ai/backend/app.py', reloading
+ * Restarting with watchdog (fsevents)
+Traceback (most recent call last):
+  File "/Users/arjantebrake/projects/own_projects/Ai/backend/app.py", line 38, in <module>
+    @token_required
+NameError: name 'token_required' is not defined

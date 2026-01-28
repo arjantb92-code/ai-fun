@@ -1,0 +1,13 @@
+#!/bin/bash
+# Simple wrapper to run cursor-agent in this repo
+# Usage: .git-commit-ai [optional prompt]
+
+CURSOR_AGENT="/Users/arjantebrake/.local/bin/cursor-agent"
+
+if [ -z "$1" ]; then
+    # No prompt - start interactive session
+    $CURSOR_AGENT --workspace "$(pwd)"
+else
+    # With prompt - use print mode
+    $CURSOR_AGENT --print --workspace "$(pwd)" agent "$@"
+fi

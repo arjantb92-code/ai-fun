@@ -1,0 +1,109 @@
+
+> frontend@0.0.0 dev
+> vite
+
+
+  VITE v7.3.1  ready in 3365 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+  ➜  Vue DevTools: Open http://localhost:5173/__devtools__/ as a separate window
+  ➜  Vue DevTools: Press Option(⌥)+Shift(⇧)+D in App to toggle the Vue DevTools
+9:51:19 PM [vite] (client) Pre-transform error: [vue/compiler-sfc] Unexpected keyword 'const'. (40:4)
+
+/Users/arjantebrake/projects/own_projects/Ai/frontend/src/App.vue
+38 |  // ...
+39 |  // ... (in handleReceiptUpload)
+40 |      const res = await fetch('http://127.0.0.1:5000/ocr/process', { method: 'POST', headers: { 'Authorization': `Bearer ${token.value}` }, body: formData })
+   |      ^
+41 |  // ...
+42 |  // ... (in handleBankImport)
+  Plugin: vite:vue
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/App.vue:40:4
+  37 |      const res = await fetch('http://127.0.0.1:5000/login', {
+  38 |  // ...
+  39 |  // ... (in handleReceiptUpload)
+     |                        ^
+  40 |      const res = await fetch('http://127.0.0.1:5000/ocr/process', { method: 'POST', headers: { 'Authorization': `Beare...
+  41 |  // ...
+9:51:19 PM [vite] (client) Pre-transform error: [vue/compiler-sfc] Unexpected keyword 'const'. (40:4)
+
+/Users/arjantebrake/projects/own_projects/Ai/frontend/src/App.vue
+38 |  // ...
+39 |  // ... (in handleReceiptUpload)
+40 |      const res = await fetch('http://127.0.0.1:5000/ocr/process', { method: 'POST', headers: { 'Authorization': `Bearer ${token.value}` }, body: formData })
+   |      ^
+41 |  // ...
+42 |  // ... (in handleBankImport)
+  Plugin: vite:vue
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/App.vue:40:4
+  37 |      const res = await fetch('http://127.0.0.1:5000/login', {
+  38 |  // ...
+  39 |  // ... (in handleReceiptUpload)
+     |                        ^
+  40 |      const res = await fetch('http://127.0.0.1:5000/ocr/process', { method: 'POST', headers: { 'Authorization': `Beare...
+  41 |  // ...
+9:51:20 PM [vite] Internal server error: [vue/compiler-sfc] Unexpected keyword 'const'. (40:4)
+
+/Users/arjantebrake/projects/own_projects/Ai/frontend/src/App.vue
+38 |  // ...
+39 |  // ... (in handleReceiptUpload)
+40 |      const res = await fetch('http://127.0.0.1:5000/ocr/process', { method: 'POST', headers: { 'Authorization': `Bearer ${token.value}` }, body: formData })
+   |      ^
+41 |  // ...
+42 |  // ... (in handleBankImport)
+  Plugin: vite:vue
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/App.vue:40:4
+  37 |      const res = await fetch('http://127.0.0.1:5000/login', {
+  38 |  // ...
+  39 |  // ... (in handleReceiptUpload)
+     |                        ^
+  40 |      const res = await fetch('http://127.0.0.1:5000/ocr/process', { method: 'POST', headers: { 'Authorization': `Beare...
+  41 |  // ...
+      at constructor (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@babel/parser/lib/index.js:365:19)
+      at Parser.raise (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@babel/parser/lib/index.js:6599:19)
+      at Parser.checkReservedWord (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@babel/parser/lib/index.js:12214:12)
+      at Parser.parseObjectProperty (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@babel/parser/lib/index.js:11944:12)
+      at Parser.parseObjPropValue (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@babel/parser/lib/index.js:11968:100)
+      at Parser.parsePropertyDefinition (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@babel/parser/lib/index.js:11905:17)
+      at Parser.parseObjectLike (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@babel/parser/lib/index.js:11822:21)
+      at Parser.parseExprAtom (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@babel/parser/lib/index.js:11329:23)
+      at Parser.parseExprSubscripts (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@babel/parser/lib/index.js:11071:23)
+      at Parser.parseUpdate (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@babel/parser/lib/index.js:11056:21)
+9:51:20 PM [vite] Internal server error: [vue/compiler-sfc] Unexpected keyword 'const'. (40:4)
+
+/Users/arjantebrake/projects/own_projects/Ai/frontend/src/App.vue
+38 |  // ...
+39 |  // ... (in handleReceiptUpload)
+40 |      const res = await fetch('http://127.0.0.1:5000/ocr/process', { method: 'POST', headers: { 'Authorization': `Bearer ${token.value}` }, body: formData })
+   |      ^
+41 |  // ...
+42 |  // ... (in handleBankImport)
+  Plugin: vite:vue
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/App.vue:40:4
+  37 |      const res = await fetch('http://127.0.0.1:5000/login', {
+  38 |  // ...
+  39 |  // ... (in handleReceiptUpload)
+     |                        ^
+  40 |      const res = await fetch('http://127.0.0.1:5000/ocr/process', { method: 'POST', headers: { 'Authorization': `Beare...
+  41 |  // ...
+      at constructor (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@babel/parser/lib/index.js:365:19)
+      at Parser.raise (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@babel/parser/lib/index.js:6599:19)
+      at Parser.checkReservedWord (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@babel/parser/lib/index.js:12214:12)
+      at Parser.parseObjectProperty (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@babel/parser/lib/index.js:11944:12)
+      at Parser.parseObjPropValue (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@babel/parser/lib/index.js:11968:100)
+      at Parser.parsePropertyDefinition (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@babel/parser/lib/index.js:11905:17)
+      at Parser.parseObjectLike (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@babel/parser/lib/index.js:11822:21)
+      at Parser.parseExprAtom (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@babel/parser/lib/index.js:11329:23)
+      at Parser.parseExprSubscripts (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@babel/parser/lib/index.js:11071:23)
+      at Parser.parseUpdate (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@babel/parser/lib/index.js:11056:21)
+9:52:00 PM [vite] (client) hmr update /src/assets/main.css
+10:00:23 PM [vite] (client) hmr update /src/App.vue, /src/assets/main.css
+10:19:15 PM [vite] (client) hmr update /src/App.vue, /src/assets/main.css
+10:20:58 PM [vite] (client) hmr update /src/App.vue, /src/App.vue?vue&type=style&index=0&lang.css, /src/assets/main.css
+10:23:30 PM [vite] (client) hmr update /src/App.vue, /src/App.vue?vue&type=style&index=0&lang.css, /src/assets/main.css
+10:28:39 PM [vite] (client) hmr update /src/App.vue, /src/assets/main.css
+10:28:39 PM [vite] (client) hmr update /src/App.vue, /src/assets/main.css
+10:28:39 PM [vite] (client) hmr update /src/App.vue, /src/assets/main.css
+10:28:39 PM [vite] (client) hmr update /src/App.vue, /src/assets/main.css
+10:28:40 PM [vite] (client) hmr update /src/App.vue, /src/assets/main.css

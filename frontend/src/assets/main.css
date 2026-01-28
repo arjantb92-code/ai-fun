@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-trainmore-dark text-white font-industrial;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-industrial-gray;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-zinc-800 border-2 border-industrial-gray hover:bg-brand-red transition-colors;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #E30613 #1A1A1A;
+}
