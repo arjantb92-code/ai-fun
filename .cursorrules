@@ -1,9 +1,24 @@
-# AI Project Rules
+# Better WBW - AI Project Rules
 
-This is an AI project with Gemini API integration and AI-free input processing.
+## Core Principles
+- Follow the "TrainMore" aesthetic: High contrast, Industrial, Dark Mode.
+- Frontend: Vue 3 (Composition API), Vite, Pinia, Tailwind CSS.
+- Backend: Flask, SQLAlchemy, PostgreSQL.
+- Logic: Debt simplification for WBW settlement.
+- OCR: Local EasyOCR for receipts.
 
-When helping with git commits:
-- Generate concise, descriptive commit messages
-- Follow conventional commit format when appropriate
-- Review changes before committing
-- Use clear, actionable commit messages
+## UI/UX Standards
+- Theme: Black (#000000), White (#FFFFFF), Brand Red (#E30613), Industrial Gray (#1A1A1A).
+- Font: Oswald (Industrial sans-serif).
+- Interactions: Slick animations, modal-based detail views, tactile feedback on actions.
+
+## Development Best Practices
+- Keep components small and focused.
+- Use `defineModel` for two-way bindings.
+- Favor `const` over `let`.
+- No `as any` or `@ts-ignore` in TypeScript (when used).
+- Self-documenting code over excessive comments.
+
+## Feature Logic
+- WBW: Transactions must support multi-user splits with weights (e.g., someone paying for 2 people).
+- Settlement: Minimize transactions using simplified debt algorithms.
