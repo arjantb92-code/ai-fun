@@ -7,7 +7,8 @@ from flask_cors import CORS
 from dotenv import load_dotenv
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
-from models import db, User, Transaction, TransactionSplit, SettlementSession, HistoricalSettlement, Trip
+from models import db, User, Transaction, TransactionSplit, SettlementSession, HistoricalSettlement, Trip, PaymentRequest
+from tikkie_service import get_tikkie_service
 from ocr import get_ocr_service
 from bank_parser import BankParser
 from sqlalchemy import func
@@ -408,7 +409,7 @@ def get_settlement_history(current_user):
         total = sum(h.amount for h in s.results)
         txs = sorted(s.transactions, key=lambda t: (t.date, t.time or ""))
         transactions = [{"id": t.id, "date": t.date.isoformat(), "time": t.time, "amount": round(t.amount, 2), "description": t.description, "payer": t.payer.name if t.payer else None} for t in txs]
-        res.append({"id": s.id, "date": s.date.isoformat(), "description": s.description, "total_amount": round(total, 2), "deleted_at": s.deleted_at.isoformat() if s.deleted_at else None, "results": [{"from_user": h.from_user.name, "to_user": h.to_user.name, "amount": h.amount} for h in s.results], "transactions": transactions})
+        res.append({"id": s.id, "date": s.date.isoformat(), "description": s.description, "total_amount": round(total, 2), "deleted_at": s.deleted_at.isoformat() if s.deleted_at else None, "results": [{"settlement_id": h.id, "from_user": h.from_user.name, "from_user_id": h.from_user_id, "to_user": h.to_user.name, "to_user_id": h.to_user_id, "amount": h.amount} for h in s.results], "transactions": transactions})
     return jsonify(res)
 
 @app.route('/settlements/<int:session_id>', methods=['DELETE'])
@@ -482,6 +483,223 @@ def process_receipt(current_user):
     try:
         return jsonify({"status": "success", "data": get_ocr_service().process_receipt(fp)})
     except Exception as e: return jsonify({"error": str(e)}), 500
+
+# ===== TIKKIE / iDEAL PAYMENT ENDPOINTS =====
+
+@app.route('/payments/tikkie/status', methods=['GET'])
+@token_required
+def get_tikkie_status(current_user):
+    """Get Tikkie integration status and configuration info"""
+    tikkie = get_tikkie_service()
+    return jsonify({
+        "enabled": True,
+        "demo_mode": tikkie.is_demo_mode,
+        "sandbox": tikkie.sandbox if not tikkie.is_demo_mode else None,
+        "info": "Tikkie is in demo mode. Configure TIKKIE_API_KEY and TIKKIE_APP_TOKEN for real payments." if tikkie.is_demo_mode else "Tikkie is configured and ready for payments."
+    })
+
+@app.route('/payments/tikkie/create', methods=['POST'])
+@token_required
+def create_tikkie_payment(current_user):
+    """
+    Create a Tikkie payment request for a settlement.
+    
+    Request body:
+    {
+        "settlement_id": int,  // HistoricalSettlement ID
+        "expiry_days": int     // Optional, default 14
+    }
+    
+    Returns the Tikkie URL that can be shared with the payer.
+    """
+    d = request.json or {}
+    settlement_id = d.get('settlement_id')
+    if not settlement_id:
+        return jsonify({"error": "settlement_id is required"}), 400
+    
+    settlement = db.session.get(HistoricalSettlement, settlement_id)
+    if not settlement:
+        return jsonify({"error": "Settlement not found"}), 404
+    
+    # Check if there's already an active payment request
+    existing = PaymentRequest.query.filter_by(
+        settlement_id=settlement_id
+    ).filter(
+        PaymentRequest.status.in_(['OPEN', 'DEMO'])
+    ).first()
+    
+    if existing:
+        return jsonify({
+            "status": "exists",
+            "payment_request": {
+                "id": existing.id,
+                "tikkie_url": existing.tikkie_url,
+                "amount": existing.amount,
+                "status": existing.status,
+                "is_demo": existing.is_demo,
+                "created_at": existing.created_at.isoformat() if existing.created_at else None,
+                "expires_at": existing.expires_at.isoformat() if existing.expires_at else None
+            }
+        })
+    
+    try:
+        tikkie = get_tikkie_service()
+        amount_cents = int(settlement.amount * 100)
+        
+        # Create description: "WBW: [from_user] -> [to_user]"
+        description = f"WBW: {settlement.from_user.name}"
+        reference_id = f"wbw_settlement_{settlement_id}"
+        expiry_days = d.get('expiry_days', 14)
+        
+        tikkie_request = tikkie.create_payment_request(
+            amount_cents=amount_cents,
+            description=description,
+            reference_id=reference_id,
+            expiry_days=expiry_days
+        )
+        
+        # Store in database
+        payment = PaymentRequest()
+        payment.settlement_id = settlement_id
+        payment.tikkie_token = tikkie_request.payment_request_token
+        payment.tikkie_url = tikkie_request.url
+        payment.amount_cents = amount_cents
+        payment.description = description
+        payment.status = tikkie_request.status
+        payment.expires_at = tikkie_request.expiry_date
+        db.session.add(payment)
+        db.session.commit()
+        
+        return jsonify({
+            "status": "created",
+            "payment_request": {
+                "id": payment.id,
+                "tikkie_url": payment.tikkie_url,
+                "amount": payment.amount,
+                "status": payment.status,
+                "is_demo": payment.is_demo,
+                "created_at": payment.created_at.isoformat() if payment.created_at else None,
+                "expires_at": payment.expires_at.isoformat() if payment.expires_at else None
+            }
+        })
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/payments/tikkie/<int:payment_id>/check', methods=['GET'])
+@token_required
+def check_tikkie_payment(current_user, payment_id):
+    """
+    Check the status of a Tikkie payment request.
+    Updates the local status if the payment has been completed.
+    """
+    payment = db.session.get(PaymentRequest, payment_id)
+    if not payment:
+        return jsonify({"error": "Payment request not found"}), 404
+    
+    # Demo payments can't be checked via API
+    if payment.is_demo:
+        return jsonify({
+            "id": payment.id,
+            "status": "DEMO",
+            "is_demo": True,
+            "amount": payment.amount,
+            "tikkie_url": payment.tikkie_url,
+            "message": "Demo payment - no real status available"
+        })
+    
+    try:
+        tikkie = get_tikkie_service()
+        tikkie_status = tikkie.get_payment_request(payment.tikkie_token)
+        
+        if tikkie_status:
+            payment.status = tikkie_status.status
+            
+            # Check if paid
+            if tikkie_status.status == "PAID" or tikkie.is_fully_paid(payment.tikkie_token, payment.amount_cents):
+                payment.status = "PAID"
+                payment.paid_at = datetime.utcnow()
+                payments = tikkie.get_payments(payment.tikkie_token)
+                if payments:
+                    payment.payer_name = payments[0].payer_name
+            
+            db.session.commit()
+        
+        return jsonify({
+            "id": payment.id,
+            "status": payment.status,
+            "is_demo": payment.is_demo,
+            "amount": payment.amount,
+            "tikkie_url": payment.tikkie_url,
+            "paid_at": payment.paid_at.isoformat() if payment.paid_at else None,
+            "payer_name": payment.payer_name
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/payments/tikkie/settlement/<int:settlement_id>', methods=['GET'])
+@token_required
+def get_settlement_payments(current_user, settlement_id):
+    """Get all payment requests for a settlement"""
+    settlement = db.session.get(HistoricalSettlement, settlement_id)
+    if not settlement:
+        return jsonify({"error": "Settlement not found"}), 404
+    
+    payments = PaymentRequest.query.filter_by(settlement_id=settlement_id).order_by(PaymentRequest.created_at.desc()).all()
+    
+    return jsonify({
+        "settlement_id": settlement_id,
+        "from_user": settlement.from_user.name,
+        "to_user": settlement.to_user.name,
+        "amount": settlement.amount,
+        "payments": [{
+            "id": p.id,
+            "tikkie_url": p.tikkie_url,
+            "amount": p.amount,
+            "status": p.status,
+            "is_demo": p.is_demo,
+            "created_at": p.created_at.isoformat() if p.created_at else None,
+            "expires_at": p.expires_at.isoformat() if p.expires_at else None,
+            "paid_at": p.paid_at.isoformat() if p.paid_at else None,
+            "payer_name": p.payer_name
+        } for p in payments]
+    })
+
+@app.route('/settlements/history/<int:session_id>/payments', methods=['GET'])
+@token_required
+def get_session_payments(current_user, session_id):
+    """Get all payment requests for settlements in a session"""
+    session = db.session.get(SettlementSession, session_id)
+    if not session:
+        return jsonify({"error": "Session not found"}), 404
+    
+    result = []
+    for settlement in session.results:
+        payments = PaymentRequest.query.filter_by(settlement_id=settlement.id).order_by(PaymentRequest.created_at.desc()).all()
+        active_payment = next((p for p in payments if p.status in ['OPEN', 'DEMO']), None)
+        
+        result.append({
+            "settlement_id": settlement.id,
+            "from_user_id": settlement.from_user_id,
+            "from_user": settlement.from_user.name,
+            "to_user_id": settlement.to_user_id,
+            "to_user": settlement.to_user.name,
+            "amount": settlement.amount,
+            "has_active_payment": active_payment is not None,
+            "active_payment": {
+                "id": active_payment.id,
+                "tikkie_url": active_payment.tikkie_url,
+                "status": active_payment.status,
+                "is_demo": active_payment.is_demo
+            } if active_payment else None,
+            "is_paid": any(p.status == "PAID" for p in payments)
+        })
+    
+    return jsonify({
+        "session_id": session_id,
+        "description": session.description,
+        "settlements": result
+    })
 
 # ===== ACTIVITIES (TRIPS) ENDPOINTS =====
 
