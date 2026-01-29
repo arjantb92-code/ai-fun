@@ -78,3 +78,58 @@ class HistoricalSettlement(db.Model):
     
     from_user = db.relationship("User", foreign_keys=[from_user_id])
     to_user = db.relationship("User", foreign_keys=[to_user_id])
+    payment_requests = db.relationship("PaymentRequest", backref="settlement", lazy="dynamic")
+
+
+class PaymentRequest(db.Model):
+    """
+    Tracks Tikkie/iDEAL payment requests for settlements.
+    
+    Links a HistoricalSettlement to a Tikkie payment request,
+    allowing users to pay their share via iDEAL.
+    """
+    __tablename__ = "payment_requests"
+    id = db.Column(db.Integer, primary_key=True)
+    
+    # Link to the settlement this payment is for
+    settlement_id = db.Column(db.Integer, db.ForeignKey("historical_settlements.id"), nullable=False)
+    
+    # Tikkie API fields
+    tikkie_token = db.Column(db.String(100), unique=True, nullable=False)  # paymentRequestToken
+    tikkie_url = db.Column(db.String(500), nullable=False)  # The payment URL
+    amount_cents = db.Column(db.Integer, nullable=False)  # Amount in cents
+    description = db.Column(db.String(255), nullable=True)
+    
+    # Status tracking
+    # DEMO = demo mode, OPEN = awaiting payment, PAID = completed, EXPIRED = expired, CLOSED = manually closed
+    status = db.Column(db.String(20), default="OPEN")
+    
+    # Timestamps
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    expires_at = db.Column(db.DateTime, nullable=True)
+    paid_at = db.Column(db.DateTime, nullable=True)
+    
+    # Payment info (filled when paid)
+    payer_name = db.Column(db.String(100), nullable=True)  # Name from iDEAL
+    
+    @property
+    def amount(self) -> float:
+        """Amount in euros"""
+        return self.amount_cents / 100.0
+    
+    @property
+    def is_demo(self) -> bool:
+        """Check if this is a demo payment request"""
+        return self.status == "DEMO"
+    
+    @property
+    def is_paid(self) -> bool:
+        """Check if this payment has been completed"""
+        return self.status == "PAID"
+    
+    @property
+    def is_expired(self) -> bool:
+        """Check if this payment request has expired"""
+        if self.expires_at and datetime.utcnow() > self.expires_at:
+            return True
+        return self.status == "EXPIRED"
