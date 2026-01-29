@@ -1,17 +1,15 @@
-"""Add deleted_at to transactions for soft delete
+"""Add deleted_at to transactions (soft delete)
 
 Revision ID: 4a5b6c7d8e9f
-Revises: 37002722bd45
-Create Date: 2026-01-29 00:00:00.000000
+Revises: 31e2876013dd
+Create Date: 2026-01-29
 
 """
 from alembic import op
 import sqlalchemy as sa
 
-
-# revision identifiers, used by Alembic.
 revision = '4a5b6c7d8e9f'
-down_revision = '37002722bd45'
+down_revision = '31e2876013dd'
 branch_labels = None
 depends_on = None
 

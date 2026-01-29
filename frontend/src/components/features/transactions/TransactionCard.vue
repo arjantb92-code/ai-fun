@@ -10,6 +10,10 @@ const props = defineProps({
     type: String,
     default: 'Onbekend'
   },
+  activity: {
+    type: Object,
+    default: null
+  },
   selectable: {
     type: Boolean,
     default: false
@@ -23,41 +27,32 @@ const props = defineProps({
 const emit = defineEmits(['click', 'toggle-select'])
 
 const isIncome = computed(() => props.transaction.type === 'INCOME')
-
-const handleClick = (e) => {
-  if (props.selectable) {
-    emit('toggle-select', props.transaction.id)
-  } else {
-    emit('click')
-  }
-}
-
-const handleCheckboxClick = (e) => {
-  e.stopPropagation()
-  emit('toggle-select', props.transaction.id)
-}
 </script>
 
 <template>
-  <div @click="handleClick" 
-       class="p-5 flex justify-between items-center hover:bg-zinc-900 border-l-2 transition-all cursor-pointer group shadow-lg text-white"
-       :class="[
-         selected ? 'bg-brand-red/10 border-brand-red' : 'bg-industrial-gray/40 border-transparent hover:border-brand-red'
-       ]">
+  <div @click="emit('click')" 
+       class="bg-industrial-gray/40 p-5 flex justify-between items-center hover:bg-zinc-900 border-l-2 transition-all cursor-pointer group shadow-lg text-white relative"
+       :class="selected ? 'border-brand-red bg-brand-red/10' : 'border-transparent hover:border-brand-red'">
     <div class="flex items-center gap-6">
-      <!-- Checkbox for selection mode -->
       <div v-if="selectable" 
-           @click="handleCheckboxClick"
-           class="w-6 h-6 border-2 flex items-center justify-center transition-all"
-           :class="selected ? 'bg-brand-red border-brand-red' : 'border-zinc-600 hover:border-brand-red'">
-        <span v-if="selected" class="text-white text-sm font-black">✓</span>
+           class="shrink-0 w-4 h-4 border-2 rounded-sm transition-all flex items-center justify-center opacity-0 group-hover:opacity-100"
+           :class="selected ? 'opacity-100 bg-brand-red border-brand-red' : 'border-zinc-600 hover:border-brand-red/50'"
+           @click.stop="emit('toggle-select', transaction.id)">
+        <svg v-if="selected" class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+        </svg>
       </div>
-      
-      <div class="w-12 h-12 bg-zinc-900 flex items-center justify-center font-black italic text-brand-red border border-zinc-800 group-hover:bg-brand-red group-hover:text-white transition-all transform group-hover:rotate-3">
+      <div class="w-12 h-12 bg-zinc-900 flex items-center justify-center font-black italic text-brand-red border border-zinc-800 group-hover:bg-brand-red group-hover:text-white transition-all transform group-hover:rotate-3"
+           :class="selectable && selected ? 'ring-2 ring-brand-red/50' : ''">
         {{ transaction.description[0] }}
       </div>
       <div>
         <div class="flex items-center gap-3 mb-1">
+          <div v-if="activity" 
+               class="text-[10px] font-black px-2 py-0.5 border tracking-tighter uppercase italic"
+               :style="{ color: activity.color || '#E30613', borderColor: activity.color || '#E30613' }">
+            {{ activity.icon || '📋' }} {{ activity.name }}
+          </div>
           <div v-if="transaction.time && transaction.time !== '00:00'" 
                class="text-[11px] font-black text-white bg-brand-red/20 px-2 py-0.5 border border-brand-red/40 tracking-tighter uppercase italic">
             {{ transaction.time }}
