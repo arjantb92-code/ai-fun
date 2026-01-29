@@ -9,6 +9,14 @@ export const useAppStore = defineStore('app', () => {
   const settlementsSuggestions = ref([])
   const settlementHistory = ref([])
   const activities = ref([])
+  const categories = ref([
+    { key: 'boodschappen', label: 'Boodschappen' },
+    { key: 'huishoudelijk', label: 'Huishoudelijk' },
+    { key: 'winkelen', label: 'Winkelen' },
+    { key: 'vervoer', label: 'Vervoer' },
+    { key: 'reizen_vrije_tijd', label: 'Reizen & Vrije Tijd' },
+    { key: 'overig', label: 'Overig' }
+  ])
   const currentUser = ref(null)
   const token = ref(localStorage.getItem('wbw_token'))
   const backendStatus = ref('Connecting...')
@@ -87,7 +95,7 @@ export const useAppStore = defineStore('app', () => {
   }
 
   return {
-    users, balances, transactions, settlementsSuggestions, settlementHistory, activities,
+    users, balances, transactions, settlementsSuggestions, settlementHistory, activities, categories,
     deletedTransactions, currentUser, token, backendStatus, isAuthenticated, groupMembers, totalGroupSpend,
     apiFetch, fetchData, fetchTrash, login, logout
   }

@@ -23,6 +23,8 @@ const store = useAppStore()
 // --- UI State ---
 const currentTab = ref('ACTIVITY')
 const searchQuery = ref('')
+const selectedCategoryFilter = ref(null)
+const showFilterDropdown = ref(false)
 const selectedActivityId = ref(null)
 const isEditModalOpen = ref(false)
 const isImportModalOpen = ref(false)
@@ -44,13 +46,26 @@ const newEmail = ref('')
 
 // --- Computed ---
 const filteredTransactions = computed(() => {
-  if (!searchQuery.value) return store.transactions
-  const q = searchQuery.value.toLowerCase()
-  return store.transactions.filter(t => 
-    t.description.toLowerCase().includes(q) || 
-    getPayerName(t.payer_id).toLowerCase().includes(q)
-  )
+  let result = store.transactions
+  
+  // Filter by category
+  if (selectedCategoryFilter.value) {
+    result = result.filter(t => t.category === selectedCategoryFilter.value)
+  }
+  
+  // Filter by search query
+  if (searchQuery.value) {
+    const q = searchQuery.value.toLowerCase()
+    result = result.filter(t => 
+      t.description.toLowerCase().includes(q) || 
+      getPayerName(t.payer_id).toLowerCase().includes(q)
+    )
+  }
+  
+  return result
 })
+
+const getCategoryLabel = (key) => store.categories.find(c => c.key === key)?.label || 'Overig'
 
 const isSelectionMode = computed(() => selectedTransactionIds.value.size > 0)
 
@@ -102,8 +117,10 @@ const openTransaction = (t) => {
 const createNewEntry = () => {
   selectedTransaction.value = { 
     id: null, description: 'Nieuwe uitgave', amount: 0, 
-    date: new Date().toISOString().split('T')[0], 
+    date: new Date().toISOString().split('T')[0],
+    time: new Date().toTimeString().slice(0, 5),
     payer_id: store.currentUser?.id, type: 'EXPENSE',
+    category: 'overig',
     activity_id: selectedActivityId.value,
     splits: store.groupMembers.map(u => ({ user_id: u.id, weight: 1 })) 
   }
@@ -356,6 +373,7 @@ const handleBankImported = async (rows) => {
         date: r.date || new Date().toISOString().split('T')[0],
         payer_id: store.currentUser.id,
         type: 'EXPENSE',
+        category: null, // Let backend auto-classify
         activity_id: selectedActivityId.value,
         splits: store.groupMembers.map(u => ({ user_id: u.id, weight: 1 }))
       }
@@ -484,7 +502,37 @@ onMounted(() => store.fetchData())
                  </div>
                  <div v-if="!showTrash" class="relative max-w-xl flex-1 min-w-[200px]">
                     <span class="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-700">🔍</span>
-                    <input v-model="searchQuery" type="text" class="w-full bg-industrial-gray border border-zinc-800 p-4 pl-12 font-black uppercase italic text-sm outline-none focus:border-brand-red transition-all text-white" placeholder="Zoek transactie of persoon...">
+                    <input v-model="searchQuery" type="text" class="w-full bg-industrial-gray border border-zinc-800 p-4 pl-12 pr-12 font-black uppercase italic text-sm outline-none focus:border-brand-red transition-all text-white" placeholder="Zoek transactie of persoon...">
+                 </div>
+                 <!-- Category Filter -->
+                 <div v-if="!showTrash" class="relative">
+                    <button @click="showFilterDropdown = !showFilterDropdown"
+                            class="bg-industrial-gray border border-zinc-800 p-4 font-black uppercase italic text-sm transition-all hover:border-brand-red flex items-center gap-2"
+                            :class="selectedCategoryFilter ? 'border-brand-red text-brand-red' : 'text-zinc-500'">
+                       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
+                       </svg>
+                       <span class="hidden md:inline">{{ selectedCategoryFilter ? getCategoryLabel(selectedCategoryFilter) : 'Filter' }}</span>
+                    </button>
+                    <!-- Filter Dropdown -->
+                    <Transition name="fade">
+                      <div v-if="showFilterDropdown">
+                         <div class="fixed inset-0 z-40" @click="showFilterDropdown = false"></div>
+                         <div class="absolute top-full right-0 mt-2 bg-industrial-gray border border-zinc-800 shadow-xl z-50 min-w-[200px]">
+                           <button @click="selectedCategoryFilter = null; showFilterDropdown = false"
+                                   class="w-full text-left px-4 py-3 font-black uppercase italic text-xs transition-all hover:bg-zinc-900"
+                                   :class="!selectedCategoryFilter ? 'text-brand-red bg-zinc-900' : 'text-zinc-400'">
+                             Alle categorieën
+                           </button>
+                           <button v-for="cat in store.categories" :key="cat.key"
+                                   @click="selectedCategoryFilter = cat.key; showFilterDropdown = false"
+                                   class="w-full text-left px-4 py-3 font-black uppercase italic text-xs transition-all hover:bg-zinc-900"
+                                   :class="selectedCategoryFilter === cat.key ? 'text-brand-red bg-zinc-900' : 'text-zinc-400'">
+                             {{ cat.label }}
+                           </button>
+                         </div>
+                      </div>
+                    </Transition>
                  </div>
               </div>
               <template v-if="!showTrash">

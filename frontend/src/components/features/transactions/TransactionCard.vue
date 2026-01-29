@@ -1,6 +1,15 @@
 <script setup>
 import { computed } from 'vue'
 
+const CATEGORY_CONFIG = {
+  boodschappen: { label: 'Boodschappen', icon: '🛒', color: '#22c55e' },
+  huishoudelijk: { label: 'Huishoudelijk', icon: '🏠', color: '#f59e0b' },
+  winkelen: { label: 'Winkelen', icon: '🛍️', color: '#ec4899' },
+  vervoer: { label: 'Vervoer', icon: '🚗', color: '#3b82f6' },
+  reizen_vrije_tijd: { label: 'Reizen & Vrije Tijd', icon: '✈️', color: '#8b5cf6' },
+  overig: { label: 'Overig', icon: '📦', color: '#6b7280' }
+}
+
 const props = defineProps({
   transaction: {
     type: Object,
@@ -27,6 +36,7 @@ const props = defineProps({
 const emit = defineEmits(['click', 'toggle-select'])
 
 const isIncome = computed(() => props.transaction.type === 'INCOME')
+const categoryConfig = computed(() => CATEGORY_CONFIG[props.transaction.category] || CATEGORY_CONFIG.overig)
 </script>
 
 <template>
@@ -47,18 +57,19 @@ const isIncome = computed(() => props.transaction.type === 'INCOME')
         {{ transaction.description[0] }}
       </div>
       <div>
-        <div class="flex items-center gap-3 mb-1">
+        <div class="flex items-center gap-2 mb-1 flex-wrap">
+          <div class="text-[10px] font-black px-2 py-0.5 border tracking-tighter uppercase italic"
+               :style="{ color: categoryConfig.color, borderColor: categoryConfig.color, backgroundColor: categoryConfig.color + '15' }">
+            {{ categoryConfig.icon }} {{ categoryConfig.label }}
+          </div>
           <div v-if="activity" 
                class="text-[10px] font-black px-2 py-0.5 border tracking-tighter uppercase italic"
                :style="{ color: activity.color || '#E30613', borderColor: activity.color || '#E30613' }">
             {{ activity.icon || '📋' }} {{ activity.name }}
           </div>
           <div v-if="transaction.time && transaction.time !== '00:00'" 
-               class="text-[11px] font-black text-white bg-brand-red/20 px-2 py-0.5 border border-brand-red/40 tracking-tighter uppercase italic">
+               class="text-[10px] font-black text-white bg-brand-red/20 px-2 py-0.5 border border-brand-red/40 tracking-tighter uppercase italic">
             {{ transaction.time }}
-          </div>
-          <div class="text-[10px] opacity-60 uppercase font-black tracking-widest">
-            {{ transaction.type }}
           </div>
         </div>
         <div class="text-xl font-black group-hover:text-brand-red transition-colors tracking-tight uppercase italic">
