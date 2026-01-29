@@ -238,6 +238,22 @@ const handleBulkDelete = async () => {
   } catch { alert('Verwijderen mislukt') }
 }
 
+// --- Settlement Handlers ---
+const handleUndoSettlement = async (settlement) => {
+  if (!confirm(`Afrekening "${settlement.description || 'Afrekening'}" ongedaan maken? De ${settlement.transactions?.length || 0} transactie(s) worden teruggezet.`)) return
+  try {
+    const res = await store.apiFetch(`/settlements/${settlement.id}/undo`, { method: 'POST' })
+    if (res.ok) {
+      const data = await res.json()
+      await store.fetchData()
+      showToast(data.message)
+    } else {
+      const err = await res.json()
+      alert(err.error || 'Ongedaan maken mislukt')
+    }
+  } catch { alert('Ongedaan maken mislukt') }
+}
+
 // --- Toast ---
 const showToast = (msg) => {
   toastMessage.value = msg
@@ -445,7 +461,7 @@ onMounted(() => store.fetchData())
                  <SettlementPlan :settlements="store.settlementsSuggestions" />
               </div>
               <div class="space-y-8">
-                 <SettlementHistory :settlements="store.settlementHistory" />
+                 <SettlementHistory :settlements="store.settlementHistory" @undo="handleUndoSettlement" />
               </div>
            </div>
         </div>

@@ -431,6 +431,36 @@ def get_settlement_history(current_user):
         })
     return jsonify(res)
 
+@app.route('/settlements/<int:session_id>/undo', methods=['POST'])
+@token_required
+def undo_settlement(current_user, session_id):
+    """Undo a settlement: restore transactions to unsettled state and delete the session"""
+    try:
+        sess = db.session.get(SettlementSession, session_id)
+        if not sess:
+            return jsonify({"error": "Settlement not found"}), 404
+        
+        # Reset settlement_session_id on all transactions in this settlement
+        txs = Transaction.query.filter_by(settlement_session_id=session_id).all()
+        tx_count = len(txs)
+        for t in txs:
+            t.settlement_session_id = None
+        
+        # Delete historical settlement records
+        HistoricalSettlement.query.filter_by(settlement_session_id=session_id).delete()
+        
+        # Delete the session itself
+        db.session.delete(sess)
+        db.session.commit()
+        
+        return jsonify({
+            "status": "success",
+            "message": f"Afrekening ongedaan gemaakt, {tx_count} transactie(s) hersteld"
+        })
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+
 @app.route("/import/bank", methods=["POST"])
 @token_required
 def import_bank(current_user):

@@ -8,6 +8,8 @@ defineProps({
   }
 })
 
+const emit = defineEmits(['undo'])
+
 const expandedIds = ref(new Set())
 
 const toggleExpand = (id) => {
@@ -24,6 +26,10 @@ const isExpanded = (id) => expandedIds.value.has(id)
 
 const formatDate = (dateStr) => {
   return new Date(dateStr).toLocaleDateString('nl-NL', { day: 'numeric', month: 'long', year: 'numeric' })
+}
+
+const handleUndo = (settlement) => {
+  emit('undo', settlement)
 }
 </script>
 
@@ -53,12 +59,18 @@ const formatDate = (dateStr) => {
           </div>
         </div>
         
-        <!-- Toggle transactions button -->
-        <button v-if="s.transactions && s.transactions.length > 0"
-                @click="toggleExpand(s.id)"
-                class="text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-brand-red transition-colors">
-          {{ isExpanded(s.id) ? 'Verberg' : 'Toon' }} posten ({{ s.transactions.length }})
-        </button>
+        <!-- Action buttons -->
+        <div class="flex items-center gap-4">
+          <button v-if="s.transactions && s.transactions.length > 0"
+                  @click="toggleExpand(s.id)"
+                  class="text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-brand-red transition-colors">
+            {{ isExpanded(s.id) ? 'Verberg' : 'Toon' }} posten ({{ s.transactions.length }})
+          </button>
+          <button @click="handleUndo(s)"
+                  class="text-[10px] font-black uppercase tracking-widest text-zinc-600 hover:text-white bg-zinc-800 px-3 py-1 transition-colors">
+            Ongedaan maken
+          </button>
+        </div>
       </div>
       
       <!-- Expandable Transactions List -->
