@@ -50,6 +50,7 @@ class Transaction(db.Model):
     description = db.Column(db.String(255), nullable=False)
     payer_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
     type = db.Column(db.String(20), default="EXPENSE")
+    category = db.Column(db.String(50), nullable=True, default="overig")
     receipt_url = db.Column(db.String(255), nullable=True)
     settlement_session_id = db.Column(db.Integer, db.ForeignKey("settlement_sessions.id"), nullable=True)
     trip_id = db.Column(db.Integer, db.ForeignKey("trips.id"), nullable=True)

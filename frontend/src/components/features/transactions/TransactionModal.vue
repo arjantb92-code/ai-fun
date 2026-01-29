@@ -1,6 +1,15 @@
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import ActivitySelector from '@/components/features/activities/ActivitySelector.vue'
+
+const CATEGORIES = [
+  { key: 'boodschappen', label: 'Boodschappen', icon: '🛒' },
+  { key: 'huishoudelijk', label: 'Huishoudelijk', icon: '🏠' },
+  { key: 'winkelen', label: 'Winkelen', icon: '🛍️' },
+  { key: 'vervoer', label: 'Vervoer', icon: '🚗' },
+  { key: 'reizen_vrije_tijd', label: 'Reizen & Vrije Tijd', icon: '✈️' },
+  { key: 'overig', label: 'Overig', icon: '📦' }
+]
 
 const props = defineProps({
   isOpen: Boolean,
@@ -10,6 +19,8 @@ const props = defineProps({
   activities: Array
 })
 
+const getCategoryIcon = (key) => CATEGORIES.find(c => c.key === key)?.icon || '📦'
+
 const emit = defineEmits(['close', 'save', 'delete', 'upload-receipt'])
 
 const localTx = ref(null)
@@ -18,6 +29,8 @@ watch(() => props.transaction, (newVal) => {
   if (newVal) {
     localTx.value = JSON.parse(JSON.stringify(newVal))
     if (!localTx.value.activity_id) localTx.value.activity_id = null
+    if (!localTx.value.category) localTx.value.category = 'overig'
+    if (!localTx.value.time) localTx.value.time = '00:00'
   }
 }, { immediate: true })
 
@@ -67,8 +80,37 @@ const handleFileUpload = (e) => {
           </div>
           
           <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-            <div class="space-y-8">
+            <div class="space-y-6">
               <input v-model="localTx.description" type="text" class="w-full bg-zinc-900 border border-zinc-800 p-4 font-black uppercase outline-none italic text-sm text-white focus:border-brand-red" placeholder="Omschrijving">
+              
+              <!-- Date and Time -->
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-[10px] uppercase opacity-40 font-black mb-2 tracking-[0.2em] italic">Datum</label>
+                  <input v-model="localTx.date" type="date" class="w-full bg-zinc-900 border border-zinc-800 p-4 font-black uppercase outline-none italic text-sm text-white focus:border-brand-red">
+                </div>
+                <div>
+                  <label class="block text-[10px] uppercase opacity-40 font-black mb-2 tracking-[0.2em] italic">Tijd</label>
+                  <input v-model="localTx.time" type="time" class="w-full bg-zinc-900 border border-zinc-800 p-4 font-black uppercase outline-none italic text-sm text-white focus:border-brand-red">
+                </div>
+              </div>
+              
+              <!-- Category -->
+              <div>
+                <label class="block text-[10px] uppercase opacity-40 font-black mb-2 tracking-[0.2em] italic">Categorie</label>
+                <div class="grid grid-cols-3 gap-2">
+                  <button v-for="cat in CATEGORIES" :key="cat.key"
+                          type="button"
+                          @click="localTx.category = cat.key"
+                          class="p-3 border text-center transition-all text-xs font-black uppercase italic"
+                          :class="localTx.category === cat.key 
+                            ? 'bg-brand-red border-brand-red text-white' 
+                            : 'bg-zinc-900 border-zinc-800 text-zinc-500 hover:border-zinc-600'">
+                    <span class="block text-lg mb-1">{{ cat.icon }}</span>
+                    <span class="block text-[9px] tracking-tight">{{ cat.label }}</span>
+                  </button>
+                </div>
+              </div>
               
               <div>
                 <label class="block text-[10px] uppercase opacity-40 font-black mb-2 tracking-[0.2em] italic">Activiteit</label>
@@ -92,7 +134,7 @@ const handleFileUpload = (e) => {
                 </div>
               </div>
 
-              <div class="border-2 border-dashed border-zinc-800 p-12 text-center hover:border-brand-red hover:bg-brand-red/5 transition-all cursor-pointer relative group">
+              <div class="border-2 border-dashed border-zinc-800 p-8 text-center hover:border-brand-red hover:bg-brand-red/5 transition-all cursor-pointer relative group">
                 <input type="file" @change="handleFileUpload" class="absolute inset-0 opacity-0 cursor-pointer" accept="image/*" />
                 <div class="space-y-2 pointer-events-none">
                    <div class="text-2xl opacity-20">📷</div>
