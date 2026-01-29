@@ -414,25 +414,36 @@ def get_settlement_history(current_user):
 @app.route('/settlements/<int:session_id>', methods=['DELETE'])
 @token_required
 def delete_settlement(current_user, session_id):
+    """Soft delete a settlement (move to trash) and restore transactions"""
     try:
         s = db.session.get(SettlementSession, session_id)
         if not s: return jsonify({"error": "Not found"}), 404
         s.deleted_at = datetime.utcnow()
+        # Restore all transactions by clearing their settlement_session_id
+        restored_count = 0
+        for t in s.transactions:
+            t.settlement_session_id = None
+            restored_count += 1
         db.session.commit()
-        return jsonify({"status": "success", "soft": True})
+        return jsonify({
+            "status": "success", 
+            "soft": True,
+            "restored_transactions": restored_count,
+            "message": f"Verrekening ongedaan gemaakt. {restored_count} transactie(s) hersteld."
+        })
     except Exception as e: db.session.rollback(); return jsonify({"error": str(e)}), 500
 
 @app.route('/settlements/<int:session_id>/restore', methods=['POST'])
 @token_required
 def restore_settlement(current_user, session_id):
+    """Restore a soft-deleted settlement from trash (re-settle transactions)"""
     try:
         s = db.session.get(SettlementSession, session_id)
         if not s: return jsonify({"error": "Not found"}), 404
         if s.deleted_at is None: return jsonify({"error": "Niet verwijderd"}), 400
         s.deleted_at = None
-        # Zet alle transacties in deze settlement terug naar unsettled
-        for t in s.transactions:
-            t.settlement_session_id = None
+        # Note: transactions stay unsettled when settlement is restored from trash
+        # This allows reviewing the settlement before committing again
         db.session.commit()
         return jsonify({"status": "success"})
     except Exception as e: db.session.rollback(); return jsonify({"error": str(e)}), 500
@@ -444,9 +455,7 @@ def delete_settlement_permanent(current_user, session_id):
         s = db.session.get(SettlementSession, session_id)
         if not s: return jsonify({"error": "Not found"}), 404
         if s.deleted_at is None: return jsonify({"error": "Alleen uit prullenbak definitief verwijderen"}), 400
-        # Zet eerst alle transacties terug naar unsettled (voor consistentie)
-        for t in s.transactions:
-            t.settlement_session_id = None
+        # Transactions should already be unsettled from soft delete
         db.session.delete(s)
         db.session.commit()
         return jsonify({"status": "success"})

@@ -566,9 +566,6 @@ onMounted(() => store.fetchData())
                    @delete="handleSettlementDelete"
                    @delete-permanent="handleSettlementDeletePermanent" />
               </div>
-              <div class="space-y-8">
-                 <SettlementHistory :settlements="store.settlementHistory" />
-              </div>
            </div>
         </div>
       </div>

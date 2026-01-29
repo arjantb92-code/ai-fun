@@ -8,7 +8,7 @@ defineProps({
   }
 })
 
-const emit = defineEmits(['restore', 'delete', 'delete-permanent'])
+const emit = defineEmits(['undo', 'restore', 'delete', 'delete-permanent'])
 
 const expandedIds = ref(new Set())
 
