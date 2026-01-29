@@ -1,12 +1,18 @@
-<script setup>
+<script setup lang="ts">
 import { ref, watch } from 'vue'
+import type { Activity, ActivityFormData } from '@/types'
 
-const props = defineProps({
-  isOpen: Boolean,
-  activity: Object
-})
+interface Props {
+  isOpen: boolean
+  activity: Activity | null
+}
 
-const emit = defineEmits(['close', 'save'])
+const props = defineProps<Props>()
+
+const emit = defineEmits<{
+  (e: 'close'): void
+  (e: 'save', data: ActivityFormData): void
+}>()
 
 const name = ref('')
 const description = ref('')
@@ -34,6 +40,17 @@ watch(() => props.activity, (a) => {
     icon.value = '📋'
   }
 }, { immediate: true })
+
+const handleSave = (): void => {
+  emit('save', {
+    name: name.value,
+    description: description.value,
+    start_date: startDate.value || null,
+    end_date: endDate.value || null,
+    color: color.value,
+    icon: icon.value
+  })
+}
 </script>
 
 <template>
@@ -79,6 +96,7 @@ watch(() => props.activity, (a) => {
                   <button 
                     v-for="ic in icons" 
                     :key="ic"
+                    type="button"
                     @click="icon = ic"
                     class="p-2 border border-zinc-700 hover:border-brand-red transition-all text-xl"
                     :class="icon === ic ? 'bg-brand-red/20 border-brand-red' : ''"
@@ -90,7 +108,7 @@ watch(() => props.activity, (a) => {
             </div>
             <div class="flex gap-4 pt-4">
               <button @click="$emit('close')" class="flex-1 py-4 font-black uppercase italic border border-zinc-700 text-zinc-400 hover:text-white hover:border-zinc-500 transition-all">Annuleren</button>
-              <button @click="$emit('save', { name, description, start_date: startDate || null, end_date: endDate || null, color, icon })" :disabled="!name" class="flex-1 py-4 font-black uppercase italic bg-brand-red text-white hover:bg-red-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed">Opslaan</button>
+              <button @click="handleSave" :disabled="!name" class="flex-1 py-4 font-black uppercase italic bg-brand-red text-white hover:bg-red-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed">Opslaan</button>
             </div>
           </div>
         </div>

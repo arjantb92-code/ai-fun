@@ -1,7 +1,12 @@
-<script setup>
-defineProps({
-  name: String,
-  size: { type: String, default: 'w-10 h-10' }
+<script setup lang="ts">
+interface Props {
+  name?: string
+  size?: string
+}
+
+withDefaults(defineProps<Props>(), {
+  name: undefined,
+  size: 'w-10 h-10'
 })
 </script>
 

@@ -1,15 +1,20 @@
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
+import type { LoginCredentials } from '@/types'
 
-const props = defineProps({
-  error: String
-})
+interface Props {
+  error?: string
+}
 
-const emit = defineEmits(['login'])
+defineProps<Props>()
 
-const credentials = ref({ username: '', password: '' })
+const emit = defineEmits<{
+  (e: 'login', credentials: LoginCredentials): void
+}>()
 
-const handleSubmit = () => {
+const credentials = ref<LoginCredentials>({ username: '', password: '' })
+
+const handleSubmit = (): void => {
   emit('login', credentials.value)
 }
 </script>
