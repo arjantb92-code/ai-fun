@@ -33,6 +33,7 @@ class Transaction(db.Model):
     type = db.Column(db.String(20), default="EXPENSE") 
     receipt_url = db.Column(db.String(255), nullable=True)
     settlement_session_id = db.Column(db.Integer, db.ForeignKey("settlement_sessions.id"), nullable=True)
+    deleted_at = db.Column(db.DateTime, nullable=True)  # Soft delete: NULL = active, timestamp = deleted
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     payer = db.relationship("User", backref="paid_transactions", foreign_keys=[payer_id])
