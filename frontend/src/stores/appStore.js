@@ -7,6 +7,8 @@ export const useAppStore = defineStore('app', () => {
   const transactions = ref([])
   const settlementsSuggestions = ref([])
   const settlementHistory = ref([])
+  const activities = ref([])
+  const deletedTransactions = ref([])
   const currentUser = ref(null)
   const token = ref(localStorage.getItem('wbw_token'))
   const backendStatus = ref('Connecting...')
@@ -30,28 +32,42 @@ export const useAppStore = defineStore('app', () => {
     return response
   }
 
-  const fetchData = async () => {
+  const fetchData = async (activityId = null) => {
     if (!token.value) return
     try {
-      const [uR, bR, tR, sS, sH] = await Promise.all([
+      const endpoints = [
         apiFetch('/users'), 
-        apiFetch('/balances'), 
-        apiFetch('/transactions'), 
-        apiFetch('/settlements/suggest'),
-        apiFetch('/settlements/history')
-      ])
+        apiFetch(activityId ? `/balances?activity_id=${activityId}` : '/balances'), 
+        apiFetch(activityId ? `/transactions?activity_id=${activityId}` : '/transactions'), 
+        apiFetch(activityId ? `/settlements/suggest?activity_id=${activityId}` : '/settlements/suggest'),
+        apiFetch('/settlements/history'),
+        apiFetch('/activities')
+      ]
+      const [uR, bR, tR, sS, sH, aR] = await Promise.all(endpoints)
       
       users.value = await uR.json()
       balances.value = await bR.json()
       transactions.value = await tR.json()
       settlementsSuggestions.value = await sS.json()
       settlementHistory.value = await sH.json()
+      activities.value = await aR.json()
       backendStatus.value = 'Online'
       
       const savedUserStr = localStorage.getItem('wbw_user')
       if (savedUserStr) currentUser.value = JSON.parse(savedUserStr)
-    } catch (e) { 
-      backendStatus.value = 'Offline' 
+    } catch (e) {
+      backendStatus.value = 'Offline'
+    }
+  }
+
+  const fetchTrash = async (activityId = null) => {
+    if (!token.value) return
+    try {
+      const url = activityId ? `/transactions?deleted=true&activity_id=${activityId}` : '/transactions?deleted=true'
+      const r = await apiFetch(url)
+      deletedTransactions.value = await r.json()
+    } catch {
+      deletedTransactions.value = []
     }
   }
 
@@ -70,9 +86,9 @@ export const useAppStore = defineStore('app', () => {
     localStorage.removeItem('wbw_user')
   }
 
-  return { 
-    users, balances, transactions, settlementsSuggestions, settlementHistory, 
-    currentUser, token, backendStatus, isAuthenticated, groupMembers, totalGroupSpend,
-    apiFetch, fetchData, login, logout 
+  return {
+    users, balances, transactions, settlementsSuggestions, settlementHistory, activities,
+    deletedTransactions, currentUser, token, backendStatus, isAuthenticated, groupMembers, totalGroupSpend,
+    apiFetch, fetchData, fetchTrash, login, logout
   }
 })

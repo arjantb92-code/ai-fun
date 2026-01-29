@@ -1,11 +1,13 @@
 <script setup>
 import { ref, watch } from 'vue'
+import ActivitySelector from '@/components/features/activities/ActivitySelector.vue'
 
 const props = defineProps({
   isOpen: Boolean,
   transaction: Object,
   users: Array,
-  groupMembers: Array
+  groupMembers: Array,
+  activities: Array
 })
 
 const emit = defineEmits(['close', 'save', 'delete', 'upload-receipt'])
@@ -13,7 +15,10 @@ const emit = defineEmits(['close', 'save', 'delete', 'upload-receipt'])
 const localTx = ref(null)
 
 watch(() => props.transaction, (newVal) => {
-  if (newVal) localTx.value = JSON.parse(JSON.stringify(newVal))
+  if (newVal) {
+    localTx.value = JSON.parse(JSON.stringify(newVal))
+    if (!localTx.value.activity_id) localTx.value.activity_id = null
+  }
 }, { immediate: true })
 
 const toggleUserInSplit = (userId) => {
@@ -64,6 +69,16 @@ const handleFileUpload = (e) => {
           <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
             <div class="space-y-8">
               <input v-model="localTx.description" type="text" class="w-full bg-zinc-900 border border-zinc-800 p-4 font-black uppercase outline-none italic text-sm text-white focus:border-brand-red" placeholder="Omschrijving">
+              
+              <div>
+                <label class="block text-[10px] uppercase opacity-40 font-black mb-2 tracking-[0.2em] italic">Activiteit</label>
+                <ActivitySelector 
+                  v-if="activities"
+                  :activities="activities"
+                  :selected-id="localTx.activity_id"
+                  @update:selected-id="localTx.activity_id = $event"
+                />
+              </div>
               
               <div class="grid grid-cols-2 gap-6">
                 <div class="relative">

@@ -13,12 +13,31 @@ class User(db.Model):
     password_hash = db.Column(db.String(255), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
+class Trip(db.Model):
+    __tablename__ = "trips"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.String(255), nullable=True)
+    start_date = db.Column(db.Date, nullable=True)
+    end_date = db.Column(db.Date, nullable=True)
+    is_settled = db.Column(db.Boolean, default=False)
+    color = db.Column(db.String(7), nullable=True)  # Hex color code
+    icon = db.Column(db.String(10), nullable=True)  # Emoji/icon
+    is_active = db.Column(db.Boolean, default=True)
+    archived_at = db.Column(db.DateTime, nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    transactions = db.relationship("Transaction", backref="trip", lazy="dynamic")
+
 class SettlementSession(db.Model):
     __tablename__ = "settlement_sessions"
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.DateTime, default=datetime.utcnow)
     description = db.Column(db.String(255), nullable=True)
+    trip_id = db.Column(db.Integer, db.ForeignKey("trips.id"), nullable=True)
+    deleted_at = db.Column(db.DateTime, nullable=True)
     
+    trip = db.relationship("Trip", backref="settlement_sessions")
     transactions = db.relationship("Transaction", backref="settlement_session")
     results = db.relationship("HistoricalSettlement", backref="session")
 
@@ -30,10 +49,12 @@ class Transaction(db.Model):
     amount = db.Column(db.Float, nullable=False)
     description = db.Column(db.String(255), nullable=False)
     payer_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
-    type = db.Column(db.String(20), default="EXPENSE") 
+    type = db.Column(db.String(20), default="EXPENSE")
     receipt_url = db.Column(db.String(255), nullable=True)
     settlement_session_id = db.Column(db.Integer, db.ForeignKey("settlement_sessions.id"), nullable=True)
+    trip_id = db.Column(db.Integer, db.ForeignKey("trips.id"), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    deleted_at = db.Column(db.DateTime, nullable=True)
 
     payer = db.relationship("User", backref="paid_transactions", foreign_keys=[payer_id])
     splits = db.relationship("TransactionSplit", backref="transaction", cascade="all, delete-orphan")
