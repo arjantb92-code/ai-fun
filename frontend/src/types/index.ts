@@ -35,6 +35,8 @@ export interface LoginResponse {
 
 export type TransactionType = 'EXPENSE' | 'INCOME' | 'TRANSFER'
 
+export type CategoryKey = 'boodschappen' | 'huishoudelijk' | 'winkelen' | 'vervoer' | 'reizen_vrije_tijd' | 'overig'
+
 export interface TransactionSplit {
   user_id: number
   weight: number
@@ -48,6 +50,7 @@ export interface Transaction {
   time?: string
   payer_id: number
   type: TransactionType
+  category?: CategoryKey | null
   activity_id: number | null
   splits: TransactionSplit[]
   deleted_at?: string | null

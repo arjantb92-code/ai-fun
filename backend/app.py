@@ -10,6 +10,7 @@ from werkzeug.utils import secure_filename
 from models import db, User, Transaction, TransactionSplit, SettlementSession, HistoricalSettlement, Trip
 from ocr import get_ocr_service
 from bank_parser import BankParser
+from category_classifier import classify_transaction, get_all_categories
 from sqlalchemy import func
 from flask_migrate import Migrate
 
@@ -183,6 +184,7 @@ def get_balances(current_user):
 @token_required
 def get_transactions(current_user):
     activity_id = request.args.get('activity_id', type=int)
+    category = request.args.get('category', type=str)
     deleted = request.args.get('deleted', 'false').lower() == 'true'
     query = Transaction.query.filter_by(settlement_session_id=None)
     if deleted:
@@ -191,6 +193,8 @@ def get_transactions(current_user):
         query = _tx_not_deleted(query)
     if activity_id is not None:
         query = query.filter_by(trip_id=activity_id)
+    if category:
+        query = query.filter_by(category=category)
     txs = query.order_by(Transaction.date.desc(), Transaction.time.desc()).all()
     if deleted:
         txs = sorted(txs, key=lambda t: (t.deleted_at or datetime.min, t.date, t.time or ""), reverse=True)
@@ -201,6 +205,7 @@ def get_transactions(current_user):
         "description": t.description,
         "amount": t.amount,
         "type": t.type or "EXPENSE",
+        "category": t.category or "overig",
         "payer_id": t.payer_id,
         "activity_id": t.trip_id,
         "deleted_at": t.deleted_at.isoformat() if t.deleted_at else None,
@@ -216,13 +221,15 @@ def add_transaction(current_user):
         t.date = datetime.strptime(d['date'], '%Y-%m-%d').date() if isinstance(d.get('date'), str) else datetime.utcnow().date()
         t.time = d.get('time', datetime.utcnow().strftime('%H:%M'))
         t.payer_id = d['payer_id']
+        # Auto-classify if category not provided
+        t.category = d.get('category') or classify_transaction(d['description'])
         if 'activity_id' in d and d['activity_id']: t.trip_id = d['activity_id']
         db.session.add(t); db.session.flush()
         for s_data in d['splits']:
             split = TransactionSplit(); split.transaction_id=t.id; split.user_id=s_data['user_id']; split.weight=s_data.get('weight', 1)
             db.session.add(split)
         db.session.commit()
-        return jsonify({"status": "success", "id": t.id})
+        return jsonify({"status": "success", "id": t.id, "category": t.category})
     except Exception as e: db.session.rollback(); return jsonify({"error": str(e)}), 500
 
 @app.route('/transactions/<int:tx_id>', methods=['PUT'])
@@ -234,7 +241,9 @@ def update_transaction(current_user, tx_id):
         if not t: return jsonify({"error": "Not found"}), 404
         t.description = d['description']; t.amount = float(d['amount']); t.type = d.get('type', 'EXPENSE')
         if isinstance(d.get('date'), str): t.date = datetime.strptime(d['date'], '%Y-%m-%d').date()
+        if isinstance(d.get('time'), str): t.time = d['time']
         t.payer_id = d['payer_id']
+        if 'category' in d: t.category = d['category'] or classify_transaction(d['description'])
         if 'activity_id' in d: t.trip_id = d['activity_id'] if d['activity_id'] else None
         TransactionSplit.query.filter_by(transaction_id=tx_id).delete()
         for s_data in d['splits']:
@@ -461,6 +470,11 @@ def delete_settlement_permanent(current_user, session_id):
         return jsonify({"status": "success"})
     except Exception as e: db.session.rollback(); return jsonify({"error": str(e)}), 500
 
+@app.route('/categories', methods=['GET'])
+@token_required
+def get_categories(current_user):
+    return jsonify(get_all_categories())
+
 @app.route("/import/bank", methods=["POST"])
 @token_required
 def import_bank(current_user):
@@ -591,6 +605,7 @@ def get_activity_transactions(current_user, activity_id):
     return jsonify([{
         "id": t.id, "date": t.date.isoformat(), "time": t.time or "00:00",
         "description": t.description, "amount": t.amount, "type": t.type or "EXPENSE",
+        "category": t.category or "overig",
         "payer_id": t.payer_id, "splits": [{"user_id": s.user_id, "weight": s.weight} for s in t.splits]
     } for t in txs])
 

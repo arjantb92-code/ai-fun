@@ -8,8 +8,14 @@ import type {
   SettlementSession, 
   Activity,
   BackendStatus,
-  LoginResponse
+  LoginResponse,
+  CategoryKey
 } from '@/types'
+
+interface Category {
+  key: CategoryKey
+  label: string
+}
 
 export const useAppStore = defineStore('app', () => {
   // --- State ---
@@ -20,6 +26,14 @@ export const useAppStore = defineStore('app', () => {
   const settlementsSuggestions = ref<SettlementSuggestion[]>([])
   const settlementHistory = ref<SettlementSession[]>([])
   const activities = ref<Activity[]>([])
+  const categories = ref<Category[]>([
+    { key: 'boodschappen', label: 'Boodschappen' },
+    { key: 'huishoudelijk', label: 'Huishoudelijk' },
+    { key: 'winkelen', label: 'Winkelen' },
+    { key: 'vervoer', label: 'Vervoer' },
+    { key: 'reizen_vrije_tijd', label: 'Reizen & Vrije Tijd' },
+    { key: 'overig', label: 'Overig' }
+  ])
   const currentUser = ref<User | null>(null)
   const token = ref<string | null>(localStorage.getItem('wbw_token'))
   const backendStatus = ref<BackendStatus>('Connecting...')
@@ -110,6 +124,7 @@ export const useAppStore = defineStore('app', () => {
     settlementsSuggestions, 
     settlementHistory, 
     activities,
+    categories,
     deletedTransactions, 
     currentUser, 
     token, 
