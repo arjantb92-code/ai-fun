@@ -1,7 +1,7 @@
 """add category to transactions
 
 Revision ID: 6c7d8e9f0a1b
-Revises: 5b6c7d8e9f0a_add_deleted_at_to_settlement_sessions
+Revises: 5b6c7d8e9f0a
 Create Date: 2026-01-29
 
 """
@@ -11,7 +11,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision = '6c7d8e9f0a1b'
-down_revision = '5b6c7d8e9f0a_add_deleted_at_to_settlement_sessions'
+down_revision = '5b6c7d8e9f0a'
 branch_labels = None
 depends_on = None
 
