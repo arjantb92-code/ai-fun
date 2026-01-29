@@ -5,6 +5,7 @@ export const useAppStore = defineStore('app', () => {
   const users = ref([])
   const balances = ref([])
   const transactions = ref([])
+  const deletedTransactions = ref([])
   const settlementsSuggestions = ref([])
   const settlementHistory = ref([])
   const currentUser = ref(null)
@@ -55,6 +56,16 @@ export const useAppStore = defineStore('app', () => {
     }
   }
 
+  const fetchTrash = async () => {
+    if (!token.value) return
+    try {
+      const res = await apiFetch('/transactions?deleted=true')
+      deletedTransactions.value = await res.json()
+    } catch (e) {
+      console.error('Failed to fetch trash:', e)
+    }
+  }
+
   const login = (data) => {
     token.value = data.token
     currentUser.value = data.user
@@ -71,8 +82,8 @@ export const useAppStore = defineStore('app', () => {
   }
 
   return { 
-    users, balances, transactions, settlementsSuggestions, settlementHistory, 
+    users, balances, transactions, deletedTransactions, settlementsSuggestions, settlementHistory, 
     currentUser, token, backendStatus, isAuthenticated, groupMembers, totalGroupSpend,
-    apiFetch, fetchData, login, logout 
+    apiFetch, fetchData, fetchTrash, login, logout 
   }
 })

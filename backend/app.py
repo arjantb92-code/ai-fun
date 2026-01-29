@@ -150,10 +150,16 @@ def serve_static(filename):
         return send_from_directory(app.config['AVATAR_FOLDER'], filename)
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
+def _tx_not_deleted(query):
+    """Helper to filter out soft-deleted transactions"""
+    return query.filter(Transaction.deleted_at.is_(None))
+
 @app.route('/balances', methods=['GET'])
 @token_required
 def get_balances(current_user):
-    users = User.query.all(); txs = Transaction.query.filter_by(settlement_session_id=None).all(); bals = {u.id: 0.0 for u in users}
+    users = User.query.all()
+    txs = _tx_not_deleted(Transaction.query.filter_by(settlement_session_id=None)).all()
+    bals = {u.id: 0.0 for u in users}
     for t in txs:
         amt = t.amount; tp = t.type or "EXPENSE"
         if t.payer_id in bals:
@@ -171,18 +177,38 @@ def get_balances(current_user):
 @app.route('/transactions', methods=['GET'])
 @token_required
 def get_transactions(current_user):
-    # Sort by date DESC and then by time DESC to get most recent first
-    txs = Transaction.query.filter_by(settlement_session_id=None).order_by(Transaction.date.desc(), Transaction.time.desc()).all()
-    return jsonify([{
-        "id": t.id,
-        "date": t.date.isoformat(),
-        "time": t.time or "00:00",
-        "description": t.description,
-        "amount": t.amount,
-        "type": t.type or "EXPENSE",
-        "payer_id": t.payer_id,
-        "splits": [{"user_id": s.user_id, "weight": s.weight} for s in t.splits]
-    } for t in txs])
+    # Check if we want deleted (trash) transactions
+    show_deleted = request.args.get('deleted', '').lower() == 'true'
+    
+    query = Transaction.query.filter_by(settlement_session_id=None)
+    
+    if show_deleted:
+        # Return only soft-deleted transactions
+        query = query.filter(Transaction.deleted_at.isnot(None))
+    else:
+        # Return only non-deleted transactions
+        query = _tx_not_deleted(query)
+    
+    # Sort by date DESC and then by time DESC
+    txs = query.order_by(Transaction.date.desc(), Transaction.time.desc()).all()
+    
+    result = []
+    for t in txs:
+        tx_data = {
+            "id": t.id,
+            "date": t.date.isoformat(),
+            "time": t.time or "00:00",
+            "description": t.description,
+            "amount": t.amount,
+            "type": t.type or "EXPENSE",
+            "payer_id": t.payer_id,
+            "splits": [{"user_id": s.user_id, "weight": s.weight} for s in t.splits]
+        }
+        if show_deleted and t.deleted_at:
+            tx_data["deleted_at"] = t.deleted_at.isoformat()
+        result.append(tx_data)
+    
+    return jsonify(result)
 
 @app.route('/transactions', methods=['POST'])
 @token_required
@@ -221,16 +247,109 @@ def update_transaction(current_user, tx_id):
 @app.route('/transactions/<int:tx_id>', methods=['DELETE'])
 @token_required
 def delete_transaction(current_user, tx_id):
+    """Soft delete a transaction (move to trash)"""
     try:
         t = db.session.get(Transaction, tx_id)
-        if t: db.session.delete(t); db.session.commit()
+        if not t:
+            return jsonify({"error": "Not found"}), 404
+        # Cannot soft delete already settled transactions
+        if t.settlement_session_id is not None:
+            return jsonify({"error": "Cannot delete settled transaction"}), 403
+        # Soft delete: set deleted_at timestamp
+        t.deleted_at = datetime.utcnow()
+        db.session.commit()
         return jsonify({"status": "success"})
-    except Exception as e: db.session.rollback(); return jsonify({"error": str(e)}), 500
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/transactions/<int:tx_id>/restore', methods=['POST'])
+@token_required
+def restore_transaction(current_user, tx_id):
+    """Restore a soft-deleted transaction from trash"""
+    try:
+        t = db.session.get(Transaction, tx_id)
+        if not t:
+            return jsonify({"error": "Not found"}), 404
+        if t.deleted_at is None:
+            return jsonify({"error": "Transaction is not in trash"}), 400
+        t.deleted_at = None
+        db.session.commit()
+        return jsonify({"status": "success"})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/transactions/<int:tx_id>/permanent', methods=['DELETE'])
+@token_required
+def delete_transaction_permanent(current_user, tx_id):
+    """Permanently delete a transaction (only allowed for trashed items)"""
+    try:
+        t = db.session.get(Transaction, tx_id)
+        if not t:
+            return jsonify({"error": "Not found"}), 404
+        if t.deleted_at is None:
+            return jsonify({"error": "Can only permanently delete trashed transactions"}), 403
+        db.session.delete(t)
+        db.session.commit()
+        return jsonify({"status": "success"})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/transactions/bulk', methods=['PATCH'])
+@token_required
+def bulk_update_transactions(current_user):
+    """Bulk update transactions: set activity_id and/or splits for multiple transactions"""
+    d = request.json
+    transaction_ids = d.get('transaction_ids', [])
+    activity_id = d.get('activity_id')  # Can be int or None
+    splits = d.get('splits')  # Array of {user_id, weight}
+    
+    if not transaction_ids:
+        return jsonify({"error": "transaction_ids is required"}), 400
+    if activity_id is None and splits is None:
+        return jsonify({"error": "At least activity_id or splits must be provided"}), 400
+    
+    try:
+        updated = 0
+        skipped = 0
+        
+        for tx_id in transaction_ids:
+            t = db.session.get(Transaction, tx_id)
+            # Skip if not found, already settled, or deleted
+            if not t or t.settlement_session_id is not None or t.deleted_at is not None:
+                skipped += 1
+                continue
+            
+            # Note: activity_id / trip_id functionality - if your model has trip_id, use that
+            # For now, we just handle splits
+            
+            if splits is not None:
+                # Remove existing splits
+                TransactionSplit.query.filter_by(transaction_id=tx_id).delete()
+                # Add new splits
+                for s_data in splits:
+                    split = TransactionSplit()
+                    split.transaction_id = tx_id
+                    split.user_id = s_data['user_id']
+                    split.weight = s_data.get('weight', 1)
+                    db.session.add(split)
+            
+            updated += 1
+        
+        db.session.commit()
+        return jsonify({"status": "success", "updated": updated, "skipped": skipped})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/settlements/suggest', methods=['GET'])
 @token_required
 def suggest_settlement(current_user):
-    users = User.query.all(); txs = Transaction.query.filter_by(settlement_session_id=None).all(); bals = {u.id: 0.0 for u in users}
+    users = User.query.all()
+    txs = _tx_not_deleted(Transaction.query.filter_by(settlement_session_id=None)).all()
+    bals = {u.id: 0.0 for u in users}
     for t in txs:
         amt = t.amount; tp = t.type or "EXPENSE"
         if t.payer_id in bals:
@@ -261,14 +380,28 @@ def suggest_settlement(current_user):
 def commit_settlement(current_user):
     try:
         suggestions = suggest_settlement(current_user).get_json()
-        if not suggestions: return jsonify({"message": "Nothing to settle"}), 400
-        sess = SettlementSession(); sess.description = f"Verrekening door {current_user.name}"; db.session.add(sess); db.session.flush()
-        unsettled = Transaction.query.filter_by(settlement_session_id=None).all()
-        for t in unsettled: t.settlement_session_id = sess.id
+        if not suggestions:
+            return jsonify({"message": "Nothing to settle"}), 400
+        sess = SettlementSession()
+        sess.description = f"Verrekening door {current_user.name}"
+        db.session.add(sess)
+        db.session.flush()
+        # Only settle non-deleted transactions
+        unsettled = _tx_not_deleted(Transaction.query.filter_by(settlement_session_id=None)).all()
+        for t in unsettled:
+            t.settlement_session_id = sess.id
         for s in suggestions:
-            hs = HistoricalSettlement(); hs.settlement_session_id = sess.id; hs.from_user_id = s['from_user_id']; hs.to_user_id = s['to_user_id']; hs.amount = s['amount']; db.session.add(hs)
-        db.session.commit(); return jsonify({"status": "success", "session_id": sess.id})
-    except Exception as e: db.session.rollback(); return jsonify({"error": str(e)}), 500
+            hs = HistoricalSettlement()
+            hs.settlement_session_id = sess.id
+            hs.from_user_id = s['from_user_id']
+            hs.to_user_id = s['to_user_id']
+            hs.amount = s['amount']
+            db.session.add(hs)
+        db.session.commit()
+        return jsonify({"status": "success", "session_id": sess.id})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/settlements/history', methods=['GET'])
 @token_required
@@ -277,7 +410,25 @@ def get_settlement_history(current_user):
     res = []
     for s in sessions:
         total = sum(h.amount for h in s.results)
-        res.append({"id": s.id, "date": s.date.isoformat(), "description": s.description, "total_amount": round(total, 2), "results": [{"from_user": h.from_user.name, "to_user": h.to_user.name, "amount": h.amount} for h in s.results]})
+        # Include transactions for this settlement session
+        txs = Transaction.query.filter_by(settlement_session_id=s.id).order_by(Transaction.date, Transaction.time).all()
+        transactions_data = [{
+            "id": t.id,
+            "date": t.date.isoformat(),
+            "time": t.time or "00:00",
+            "amount": t.amount,
+            "description": t.description,
+            "payer": t.payer.name if t.payer else "Onbekend"
+        } for t in txs]
+        
+        res.append({
+            "id": s.id,
+            "date": s.date.isoformat(),
+            "description": s.description,
+            "total_amount": round(total, 2),
+            "results": [{"from_user": h.from_user.name, "to_user": h.to_user.name, "amount": h.amount} for h in s.results],
+            "transactions": transactions_data
+        })
     return jsonify(res)
 
 @app.route("/import/bank", methods=["POST"])
