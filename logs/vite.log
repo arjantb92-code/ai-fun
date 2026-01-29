@@ -217,3 +217,236 @@
 11:29:48 AM [vite] (client) hmr update /src/App.vue, /src/assets/main.css
 11:29:52 AM [vite] (client) hmr update /src/components/features/balance/SettlementHistory.vue, /src/assets/main.css
 11:29:58 AM [vite] (client) hmr update /src/components/features/balance/SettlementHistory.vue, /src/assets/main.css
+12:13:50 PM [vite] (client) hmr update /src/App.vue, /src/components/layout/AppHeader.vue, /src/assets/main.css
+12:13:52 PM [vite] Internal server error: Element is missing end tag.
+  Plugin: vite-plugin-vue-inspector
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/App.vue
+      at createCompilerError (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:1378:17)
+      at emitError (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:3014:5)
+      at Object.onclosetag (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:2381:13)
+      at Tokenizer.stateInClosingTagName (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:799:16)
+      at Tokenizer.parse (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:1157:16)
+      at Object.baseParse (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:3053:13)
+      at parse (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-dom/dist/compiler-dom.cjs.js:910:23)
+      at result (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite-plugin-vue-inspector/dist/index.mjs:29:21)
+      at new Promise (<anonymous>)
+      at compileSFCTemplate (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite-plugin-vue-inspector/dist/index.mjs:26:24)
+12:13:52 PM [vite] Internal server error: Failed to parse source for import analysis because the content contains invalid JS syntax. If you are using JSX, make sure to name the file with the .jsx or .tsx extension.
+  Plugin: vite:import-analysis
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/stores/appStore.js:1:0
+  1  |  import { defineStore } from 'pinia'
+     |  ^
+  2  |  import { ref, computed } from 'vue'
+  3  |  
+      at TransformPluginContext._formatLog (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:28999:43)
+      at TransformPluginContext.error (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:28996:14)
+      at TransformPluginContext.transform (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:27082:10)
+      at async file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite-plugin-inspect/dist/shared/vite-plugin-inspect.BzUKaD4x.mjs:403:17
+      at async EnvironmentPluginContainer.transform (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:28797:14)
+      at async loadAndTransform (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:22670:26)
+12:13:52 PM [vite] (client) Pre-transform error: Failed to parse source for import analysis because the content contains invalid JS syntax. If you are using JSX, make sure to name the file with the .jsx or .tsx extension.
+  Plugin: vite:import-analysis
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/stores/appStore.js:1:0
+  1  |  import { defineStore } from 'pinia'
+     |  ^
+  2  |  import { ref, computed } from 'vue'
+  3  |  
+12:13:53 PM [vite] Internal server error: Element is missing end tag.
+  Plugin: vite-plugin-vue-inspector
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/App.vue
+      at createCompilerError (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:1378:17)
+      at emitError (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:3014:5)
+      at Object.onclosetag (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:2381:13)
+      at Tokenizer.stateInClosingTagName (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:799:16)
+      at Tokenizer.parse (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:1157:16)
+      at Object.baseParse (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:3053:13)
+      at parse (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-dom/dist/compiler-dom.cjs.js:910:23)
+      at result (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite-plugin-vue-inspector/dist/index.mjs:29:21)
+      at new Promise (<anonymous>)
+      at compileSFCTemplate (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite-plugin-vue-inspector/dist/index.mjs:26:24)
+12:13:53 PM [vite] Internal server error: Failed to parse source for import analysis because the content contains invalid JS syntax. If you are using JSX, make sure to name the file with the .jsx or .tsx extension.
+  Plugin: vite:import-analysis
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/stores/appStore.js:1:0
+  1  |  import { defineStore } from 'pinia'
+     |  ^
+  2  |  import { ref, computed } from 'vue'
+  3  |  
+      at TransformPluginContext._formatLog (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:28999:43)
+      at TransformPluginContext.error (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:28996:14)
+      at TransformPluginContext.transform (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:27082:10)
+      at async file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite-plugin-inspect/dist/shared/vite-plugin-inspect.BzUKaD4x.mjs:403:17
+      at async EnvironmentPluginContainer.transform (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:28797:14)
+      at async loadAndTransform (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:22670:26)
+      at async viteTransformMiddleware (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:24542:20)
+12:18:46 PM [vite] (client) hmr update /src/App.vue, /src/components/layout/AppHeader.vue, /src/assets/main.css
+12:18:47 PM [vite] Internal server error: Element is missing end tag.
+  Plugin: vite-plugin-vue-inspector
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/App.vue
+      at createCompilerError (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:1378:17)
+      at emitError (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:3014:5)
+      at Object.onclosetag (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:2381:13)
+      at Tokenizer.stateInClosingTagName (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:799:16)
+      at Tokenizer.parse (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:1157:16)
+      at Object.baseParse (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:3053:13)
+      at parse (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-dom/dist/compiler-dom.cjs.js:910:23)
+      at result (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite-plugin-vue-inspector/dist/index.mjs:29:21)
+      at new Promise (<anonymous>)
+      at compileSFCTemplate (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite-plugin-vue-inspector/dist/index.mjs:26:24)
+12:18:47 PM [vite] Internal server error: Element is missing end tag.
+  Plugin: vite-plugin-vue-inspector
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/App.vue
+      at createCompilerError (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:1378:17)
+      at emitError (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:3014:5)
+      at Object.onclosetag (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:2381:13)
+      at Tokenizer.stateInClosingTagName (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:799:16)
+      at Tokenizer.parse (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:1157:16)
+      at Object.baseParse (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:3053:13)
+      at parse (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-dom/dist/compiler-dom.cjs.js:910:23)
+      at result (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite-plugin-vue-inspector/dist/index.mjs:29:21)
+      at new Promise (<anonymous>)
+      at compileSFCTemplate (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite-plugin-vue-inspector/dist/index.mjs:26:24)
+12:21:27 PM [vite] (client) hmr update /src/components/features/balance/SettlementHistory.vue, /src/assets/main.css
+12:21:27 PM [vite] Internal server error: Element is missing end tag.
+  Plugin: vite-plugin-vue-inspector
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/components/features/balance/SettlementHistory.vue
+      at createCompilerError (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:1378:17)
+      at emitError (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:3014:5)
+      at Object.onclosetag (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:2381:13)
+      at Tokenizer.stateInClosingTagName (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:799:16)
+      at Tokenizer.parse (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:1157:16)
+      at Object.baseParse (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:3053:13)
+      at parse (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-dom/dist/compiler-dom.cjs.js:910:23)
+      at result (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite-plugin-vue-inspector/dist/index.mjs:29:21)
+      at new Promise (<anonymous>)
+      at compileSFCTemplate (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite-plugin-vue-inspector/dist/index.mjs:26:24)
+12:21:27 PM [vite] Internal server error: Element is missing end tag.
+  Plugin: vite-plugin-vue-inspector
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/components/features/balance/SettlementHistory.vue
+      at createCompilerError (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:1378:17)
+      at emitError (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:3014:5)
+      at Object.onclosetag (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:2381:13)
+      at Tokenizer.stateInClosingTagName (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:799:16)
+      at Tokenizer.parse (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:1157:16)
+      at Object.baseParse (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:3053:13)
+      at parse (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-dom/dist/compiler-dom.cjs.js:910:23)
+      at result (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite-plugin-vue-inspector/dist/index.mjs:29:21)
+      at new Promise (<anonymous>)
+      at compileSFCTemplate (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite-plugin-vue-inspector/dist/index.mjs:26:24)
+12:22:02 PM [vite] (client) Pre-transform error: Element is missing end tag.
+  Plugin: vite-plugin-vue-inspector
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/App.vue
+12:22:02 PM [vite] (client) Pre-transform error: Element is missing end tag.
+  Plugin: vite-plugin-vue-inspector
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/App.vue
+12:22:02 PM [vite] Internal server error: Element is missing end tag.
+  Plugin: vite-plugin-vue-inspector
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/App.vue
+      at createCompilerError (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:1378:17)
+      at emitError (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:3014:5)
+      at Object.onclosetag (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:2381:13)
+      at Tokenizer.stateInClosingTagName (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:799:16)
+      at Tokenizer.parse (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:1157:16)
+      at Object.baseParse (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:3053:13)
+      at parse (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-dom/dist/compiler-dom.cjs.js:910:23)
+      at result (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite-plugin-vue-inspector/dist/index.mjs:29:21)
+      at new Promise (<anonymous>)
+      at compileSFCTemplate (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite-plugin-vue-inspector/dist/index.mjs:26:24)
+12:22:02 PM [vite] Internal server error: Element is missing end tag.
+  Plugin: vite-plugin-vue-inspector
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/App.vue
+      at createCompilerError (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:1378:17)
+      at emitError (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:3014:5)
+      at Object.onclosetag (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:2381:13)
+      at Tokenizer.stateInClosingTagName (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:799:16)
+      at Tokenizer.parse (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:1157:16)
+      at Object.baseParse (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:3053:13)
+      at parse (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-dom/dist/compiler-dom.cjs.js:910:23)
+      at result (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite-plugin-vue-inspector/dist/index.mjs:29:21)
+      at new Promise (<anonymous>)
+      at compileSFCTemplate (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite-plugin-vue-inspector/dist/index.mjs:26:24)
+12:35:27 PM [vite] (client) hmr update /src/components/features/balance/SettlementHistory.vue, /src/assets/main.css
+12:35:28 PM [vite] (client) Pre-transform error: Element is missing end tag.
+  Plugin: vite-plugin-vue-inspector
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/App.vue
+12:35:28 PM [vite] (client) Pre-transform error: Element is missing end tag.
+  Plugin: vite-plugin-vue-inspector
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/App.vue
+12:35:28 PM [vite] Internal server error: Element is missing end tag.
+  Plugin: vite-plugin-vue-inspector
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/App.vue
+      at createCompilerError (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:1378:17)
+      at emitError (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:3014:5)
+      at Object.onclosetag (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:2381:13)
+      at Tokenizer.stateInClosingTagName (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:799:16)
+      at Tokenizer.parse (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:1157:16)
+      at Object.baseParse (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:3053:13)
+      at parse (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-dom/dist/compiler-dom.cjs.js:910:23)
+      at result (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite-plugin-vue-inspector/dist/index.mjs:29:21)
+      at new Promise (<anonymous>)
+      at compileSFCTemplate (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite-plugin-vue-inspector/dist/index.mjs:26:24)
+12:42:51 PM [vite] (client) hmr update /src/components/features/transactions/TransactionCard.vue, /src/assets/main.css
+12:42:51 PM [vite] (client) Pre-transform error: [vue/compiler-sfc] Identifier 'handleBulkSplitsApply' has already been declared. (316:6)
+
+/Users/arjantebrake/projects/own_projects/Ai/frontend/src/App.vue
+314|  }
+315|  
+316|  const handleBulkSplitsApply = async () => {
+   |        ^
+317|    if (bulkSplits.value.length === 0) {
+318|      alert('Selecteer minstens één persoon')
+  Plugin: vite:vue
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/App.vue:316:6
+  311 |        alert(data.error || 'Ongedaan maken mislukt')
+  312 |      }
+  313 |    } catch { alert('Ongedaan maken mislukt') }
+      |                                           ^
+  314 |  }
+  315 |  
+12:42:51 PM [vite] (client) Pre-transform error: [vue/compiler-sfc] Identifier 'handleBulkSplitsApply' has already been declared. (316:6)
+
+/Users/arjantebrake/projects/own_projects/Ai/frontend/src/App.vue
+314|  }
+315|  
+316|  const handleBulkSplitsApply = async () => {
+   |        ^
+317|    if (bulkSplits.value.length === 0) {
+318|      alert('Selecteer minstens één persoon')
+  Plugin: vite:vue
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/App.vue:316:6
+  311 |        alert(data.error || 'Ongedaan maken mislukt')
+  312 |      }
+  313 |    } catch { alert('Ongedaan maken mislukt') }
+      |                                           ^
+  314 |  }
+  315 |  
+12:42:54 PM [vite] Internal server error: [vue/compiler-sfc] Identifier 'handleBulkSplitsApply' has already been declared. (316:6)
+
+/Users/arjantebrake/projects/own_projects/Ai/frontend/src/App.vue
+314|  }
+315|  
+316|  const handleBulkSplitsApply = async () => {
+   |        ^
+317|    if (bulkSplits.value.length === 0) {
+318|      alert('Selecteer minstens één persoon')
+  Plugin: vite:vue
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/App.vue:316:6
+  311 |        alert(data.error || 'Ongedaan maken mislukt')
+  312 |      }
+  313 |    } catch { alert('Ongedaan maken mislukt') }
+      |                                           ^
+  314 |  }
+  315 |  
+      at constructor (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@babel/parser/lib/index.js:365:19)
+      at Parser.raise (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@babel/parser/lib/index.js:6599:19)
+      at ScopeHandler.checkRedeclarationInScope (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@babel/parser/lib/index.js:1619:19)
+      at ScopeHandler.declareName (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@babel/parser/lib/index.js:1585:12)
+      at Parser.declareNameFromIdentifier (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@babel/parser/lib/index.js:7567:16)
+      at Parser.checkIdentifier (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@babel/parser/lib/index.js:7563:12)
+      at Parser.checkLVal (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@babel/parser/lib/index.js:7500:12)
+      at Parser.parseVarId (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@babel/parser/lib/index.js:13402:10)
+      at Parser.parseVar (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@babel/parser/lib/index.js:13373:12)
+      at Parser.parseVarStatement (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@babel/parser/lib/index.js:13220:10)
+12:43:05 PM [vite] (client) hmr update /src/components/features/transactions/TransactionCard.vue, /src/assets/main.css
+12:46:17 PM [vite] (client) hmr update /src/App.vue, /src/assets/main.css
+12:47:09 PM [vite] (client) hmr update /src/App.vue, /src/components/layout/AppHeader.vue, /src/assets/main.css
+12:47:12 PM [vite] (client) hmr update /src/App.vue, /src/components/layout/AppHeader.vue, /src/assets/main.css

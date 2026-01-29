@@ -52,6 +52,8 @@ const filteredTransactions = computed(() => {
   )
 })
 
+const isSelectionMode = computed(() => selectedTransactionIds.value.size > 0)
+
 const groupedTransactions = computed(() => {
   const groups = []
   const groupMap = {}
@@ -138,7 +140,9 @@ const handleDelete = async (id) => {
     } else {
       alert(data.error || 'Verwijderen mislukt')
     }
-  } catch { alert('Verwijderen mislukt') }
+  } catch { 
+    alert('Verwijderen mislukt') 
+  }
 }
 
 const handleRestore = async (id) => {
@@ -257,20 +261,6 @@ async function handleBulkSplitsApply() {
   } catch { alert('Bulk update mislukt') }
 }
 
-async function handleBulkDelete() {
-  if (!confirm(`${selectedTransactionIds.value.size} transactie(s) naar prullenbak verplaatsen?`)) return
-  const ids = Array.from(selectedTransactionIds.value)
-  try {
-    for (const id of ids) {
-      await store.apiFetch(`/transactions/${id}`, { method: 'DELETE' })
-    }
-    toastMessage.value = 'Verplaatst naar prullenbak'
-    setTimeout(() => { toastMessage.value = '' }, 2500)
-    clearSelection()
-    await store.fetchData(selectedActivityId.value)
-  } catch { alert('Verwijderen mislukt') }
-}
-
 async function handleSettlementRestore(sessionId) {
   try {
     const res = await store.apiFetch(`/settlements/${sessionId}/restore`, { method: 'POST' })
@@ -309,6 +299,21 @@ async function handleSettlementDelete(sessionId) {
       alert(data.error || 'Ongedaan maken mislukt')
     }
   } catch { alert('Ongedaan maken mislukt') }
+}
+
+const handleBulkDelete = async () => {
+  if (!confirm(`${selectedTransactionIds.value.size} transactie(s) verplaatsen naar prullenbak?`)) return
+  try {
+    let deleted = 0
+    for (const id of selectedTransactionIds.value) {
+      const res = await store.apiFetch(`/transactions/${id}`, { method: 'DELETE' })
+      if (res.ok) deleted++
+    }
+    await store.fetchData(selectedActivityId.value)
+    clearSelection()
+    toastMessage.value = `${deleted} transactie(s) naar prullenbak`
+    setTimeout(() => { toastMessage.value = '' }, 2500)
+  } catch { alert('Verwijderen mislukt') }
 }
 
 const handleReceiptUpload = async (file) => {
@@ -560,6 +565,9 @@ onMounted(() => store.fetchData())
                    @restore="handleSettlementRestore"
                    @delete="handleSettlementDelete"
                    @delete-permanent="handleSettlementDeletePermanent" />
+              </div>
+              <div class="space-y-8">
+                 <SettlementHistory :settlements="store.settlementHistory" />
               </div>
            </div>
         </div>

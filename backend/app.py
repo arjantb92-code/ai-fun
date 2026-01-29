@@ -151,6 +151,7 @@ def serve_static(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 def _tx_not_deleted(query):
+    """Helper to filter out soft-deleted transactions"""
     return query.filter(Transaction.deleted_at.is_(None))
 
 @app.route('/balances', methods=['GET'])
