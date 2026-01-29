@@ -1,22 +1,29 @@
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
+import type { BankImportRow, BankType } from '@/types'
 
-defineProps({
-  isOpen: Boolean
-})
+interface Props {
+  isOpen: boolean
+}
 
-const emit = defineEmits(['close', 'imported'])
+defineProps<Props>()
 
-const bankType = ref('ing')
-const fileInput = ref(null)
-const file = ref(null)
+const emit = defineEmits<{
+  (e: 'close'): void
+  (e: 'imported', rows: BankImportRow[]): void
+}>()
+
+const bankType = ref<BankType>('ing')
+const fileInput = ref<HTMLInputElement | null>(null)
+const file = ref<File | null>(null)
 const loading = ref(false)
 const error = ref('')
-const previewRows = ref([])
-const step = ref(1) // 1 = upload, 2 = preview
+const previewRows = ref<BankImportRow[]>([])
+const step = ref<1 | 2>(1) // 1 = upload, 2 = preview
 
-const handleFileChange = (e) => {
-  const f = e.target.files?.[0]
+const handleFileChange = (e: Event): void => {
+  const target = e.target as HTMLInputElement
+  const f = target.files?.[0]
   file.value = f || null
   error.value = ''
   if (f && !/\.(csv|txt)$/i.test(f.name)) {
@@ -24,39 +31,12 @@ const handleFileChange = (e) => {
   }
 }
 
-const uploadAndPreview = async () => {
-  if (!file.value) return
-  loading.value = true
-  error.value = ''
-  try {
-    const formData = new FormData()
-    formData.append('file', file.value)
-    formData.append('bank_type', bankType.value)
-    const res = await fetch('http://localhost:5001/import/bank', {
-      method: 'POST',
-      headers: getAuthHeader(),
-      body: formData
-    })
-    const data = await res.json().catch(() => ({}))
-    if (res.ok && data.transactions) {
-      previewRows.value = data.transactions.map((r, i) => ({ ...r, _id: i, selected: true }))
-      step.value = 2
-    } else {
-      error.value = data.error || 'Import mislukt'
-    }
-  } catch (e) {
-    error.value = e.message || 'Verbinding mislukt'
-  } finally {
-    loading.value = false
-  }
-}
-
-const getAuthHeader = () => {
+const getAuthHeader = (): Record<string, string> => {
   const t = localStorage.getItem('wbw_token')
   return t ? { 'Authorization': `Bearer ${t}` } : {}
 }
 
-const doUpload = async () => {
+const doUpload = async (): Promise<void> => {
   if (!file.value) return
   loading.value = true
   error.value = ''
@@ -69,7 +49,7 @@ const doUpload = async () => {
       headers: getAuthHeader(),
       body: formData
     })
-    const data = await res.json().catch(() => ({}))
+    const data = await res.json().catch(() => ({})) as { transactions?: Array<{ date: string; time?: string; description: string; raw_description?: string; amount: number }>; error?: string }
     if (res.ok && data.transactions) {
       previewRows.value = data.transactions.map((r, i) => ({ ...r, _id: i, selected: true }))
       step.value = 2
@@ -77,19 +57,19 @@ const doUpload = async () => {
       error.value = data.error || 'Import mislukt'
     }
   } catch (e) {
-    error.value = e.message || 'Verbinding mislukt'
+    error.value = (e as Error).message || 'Verbinding mislukt'
   } finally {
     loading.value = false
   }
 }
 
-const toggleAll = (v) => {
+const toggleAll = (v: boolean): void => {
   previewRows.value.forEach(r => { r.selected = v })
 }
 
-const selectedCount = () => previewRows.value.filter(r => r.selected).length
+const selectedCount = (): number => previewRows.value.filter(r => r.selected).length
 
-const closeModal = () => {
+const closeModal = (): void => {
   step.value = 1
   file.value = null
   previewRows.value = []
@@ -98,7 +78,7 @@ const closeModal = () => {
   emit('close')
 }
 
-const confirmImport = () => {
+const confirmImport = (): void => {
   emit('imported', previewRows.value.filter(r => r.selected))
   closeModal()
 }
@@ -113,7 +93,7 @@ const confirmImport = () => {
         <div class="p-8 overflow-auto flex-1">
           <div class="flex justify-between items-center mb-6">
             <h2 class="text-2xl font-black uppercase italic tracking-tighter">Bank Import</h2>
-            <button @click="closeModal" class="text-zinc-600 hover:text-white text-xl leading-none">×</button>
+            <button type="button" @click="closeModal" class="text-zinc-600 hover:text-white text-xl leading-none">×</button>
           </div>
 
           <template v-if="step === 1">
@@ -131,7 +111,7 @@ const confirmImport = () => {
                        class="w-full bg-zinc-900 border border-zinc-800 p-4 font-black uppercase text-sm text-white file:mr-4 file:py-2 file:px-4 file:border-0 file:bg-brand-red file:text-white file:font-black file:uppercase file:italic">
               </div>
               <p v-if="error" class="text-brand-red text-sm font-bold">{{ error }}</p>
-              <button @click="doUpload" :disabled="!file || loading"
+              <button type="button" @click="doUpload" :disabled="!file || loading"
                       class="w-full py-4 font-black uppercase italic bg-brand-red text-white hover:bg-red-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
                 {{ loading ? 'Laden...' : 'Upload en preview' }}
               </button>
@@ -143,8 +123,8 @@ const confirmImport = () => {
               <div class="flex items-center justify-between mb-4">
                 <h3 class="text-2xl font-black italic uppercase tracking-tighter">Bank Ingestion</h3>
                 <div class="flex gap-2">
-                  <button @click="toggleAll(true)" class="px-3 py-1 text-[10px] font-black uppercase border border-zinc-700 text-zinc-400 hover:text-white hover:border-brand-red transition-all">Alles</button>
-                  <button @click="toggleAll(false)" class="px-3 py-1 text-[10px] font-black uppercase border border-zinc-700 text-zinc-400 hover:text-white hover:border-brand-red transition-all">Niets</button>
+                  <button type="button" @click="toggleAll(true)" class="px-3 py-1 text-[10px] font-black uppercase border border-zinc-700 text-zinc-400 hover:text-white hover:border-brand-red transition-all">Alles</button>
+                  <button type="button" @click="toggleAll(false)" class="px-3 py-1 text-[10px] font-black uppercase border border-zinc-700 text-zinc-400 hover:text-white hover:border-brand-red transition-all">Niets</button>
                 </div>
               </div>
               
@@ -191,7 +171,7 @@ const confirmImport = () => {
               </div>
 
               <div class="pt-6">
-                <button @click="confirmImport" 
+                <button type="button" @click="confirmImport" 
                         class="w-full py-5 font-black uppercase italic tracking-[0.2em] text-xl bg-brand-red text-white hover:bg-red-600 transition-all shadow-glow hover:scale-[1.01] active:scale-[0.99]">
                   Commit {{ selectedCount() }} Segments
                 </button>

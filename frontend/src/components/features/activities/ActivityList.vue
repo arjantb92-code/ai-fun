@@ -1,12 +1,20 @@
-<script setup>
-const props = defineProps({
-  activities: Array,
-  selectedId: [Number, String, null]
-})
+<script setup lang="ts">
+import type { Activity } from '@/types'
 
-const emit = defineEmits(['select', 'new', 'archive'])
+interface Props {
+  activities: Activity[]
+  selectedId: number | null
+}
 
-const selectActivity = (id) => {
+const props = defineProps<Props>()
+
+const emit = defineEmits<{
+  (e: 'select', id: number | null): void
+  (e: 'new'): void
+  (e: 'archive', id: number): void
+}>()
+
+const selectActivity = (id: number | null): void => {
   emit('select', id === props.selectedId ? null : id)
 }
 </script>

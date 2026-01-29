@@ -1,8 +1,17 @@
-<script setup>
-import { ref, watch, computed } from 'vue'
+<script setup lang="ts">
+import { ref, watch } from 'vue'
 import ActivitySelector from '@/components/features/activities/ActivitySelector.vue'
+import type { Transaction, User, Activity, TransactionType } from '@/types'
 
-const CATEGORIES = [
+type CategoryKey = 'boodschappen' | 'huishoudelijk' | 'winkelen' | 'vervoer' | 'reizen_vrije_tijd' | 'overig'
+
+interface Category {
+  key: CategoryKey
+  label: string
+  icon: string
+}
+
+const CATEGORIES: Category[] = [
   { key: 'boodschappen', label: 'Boodschappen', icon: '🛒' },
   { key: 'huishoudelijk', label: 'Huishoudelijk', icon: '🏠' },
   { key: 'winkelen', label: 'Winkelen', icon: '🛍️' },
@@ -11,48 +20,69 @@ const CATEGORIES = [
   { key: 'overig', label: 'Overig', icon: '📦' }
 ]
 
-const props = defineProps({
-  isOpen: Boolean,
-  transaction: Object,
-  users: Array,
-  groupMembers: Array,
-  activities: Array
-})
+interface Props {
+  isOpen: boolean
+  transaction: Transaction | null
+  users: User[]
+  groupMembers: User[]
+  activities: Activity[]
+}
 
-const getCategoryIcon = (key) => CATEGORIES.find(c => c.key === key)?.icon || '📦'
+const props = defineProps<Props>()
 
-const emit = defineEmits(['close', 'save', 'delete', 'upload-receipt'])
+const emit = defineEmits<{
+  (e: 'close'): void
+  (e: 'save', transaction: Transaction): void
+  (e: 'delete', id: number): void
+  (e: 'upload-receipt', file: File): void
+}>()
 
-const localTx = ref(null)
+const localTx = ref<(Transaction & { category?: CategoryKey }) | null>(null)
 
 watch(() => props.transaction, (newVal) => {
   if (newVal) {
-    localTx.value = JSON.parse(JSON.stringify(newVal))
+    localTx.value = JSON.parse(JSON.stringify(newVal)) as Transaction & { category?: CategoryKey }
     if (!localTx.value.activity_id) localTx.value.activity_id = null
     if (!localTx.value.category) localTx.value.category = 'overig'
     if (!localTx.value.time) localTx.value.time = '00:00'
   }
 }, { immediate: true })
 
-const toggleUserInSplit = (userId) => {
+const toggleUserInSplit = (userId: number): void => {
+  if (!localTx.value) return
   const idx = localTx.value.splits.findIndex(s => s.user_id === userId)
   if (idx !== -1) localTx.value.splits.splice(idx, 1)
   else localTx.value.splits.push({ user_id: userId, weight: 1 })
 }
 
-const incrementWeight = (uId) => {
-  const s = localTx.value.splits.find(s => s.user_id === uId)
+const incrementWeight = (userId: number): void => {
+  if (!localTx.value) return
+  const s = localTx.value.splits.find(s => s.user_id === userId)
   if (s) s.weight++
 }
 
-const decrementWeight = (uId) => {
-  const s = localTx.value.splits.find(s => s.user_id === uId)
+const decrementWeight = (userId: number): void => {
+  if (!localTx.value) return
+  const s = localTx.value.splits.find(s => s.user_id === userId)
   if (s && s.weight > 1) s.weight--
 }
 
-const handleFileUpload = (e) => {
-  const file = e.target.files[0]
+const handleFileUpload = (e: Event): void => {
+  const target = e.target as HTMLInputElement
+  const file = target.files?.[0]
   if (file) emit('upload-receipt', file)
+}
+
+const setTransactionType = (type: TransactionType): void => {
+  if (localTx.value) localTx.value.type = type
+}
+
+const updateActivityId = (id: number | null): void => {
+  if (localTx.value) localTx.value.activity_id = id
+}
+
+const setCategory = (key: CategoryKey): void => {
+  if (localTx.value) localTx.value.category = key
 }
 </script>
 
@@ -65,8 +95,9 @@ const handleFileUpload = (e) => {
         
         <!-- Tabs -->
         <div class="flex border-b border-zinc-800">
-           <button v-for="tType in ['EXPENSE', 'INCOME', 'TRANSFER']" :key="tType"
-                   @click="localTx.type = tType"
+           <button v-for="tType in (['EXPENSE', 'INCOME', 'TRANSFER'] as const)" :key="tType"
+                   type="button"
+                   @click="setTransactionType(tType)"
                    class="flex-1 py-5 font-black uppercase italic text-[10px] tracking-[0.2em] transition-all"
                    :class="localTx.type === tType ? 'bg-brand-red text-white' : 'hover:bg-zinc-800 text-zinc-600'">
               {{ tType }}
@@ -76,7 +107,7 @@ const handleFileUpload = (e) => {
         <div class="p-10 max-h-[85vh] overflow-y-auto">
           <div class="flex justify-between items-start mb-8">
             <h2 class="text-4xl font-black uppercase italic tracking-tighter">{{ localTx.id ? 'Edit Entry' : 'New Entry' }}</h2>
-            <button @click="$emit('close')" class="text-zinc-600 hover:text-white">X</button>
+            <button type="button" @click="$emit('close')" class="text-zinc-600 hover:text-white">X</button>
           </div>
           
           <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
@@ -101,7 +132,7 @@ const handleFileUpload = (e) => {
                   v-if="activities"
                   :activities="activities"
                   :selected-id="localTx.activity_id"
-                  @update:selected-id="localTx.activity_id = $event"
+                  @update:selected-id="updateActivityId"
                 />
               </div>
               
@@ -127,13 +158,13 @@ const handleFileUpload = (e) => {
             </div>
 
             <div class="space-y-6">
-              <!-- Category - Verplaatst naar rechts en kleiner gemaakt -->
+              <!-- Category -->
               <div>
                 <label class="block text-[10px] uppercase opacity-40 font-black mb-2 tracking-[0.2em] italic">Categorie</label>
                 <div class="grid grid-cols-3 gap-1.5">
                   <button v-for="cat in CATEGORIES" :key="cat.key"
                           type="button"
-                          @click="localTx.category = cat.key"
+                          @click="setCategory(cat.key)"
                           class="p-2 border text-center transition-all text-[10px] font-black uppercase italic"
                           :class="localTx.category === cat.key 
                             ? 'bg-brand-red border-brand-red text-white' 
@@ -155,9 +186,9 @@ const handleFileUpload = (e) => {
                       <span class="font-black uppercase text-[11px] italic">{{ u.name }}</span>
                     </div>
                     <div v-if="localTx.splits.some(s => s.user_id === u.id) && localTx.type !== 'TRANSFER'" class="flex items-center gap-3">
-                       <button @click="decrementWeight(u.id)" class="w-6 h-6 hover:text-brand-red transition-colors font-black text-xs">-</button>
-                       <span class="font-black text-brand-red italic text-sm w-4 text-center">{{ localTx.splits.find(s => s.user_id === u.id).weight }}</span>
-                       <button @click="incrementWeight(u.id)" class="w-6 h-6 hover:text-brand-red transition-colors font-black text-xs">+</button>
+                       <button type="button" @click="decrementWeight(u.id)" class="w-6 h-6 hover:text-brand-red transition-colors font-black text-xs">-</button>
+                       <span class="font-black text-brand-red italic text-sm w-4 text-center">{{ localTx.splits.find(s => s.user_id === u.id)?.weight }}</span>
+                       <button type="button" @click="incrementWeight(u.id)" class="w-6 h-6 hover:text-brand-red transition-colors font-black text-xs">+</button>
                     </div>
                   </div>
                 </div>
@@ -165,8 +196,8 @@ const handleFileUpload = (e) => {
             </div>
           </div>
           <div class="mt-8 flex gap-4 pt-6 border-t border-zinc-800">
-            <button v-if="localTx.id" @click="$emit('delete', localTx.id)" class="border-2 border-zinc-800 text-zinc-600 px-8 py-5 font-black uppercase tracking-[0.2em] hover:text-red-500 hover:border-red-500 transition-all italic text-sm">Delete</button>
-            <button @click="$emit('save', localTx)" class="flex-1 bg-brand-red text-white py-5 font-black uppercase tracking-[0.3em] italic text-2xl shadow-2xl transform active:scale-[0.98] transition-all">Save</button>
+            <button v-if="localTx.id" type="button" @click="$emit('delete', localTx.id)" class="border-2 border-zinc-800 text-zinc-600 px-8 py-5 font-black uppercase tracking-[0.2em] hover:text-red-500 hover:border-red-500 transition-all italic text-sm">Delete</button>
+            <button type="button" @click="$emit('save', localTx)" class="flex-1 bg-brand-red text-white py-5 font-black uppercase tracking-[0.3em] italic text-2xl shadow-2xl transform active:scale-[0.98] transition-all">Save</button>
           </div>
         </div>
       </div>

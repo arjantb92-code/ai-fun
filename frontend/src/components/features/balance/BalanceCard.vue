@@ -1,15 +1,13 @@
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue'
 
-const props = defineProps({
-  balance: {
-    type: Number,
-    required: true
-  },
-  label: {
-    type: String,
-    default: 'Personal Balance'
-  }
+interface Props {
+  balance: number
+  label?: string
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  label: 'Personal Balance'
 })
 
 const isPositive = computed(() => props.balance >= 0)

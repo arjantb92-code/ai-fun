@@ -1,18 +1,25 @@
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
+import type { SettlementSession } from '@/types'
 
-defineProps({
-  history: {
-    type: Array,
-    default: () => []
-  }
+interface Props {
+  history: SettlementSession[]
+}
+
+withDefaults(defineProps<Props>(), {
+  history: () => []
 })
 
-const emit = defineEmits(['undo', 'restore', 'delete', 'delete-permanent'])
+const emit = defineEmits<{
+  (e: 'undo', sessionId: number): void
+  (e: 'restore', sessionId: number): void
+  (e: 'delete', sessionId: number): void
+  (e: 'delete-permanent', sessionId: number): void
+}>()
 
-const expandedIds = ref(new Set())
+const expandedIds = ref<Set<number>>(new Set())
 
-function togglePosten(sessionId) {
+function togglePosten(sessionId: number): void {
   if (expandedIds.value.has(sessionId)) {
     expandedIds.value.delete(sessionId)
   } else {
@@ -21,9 +28,9 @@ function togglePosten(sessionId) {
   expandedIds.value = new Set(expandedIds.value)
 }
 
-function formatDate(d, time) {
+function formatDate(d: string | undefined, time?: string): string {
   if (!d) return ''
-  const opts = { day: 'numeric', month: 'short', year: 'numeric' }
+  const opts: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'short', year: 'numeric' }
   const str = new Date(d).toLocaleDateString('nl-NL', opts)
   if (time) return `${str} ${time}`
   return str

@@ -1,7 +1,16 @@
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue'
+import type { Transaction, ActivityDisplay } from '@/types'
 
-const CATEGORY_CONFIG = {
+type CategoryKey = 'boodschappen' | 'huishoudelijk' | 'winkelen' | 'vervoer' | 'reizen_vrije_tijd' | 'overig'
+
+interface CategoryConfig {
+  label: string
+  icon: string
+  color: string
+}
+
+const CATEGORY_CONFIG: Record<CategoryKey, CategoryConfig> = {
   boodschappen: { label: 'Boodschappen', icon: '🛒', color: '#22c55e' },
   huishoudelijk: { label: 'Huishoudelijk', icon: '🏠', color: '#f59e0b' },
   winkelen: { label: 'Winkelen', icon: '🛍️', color: '#ec4899' },
@@ -10,33 +19,31 @@ const CATEGORY_CONFIG = {
   overig: { label: 'Overig', icon: '📦', color: '#6b7280' }
 }
 
-const props = defineProps({
-  transaction: {
-    type: Object,
-    required: true
-  },
-  payerName: {
-    type: String,
-    default: 'Onbekend'
-  },
-  activity: {
-    type: Object,
-    default: null
-  },
-  selectable: {
-    type: Boolean,
-    default: false
-  },
-  selected: {
-    type: Boolean,
-    default: false
-  }
+interface Props {
+  transaction: Transaction
+  payerName?: string
+  activity?: ActivityDisplay | null
+  selectable?: boolean
+  selected?: boolean
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  payerName: 'Onbekend',
+  activity: null,
+  selectable: false,
+  selected: false
 })
 
-const emit = defineEmits(['click', 'toggle-select'])
+const emit = defineEmits<{
+  (e: 'click'): void
+  (e: 'toggle-select', id: number): void
+}>()
 
 const isIncome = computed(() => props.transaction.type === 'INCOME')
-const categoryConfig = computed(() => CATEGORY_CONFIG[props.transaction.category] || CATEGORY_CONFIG.overig)
+const categoryConfig = computed(() => {
+  const category = (props.transaction as Transaction & { category?: CategoryKey }).category
+  return CATEGORY_CONFIG[category ?? 'overig'] ?? CATEGORY_CONFIG.overig
+})
 </script>
 
 <template>
@@ -47,7 +54,7 @@ const categoryConfig = computed(() => CATEGORY_CONFIG[props.transaction.category
       <div v-if="selectable" 
            class="shrink-0 w-4 h-4 border-2 rounded-sm transition-all flex items-center justify-center opacity-0 group-hover:opacity-100"
            :class="selected ? 'opacity-100 bg-brand-red border-brand-red' : 'border-zinc-600 hover:border-brand-red/50'"
-           @click.stop="emit('toggle-select', transaction.id)">
+           @click.stop="emit('toggle-select', transaction.id!)">
         <svg v-if="selected" class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
         </svg>

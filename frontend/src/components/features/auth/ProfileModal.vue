@@ -1,12 +1,18 @@
-<script setup>
+<script setup lang="ts">
 import { ref, watch } from 'vue'
+import type { User } from '@/types'
 
-const props = defineProps({
-  isOpen: Boolean,
-  user: Object
-})
+interface Props {
+  isOpen: boolean
+  user: User | null
+}
 
-const emit = defineEmits(['close', 'save'])
+const props = defineProps<Props>()
+
+const emit = defineEmits<{
+  (e: 'close'): void
+  (e: 'save', data: { name: string; email: string }): void
+}>()
 
 const name = ref('')
 const email = ref('')
@@ -33,7 +39,7 @@ watch(() => props.user, (u) => {
           <div v-if="user" class="space-y-6">
             <div class="flex justify-center">
               <div class="w-24 h-24 rounded-full border-2 border-zinc-700 overflow-hidden bg-zinc-900">
-                <img v-if="user.avatar_url" :src="user.avatar_url" class="w-full h-full object-cover" @error="user.avatar_url = null">
+                <img v-if="user.avatar_url" :src="user.avatar_url" class="w-full h-full object-cover" @error="(user as User).avatar_url = null">
                 <span v-else class="w-full h-full flex items-center justify-center text-3xl font-black text-brand-red italic">{{ (user.name || '?')[0] }}</span>
               </div>
             </div>
