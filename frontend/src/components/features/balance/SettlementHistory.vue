@@ -8,6 +8,8 @@ defineProps({
   }
 })
 
+const emit = defineEmits(['undo'])
+
 const expandedIds = ref(new Set())
 
 const toggleExpand = (id) => {
@@ -53,12 +55,18 @@ const formatDate = (dateStr) => {
           </div>
         </div>
         
-        <!-- Toggle transactions button -->
-        <button v-if="s.transactions && s.transactions.length > 0"
-                @click="toggleExpand(s.id)"
-                class="text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-brand-red transition-colors">
-          {{ isExpanded(s.id) ? 'Verberg' : 'Toon' }} posten ({{ s.transactions.length }})
-        </button>
+        <!-- Action buttons -->
+        <div class="flex items-center gap-4">
+          <button v-if="s.transactions && s.transactions.length > 0"
+                  @click="toggleExpand(s.id)"
+                  class="text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-brand-red transition-colors">
+            {{ isExpanded(s.id) ? 'Verberg' : 'Toon' }} posten ({{ s.transactions.length }})
+          </button>
+          <button @click="emit('undo', s.id)"
+                  class="text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-brand-red transition-colors border border-zinc-700 px-3 py-1 hover:border-brand-red">
+            Ongedaan maken
+          </button>
+        </div>
       </div>
       
       <!-- Expandable Transactions List -->

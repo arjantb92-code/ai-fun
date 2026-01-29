@@ -273,6 +273,21 @@ const handleProfileSave = async ({ name, email }) => {
   } catch { alert('Profiel opslaan mislukt') }
 }
 
+const handleUndoSettlement = async (sessionId) => {
+  if (!confirm('Weet je zeker dat je deze verrekening ongedaan wilt maken? Alle transacties worden hersteld.')) return
+  try {
+    const res = await store.apiFetch(`/settlements/${sessionId}/undo`, { method: 'DELETE' })
+    if (res.ok) {
+      const data = await res.json()
+      await store.fetchData()
+      showToast(data.message || 'Verrekening ongedaan gemaakt')
+    } else {
+      const err = await res.json()
+      alert(err.error || 'Ongedaan maken mislukt')
+    }
+  } catch { alert('Ongedaan maken mislukt') }
+}
+
 const handleBankImported = async (rows) => {
   if (!rows?.length || !store.currentUser || !store.groupMembers?.length) return
   try {
@@ -445,7 +460,7 @@ onMounted(() => store.fetchData())
                  <SettlementPlan :settlements="store.settlementsSuggestions" />
               </div>
               <div class="space-y-8">
-                 <SettlementHistory :settlements="store.settlementHistory" />
+                 <SettlementHistory :settlements="store.settlementHistory" @undo="handleUndoSettlement" />
               </div>
            </div>
         </div>
