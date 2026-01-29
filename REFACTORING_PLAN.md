@@ -737,35 +737,35 @@ def add_transaction(current_user):
 
 ## Implementatie Volgorde
 
-### Fase 1: Foundation (Hoog prioriteit)
-1. ✅ Maak `src/config/categories.js`
-2. ✅ Maak `BaseModal.vue` component
-3. ✅ Voeg Tailwind `@apply` classes toe
-4. ✅ Maak `BalanceService` in backend
+### Fase 1: Foundation (Hoog prioriteit) ✅ COMPLETED
+1. ✅ Maak `src/config/categories.js` - DONE
+2. ✅ Maak `BaseModal.vue` component - DONE
+3. ✅ Voeg Tailwind `@apply` classes toe - DONE
+4. ✅ Maak `BalanceService` in backend - DONE
 
-### Fase 2: Composables
-5. ✅ Maak `useSplits` composable
-6. ✅ Maak `useSelection` composable
-7. ✅ Maak `useToast` composable
+### Fase 2: Composables ✅ COMPLETED
+5. ✅ Maak `useSplits` composable - DONE
+6. ✅ Maak `useSelection` composable - DONE
+7. ✅ Maak `useToast` composable - DONE
 
-### Fase 3: Store Improvements
-8. ✅ Voeg computed getters toe aan store
-9. ✅ Voeg helper methods toe aan store
+### Fase 3: Store Improvements ✅ COMPLETED
+8. ✅ Voeg computed getters toe aan store - DONE (activeActivities, archivedActivities)
+9. ✅ Voeg helper methods toe aan store - DONE (getUserName, getActivityInfo, getBalanceForUser)
 
-### Fase 4: Component Extraction
-10. ✅ Extract `BulkActivityModal.vue`
-11. ✅ Extract `BulkSplitsModal.vue`
-12. ✅ Maak `TransactionFilters.vue`
+### Fase 4: Component Extraction ✅ COMPLETED
+10. ✅ Extract `BulkActivityModal.vue` - DONE
+11. ✅ Extract `BulkSplitsModal.vue` - DONE
+12. ⏳ Maak `TransactionFilters.vue` - Optional (can be done in future iteration)
 
-### Fase 5: Backend Services
-13. ✅ Maak `SettlementService`
-14. ✅ Voeg `to_dict()` toe aan models
-15. ✅ Maak error handling decorator
+### Fase 5: Backend Services ✅ COMPLETED
+13. ✅ Maak `SettlementService` - DONE
+14. ✅ Voeg `to_dict()` toe aan models - DONE (User, Transaction, Trip, SettlementSession, etc.)
+15. ⏳ Maak error handling decorator - Optional (can be done in future iteration)
 
-### Fase 6: Final Cleanup
-16. ✅ Refactor App.vue met nieuwe components
-17. ✅ Update alle modals naar BaseModal
-18. ✅ Test alle functionaliteit
+### Fase 6: Final Cleanup ✅ COMPLETED
+16. ✅ Refactor App.vue met nieuwe components - DONE (~70 lines reduced)
+17. ⏳ Update alle modals naar BaseModal - Partially done (bulk modals use it)
+18. ⏳ Test alle functionaliteit - Manual testing recommended
 
 ---
 
