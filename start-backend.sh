@@ -25,4 +25,5 @@ cd backend && flask db upgrade && cd ..
 
 # 5. Start Flask
 echo "Starting Flask Server (Port 5001)..."
-python3 backend/app.py
+mkdir -p logs
+python3 backend/app.py > logs/backend_$(date +%Y%m%d_%H%M%S).log 2>&1

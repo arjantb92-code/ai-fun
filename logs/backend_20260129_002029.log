@@ -1,0 +1,194 @@
+ * Serving Flask app 'app'
+ * Debug mode: on
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5001
+[33mPress CTRL+C to quit[0m
+ * Restarting with watchdog (fsevents)
+ * Debugger is active!
+ * Debugger PIN: 131-359-949
+127.0.0.1 - - [29/Jan/2026 00:21:01] "OPTIONS /users HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:21:01] "OPTIONS /balances HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:21:01] "OPTIONS /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:21:01] "OPTIONS /settlements/suggest HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:21:01] "OPTIONS /settlements/history HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:21:01] "GET /users HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:21:01] "GET /settlements/history HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:21:01] "GET /balances HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:21:01] "GET /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:21:01] "GET /settlements/suggest HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:21:07] "OPTIONS /users HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:21:07] "OPTIONS /balances HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:21:07] "OPTIONS /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:21:07] "OPTIONS /settlements/suggest HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:21:07] "OPTIONS /settlements/history HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:21:07] "GET /users HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:21:07] "GET /settlements/history HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:21:07] "GET /settlements/suggest HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:21:07] "GET /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:21:07] "GET /balances HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:21:56] "OPTIONS /users HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:21:56] "OPTIONS /balances HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:21:56] "OPTIONS /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:21:56] "OPTIONS /settlements/suggest HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:21:56] "OPTIONS /settlements/history HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:21:56] "GET /users HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:21:56] "GET /settlements/history HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:21:56] "GET /balances HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:21:56] "GET /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:21:56] "GET /settlements/suggest HTTP/1.1" 200 -
+ * Detected change in '/Users/arjantebrake/projects/own_projects/Ai/scripts/import_linear_bank_import.py', reloading
+ * Restarting with watchdog (fsevents)
+ * Debugger is active!
+ * Debugger PIN: 131-359-949
+127.0.0.1 - - [29/Jan/2026 00:24:40] "OPTIONS /users HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:24:40] "OPTIONS /balances HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:24:40] "OPTIONS /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:24:40] "OPTIONS /settlements/suggest HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:24:40] "OPTIONS /settlements/history HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:24:40] "GET /users HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:24:40] "GET /settlements/history HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:24:40] "GET /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:24:40] "GET /settlements/suggest HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:24:40] "GET /balances HTTP/1.1" 200 -
+ * Detected change in '/Users/arjantebrake/projects/own_projects/Ai/scripts/import_linear_bank_import.py', reloading
+ * Restarting with watchdog (fsevents)
+ * Debugger is active!
+ * Debugger PIN: 131-359-949
+ * Detected change in '/Users/arjantebrake/projects/own_projects/Ai/scripts/import_linear_bank_import.py', reloading
+ * Restarting with watchdog (fsevents)
+ * Debugger is active!
+ * Debugger PIN: 131-359-949
+127.0.0.1 - - [29/Jan/2026 00:25:40] "OPTIONS /users HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:25:40] "OPTIONS /balances HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:25:40] "OPTIONS /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:25:40] "OPTIONS /settlements/suggest HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:25:40] "OPTIONS /settlements/history HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:25:41] "GET /settlements/history HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:25:41] "GET /users HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:25:41] "GET /settlements/suggest HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:25:41] "GET /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:25:41] "GET /balances HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:25:50] "OPTIONS /users HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:25:50] "OPTIONS /balances HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:25:50] "OPTIONS /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:25:50] "OPTIONS /settlements/suggest HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:25:50] "OPTIONS /settlements/history HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:25:50] "GET /users HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:25:50] "GET /settlements/history HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:25:50] "GET /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:25:50] "GET /balances HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:25:50] "GET /settlements/suggest HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:30:02] "OPTIONS /settlements/suggest HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:30:02] "OPTIONS /users HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:30:02] "OPTIONS /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:30:02] "OPTIONS /settlements/history HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:30:02] "OPTIONS /balances HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:30:02] "GET /users HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:30:02] "GET /settlements/history HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:30:02] "GET /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:30:02] "GET /balances HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:30:02] "GET /settlements/suggest HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:32:57] "OPTIONS /users HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:32:57] "OPTIONS /balances HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:32:57] "OPTIONS /settlements/suggest HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:32:57] "OPTIONS /settlements/history HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:32:57] "OPTIONS /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:32:57] "GET /users HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:32:57] "GET /settlements/history HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:32:57] "GET /settlements/suggest HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:32:57] "GET /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:32:57] "GET /balances HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:40:09] "OPTIONS /balances HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:40:09] "OPTIONS /users HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:40:09] "OPTIONS /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:40:09] "OPTIONS /settlements/history HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:40:09] "OPTIONS /settlements/suggest HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:40:09] "GET /users HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:40:09] "GET /settlements/history HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:40:09] "GET /balances HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:40:09] "GET /settlements/suggest HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:40:09] "GET /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:40:17] "OPTIONS /users HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:40:17] "OPTIONS /balances HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:40:17] "OPTIONS /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:40:17] "OPTIONS /settlements/suggest HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:40:17] "OPTIONS /settlements/history HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:40:17] "GET /users HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:40:17] "GET /settlements/history HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:40:17] "GET /balances HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:40:17] "GET /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:40:17] "GET /settlements/suggest HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:45:36] "OPTIONS /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:45:36] "OPTIONS /users HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:45:36] "OPTIONS /balances HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:45:36] "OPTIONS /settlements/suggest HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:45:36] "OPTIONS /settlements/history HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:45:36] "GET /users HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:45:36] "GET /settlements/history HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:45:36] "GET /settlements/suggest HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:45:36] "GET /balances HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:45:36] "GET /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:45:51] "OPTIONS /import/bank HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:45:52] "POST /import/bank HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:48:06] "OPTIONS /users HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:48:06] "OPTIONS /balances HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:48:06] "OPTIONS /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:48:06] "OPTIONS /settlements/suggest HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:48:06] "OPTIONS /settlements/history HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:48:07] "GET /settlements/history HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:48:07] "GET /users HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:48:07] "GET /balances HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:48:07] "GET /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:48:07] "GET /settlements/suggest HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:48:30] "OPTIONS /import/bank HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:48:30] "POST /import/bank HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:49:38] "OPTIONS /users HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:49:38] "OPTIONS /balances HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:49:38] "OPTIONS /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:49:38] "OPTIONS /settlements/suggest HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:49:38] "OPTIONS /settlements/history HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:49:38] "GET /users HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:49:38] "GET /settlements/history HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:49:38] "GET /balances HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:49:38] "GET /settlements/suggest HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:49:38] "GET /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:49:48] "OPTIONS /import/bank HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:49:48] "POST /import/bank HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:53:28] "OPTIONS /balances HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:53:28] "OPTIONS /users HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:53:28] "OPTIONS /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:53:28] "OPTIONS /settlements/suggest HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:53:28] "OPTIONS /settlements/history HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:53:28] "GET /users HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:53:28] "GET /settlements/history HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:53:28] "GET /balances HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:53:28] "GET /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:53:28] "GET /settlements/suggest HTTP/1.1" 200 -
+ * Detected change in '/Users/arjantebrake/projects/own_projects/Ai/backend/bank_parser.py', reloading
+ * Restarting with watchdog (fsevents)
+ * Debugger is active!
+ * Debugger PIN: 131-359-949
+ * Detected change in '/Users/arjantebrake/projects/own_projects/Ai/backend/bank_parser.py', reloading
+ * Restarting with watchdog (fsevents)
+ * Debugger is active!
+ * Debugger PIN: 131-359-949
+127.0.0.1 - - [29/Jan/2026 00:53:53] "OPTIONS /import/bank HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:53:54] "POST /import/bank HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:54:31] "OPTIONS /settlements/suggest HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:54:31] "OPTIONS /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:54:31] "OPTIONS /users HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:54:31] "OPTIONS /balances HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:54:31] "OPTIONS /settlements/history HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:54:31] "GET /users HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:54:31] "GET /settlements/history HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:54:31] "GET /settlements/suggest HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:54:31] "GET /balances HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:54:31] "GET /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:54:46] "OPTIONS /import/bank HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:54:47] "POST /import/bank HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:57:47] "OPTIONS /import/bank HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:57:48] "POST /import/bank HTTP/1.1" 200 -
+ * Detected change in '/Users/arjantebrake/projects/own_projects/Ai/backend/bank_parser.py', reloading
+ * Restarting with watchdog (fsevents)
+ * Debugger is active!
+ * Debugger PIN: 131-359-949

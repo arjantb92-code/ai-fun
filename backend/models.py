@@ -26,6 +26,7 @@ class Transaction(db.Model):
     __tablename__ = "transactions"
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.Date, nullable=False)
+    time = db.Column(db.String(10), nullable=True, default="00:00")
     amount = db.Column(db.Float, nullable=False)
     description = db.Column(db.String(255), nullable=False)
     payer_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)

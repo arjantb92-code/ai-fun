@@ -6,11 +6,6 @@ from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 from dotenv import load_dotenv
 from werkzeug.security import generate_password_hash, check_password_hash
-
-# Force PBKDF2 as specified in requirements
-def hash_password(password):
-    """Hash password using PBKDF2-SHA256 as required"""
-    return generate_password_hash(password, method='pbkdf2:sha256', salt_length=16)
 from werkzeug.utils import secure_filename
 from models import db, User, Transaction, TransactionSplit, SettlementSession, HistoricalSettlement
 from ocr import get_ocr_service
@@ -65,25 +60,34 @@ def token_required(f):
 def health():
     return jsonify({"status": "ok"})
 
-@app.route("/seed-db")
-def seed_db():
+@app.route("/init-db")
+def init_db():
     try:
-        # Check if users already exist to avoid duplicates
-        if User.query.first():
-            return jsonify({"message": "Database already seeded"}), 200
-            
-        pw = hash_password('wbw2026')  # PBKDF2-SHA256
-        
+        db.drop_all(); db.create_all()
+        pw = generate_password_hash('wbw2026')
         m1 = User(); m1.name='Arjan'; m1.email='arjan@example.com'; m1.avatar_url='http://127.0.0.1:5000/static/user_1_1636579358798.jpeg'; m1.is_group_member=True; m1.password_hash=pw
         m2 = User(); m2.name='Emma'; m2.email='emma@example.com'; m2.avatar_url='https://i.pravatar.cc/150?u=emma'; m2.is_group_member=True; m2.password_hash=pw
         m3 = User(); m3.name='Lars'; m3.email='lars@example.com'; m3.avatar_url='https://i.pravatar.cc/150?u=lars'; m3.is_group_member=True; m3.password_hash=pw
         m4 = User(); m4.name='Friend'; m4.is_group_member=False; m4.email=None; m4.password_hash=None
         db.session.add_all([m1, m2, m3, m4]); db.session.flush()
-
+        
         today = datetime.utcnow().date()
         yesterday = today - timedelta(days=1)
         last_week = today - timedelta(days=7)
+        last_month = today - timedelta(days=30)
         
+        sess = SettlementSession(); sess.date = datetime.utcnow() - timedelta(days=15); sess.description = "Weekendje Ardennen"
+        db.session.add(sess); db.session.flush()
+        
+        t_old = Transaction(); t_old.description="Huur Huisje"; t_old.amount=450.0; t_old.date=last_month; t_old.payer_id=m1.id; t_old.settlement_session_id=sess.id
+        db.session.add(t_old); db.session.flush()
+        for u in [m1, m2, m3]: 
+            s = TransactionSplit(); s.transaction_id=t_old.id; s.user_id=u.id; s.weight=1; db.session.add(s)
+        
+        hs1 = HistoricalSettlement(); hs1.settlement_session_id=sess.id; hs1.from_user_id=m2.id; hs1.to_user_id=m1.id; hs1.amount=150.0
+        hs2 = HistoricalSettlement(); hs2.settlement_session_id=sess.id; hs2.from_user_id=m3.id; hs2.to_user_id=m1.id; hs2.amount=150.0
+        db.session.add_all([hs1, hs2])
+
         t1 = Transaction(); t1.description="Lunch bij Loetje"; t1.amount=65.50; t1.date=today; t1.payer_id=m1.id; t1.type='EXPENSE'
         db.session.add(t1); db.session.flush()
         for u in [m1, m2, m3]: 
@@ -100,9 +104,8 @@ def seed_db():
         s3b = TransactionSplit(); s3b.transaction_id=t3.id; s3b.user_id=m3.id; s3b.weight=1; db.session.add(s3b)
         
         db.session.commit()
-        return jsonify({"status": "success", "message": "Seed complete"})
-    except Exception as e: 
-        db.session.rollback(); return jsonify({"error": str(e)}), 500
+        return jsonify({"status": "success"})
+    except Exception as e: return jsonify({"error": str(e)}), 500
 
 @app.route("/login", methods=["POST"])
 def login():
@@ -168,8 +171,18 @@ def get_balances(current_user):
 @app.route('/transactions', methods=['GET'])
 @token_required
 def get_transactions(current_user):
-    txs = Transaction.query.filter_by(settlement_session_id=None).order_by(Transaction.date.desc()).all()
-    return jsonify([{"id": t.id, "date": t.date.isoformat(), "description": t.description, "amount": t.amount, "type": t.type or "EXPENSE", "payer_id": t.payer_id, "splits": [{"user_id": s.user_id, "weight": s.weight} for s in t.splits]} for t in txs])
+    # Sort by date DESC and then by time DESC to get most recent first
+    txs = Transaction.query.filter_by(settlement_session_id=None).order_by(Transaction.date.desc(), Transaction.time.desc()).all()
+    return jsonify([{
+        "id": t.id,
+        "date": t.date.isoformat(),
+        "time": t.time or "00:00",
+        "description": t.description,
+        "amount": t.amount,
+        "type": t.type or "EXPENSE",
+        "payer_id": t.payer_id,
+        "splits": [{"user_id": s.user_id, "weight": s.weight} for s in t.splits]
+    } for t in txs])
 
 @app.route('/transactions', methods=['POST'])
 @token_required
@@ -178,6 +191,7 @@ def add_transaction(current_user):
     try:
         t = Transaction(); t.description = d['description']; t.amount = float(d['amount']); t.type = d.get('type', 'EXPENSE')
         t.date = datetime.strptime(d['date'], '%Y-%m-%d').date() if isinstance(d.get('date'), str) else datetime.utcnow().date()
+        t.time = d.get('time', datetime.utcnow().strftime('%H:%M'))
         t.payer_id = d['payer_id']
         db.session.add(t); db.session.flush()
         for s_data in d['splits']:

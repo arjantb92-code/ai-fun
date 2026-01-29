@@ -107,3 +107,67 @@
 10:28:39 PM [vite] (client) hmr update /src/App.vue, /src/assets/main.css
 10:28:39 PM [vite] (client) hmr update /src/App.vue, /src/assets/main.css
 10:28:40 PM [vite] (client) hmr update /src/App.vue, /src/assets/main.css
+11:09:21 PM [vite] (client) hmr update /src/App.vue, /src/assets/main.css
+11:33:07 PM [vite] (client) hmr update /src/App.vue, /src/assets/main.css
+11:33:39 PM [vite] (client) hmr update /src/App.vue, /src/assets/main.css
+11:37:59 PM [vite] (client) hmr update /src/App.vue, /src/assets/main.css
+11:37:59 PM [vite] Internal server error: Invalid end tag.
+  Plugin: vite-plugin-vue-inspector
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/App.vue
+      at createCompilerError (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:1378:17)
+      at emitError (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:3014:5)
+      at Object.onclosetag (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:2391:9)
+      at Tokenizer.stateInClosingTagName (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:799:16)
+      at Tokenizer.parse (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:1157:16)
+      at Object.baseParse (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:3053:13)
+      at parse (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-dom/dist/compiler-dom.cjs.js:910:23)
+      at result (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite-plugin-vue-inspector/dist/index.mjs:29:21)
+      at new Promise (<anonymous>)
+      at compileSFCTemplate (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite-plugin-vue-inspector/dist/index.mjs:26:24)
+11:39:02 PM [vite] (client) hmr update /src/App.vue, /src/assets/main.css
+11:39:03 PM [vite] Internal server error: Invalid end tag.
+  Plugin: vite-plugin-vue-inspector
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/App.vue
+      at createCompilerError (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:1378:17)
+      at emitError (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:3014:5)
+      at Object.onclosetag (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:2391:9)
+      at Tokenizer.stateInClosingTagName (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:799:16)
+      at Tokenizer.parse (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:1157:16)
+      at Object.baseParse (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:3053:13)
+      at parse (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-dom/dist/compiler-dom.cjs.js:910:23)
+      at result (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite-plugin-vue-inspector/dist/index.mjs:29:21)
+      at new Promise (<anonymous>)
+      at compileSFCTemplate (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite-plugin-vue-inspector/dist/index.mjs:26:24)
+11:39:04 PM [vite] (client) hmr update /src/App.vue, /src/assets/main.css
+11:39:04 PM [vite] Internal server error: Invalid end tag.
+  Plugin: vite-plugin-vue-inspector
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/App.vue
+      at createCompilerError (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:1378:17)
+      at emitError (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:3014:5)
+      at Object.onclosetag (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:2391:9)
+      at Tokenizer.stateInClosingTagName (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:799:16)
+      at Tokenizer.parse (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:1157:16)
+      at Object.baseParse (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:3053:13)
+      at parse (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-dom/dist/compiler-dom.cjs.js:910:23)
+      at result (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite-plugin-vue-inspector/dist/index.mjs:29:21)
+      at new Promise (<anonymous>)
+      at compileSFCTemplate (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite-plugin-vue-inspector/dist/index.mjs:26:24)
+11:40:19 PM [vite] (client) hmr update /src/App.vue, /src/assets/main.css
+11:47:06 PM [vite] (client) hmr update /src/App.vue, /src/assets/main.css
+11:51:39 PM [vite] (client) hmr update /src/App.vue, /src/assets/main.css
+11:55:44 PM [vite] (client) hmr update /src/components/features/auth/LoginView.vue, /src/assets/main.css
+11:56:00 PM [vite] (client) hmr update /src/App.vue, /src/components/layout/AppHeader.vue, /src/assets/main.css
+11:56:17 PM [vite] (client) hmr update /src/App.vue, /src/assets/main.css
+11:56:29 PM [vite] (client) hmr update /src/App.vue, /src/assets/main.css
+12:15:05 AM [vite] (client) hmr update /src/App.vue, /src/assets/main.css
+12:25:22 AM [vite] (client) hmr update /src/App.vue, /src/components/layout/AppHeader.vue, /src/assets/main.css
+12:25:27 AM [vite] (client) hmr update /src/App.vue, /src/components/layout/AppHeader.vue, /src/assets/main.css
+12:40:08 AM [vite] (client) hmr update /src/App.vue, /src/assets/main.css
+12:40:16 AM [vite] (client) hmr update /src/App.vue, /src/assets/main.css
+12:40:19 AM [vite] (client) hmr update /src/App.vue, /src/assets/main.css
+12:40:39 AM [vite] (client) hmr update /src/components/features/transactions/BankImportModal.vue, /src/assets/main.css
+12:49:09 AM [vite] (client) hmr update /src/components/features/transactions/BankImportModal.vue, /src/assets/main.css
+12:51:24 AM [vite] (client) hmr update /src/components/features/transactions/BankImportModal.vue, /src/assets/main.css
+12:54:04 AM [vite] (client) hmr update /src/components/features/transactions/BankImportModal.vue, /src/assets/main.css
+12:57:10 AM [vite] (client) hmr update /src/components/features/transactions/BankImportModal.vue, /src/assets/main.css
+1:00:02 AM [vite] (client) hmr update /src/components/features/transactions/BankImportModal.vue, /src/assets/main.css

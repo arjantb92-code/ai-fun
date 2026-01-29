@@ -16,7 +16,7 @@ import sys
 import json
 import requests
 from dotenv import load_dotenv
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Any
 
 # Load environment variables
 load_dotenv()
@@ -168,7 +168,7 @@ def linear_query(query: str, variables: Optional[Dict] = None) -> Dict:
         "Content-Type": "application/json"
     }
     
-    payload = {"query": query}
+    payload: Dict[str, Any] = {"query": query}
     if variables:
         payload["variables"] = variables
     

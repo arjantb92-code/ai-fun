@@ -1,0 +1,95 @@
+ * Serving Flask app 'app'
+ * Debug mode: on
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5001
+[33mPress CTRL+C to quit[0m
+ * Restarting with watchdog (fsevents)
+ * Debugger is active!
+ * Debugger PIN: 131-359-949
+127.0.0.1 - - [28/Jan/2026 23:54:44] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 23:56:00] "OPTIONS /users HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 23:56:00] "OPTIONS /balances HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 23:56:00] "OPTIONS /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 23:56:00] "OPTIONS /settlements/suggest HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 23:56:00] "OPTIONS /settlements/history HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 23:56:00] "GET /users HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 23:56:00] "GET /settlements/history HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 23:56:00] "GET /balances HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 23:56:00] "GET /settlements/suggest HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 23:56:00] "GET /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 23:56:17] "OPTIONS /users HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 23:56:17] "OPTIONS /balances HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 23:56:17] "OPTIONS /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 23:56:17] "OPTIONS /settlements/suggest HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 23:56:17] "OPTIONS /settlements/history HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 23:56:17] "GET /users HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 23:56:17] "GET /settlements/history HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 23:56:17] "GET /settlements/suggest HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 23:56:17] "GET /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 23:56:17] "GET /balances HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 23:56:29] "OPTIONS /users HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 23:56:29] "OPTIONS /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 23:56:29] "OPTIONS /balances HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 23:56:29] "OPTIONS /settlements/suggest HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 23:56:29] "OPTIONS /settlements/history HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 23:56:29] "GET /users HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 23:56:29] "GET /settlements/history HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 23:56:29] "GET /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 23:56:29] "GET /settlements/suggest HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 23:56:29] "GET /balances HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 23:57:58] "OPTIONS /balances HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 23:57:58] "OPTIONS /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 23:57:58] "OPTIONS /users HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 23:57:58] "OPTIONS /settlements/suggest HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 23:57:58] "OPTIONS /settlements/history HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 23:57:59] "GET /users HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 23:57:59] "GET /balances HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 23:57:59] "GET /settlements/suggest HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 23:57:59] "GET /settlements/history HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 23:57:59] "GET /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 23:59:48] "OPTIONS /balances HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 23:59:48] "OPTIONS /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 23:59:48] "OPTIONS /users HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 23:59:48] "OPTIONS /settlements/suggest HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 23:59:48] "OPTIONS /settlements/history HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 23:59:48] "GET /users HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 23:59:48] "GET /settlements/suggest HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 23:59:48] "GET /settlements/history HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 23:59:48] "GET /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jan/2026 23:59:48] "GET /balances HTTP/1.1" 200 -
+ * Detected change in '/Users/arjantebrake/projects/own_projects/Ai/cursor_api_client.py', reloading
+ * Restarting with watchdog (fsevents)
+ * Debugger is active!
+ * Debugger PIN: 131-359-949
+ * Detected change in '/Users/arjantebrake/projects/own_projects/Ai/cursor_api_client.py', reloading
+ * Restarting with watchdog (fsevents)
+ * Debugger is active!
+ * Debugger PIN: 131-359-949
+ * Detected change in '/Users/arjantebrake/projects/own_projects/Ai/cursor_api_client.py', reloading
+ * Restarting with watchdog (fsevents)
+ * Debugger is active!
+ * Debugger PIN: 131-359-949
+127.0.0.1 - - [29/Jan/2026 00:18:53] "OPTIONS /users HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:18:53] "OPTIONS /balances HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:18:53] "OPTIONS /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:18:53] "OPTIONS /settlements/suggest HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:18:53] "OPTIONS /settlements/history HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:18:55] "GET /users HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:18:55] "GET /settlements/history HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:18:55] "GET /settlements/suggest HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:18:55] "GET /balances HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:18:55] "GET /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:19:53] "OPTIONS /users HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:19:53] "OPTIONS /balances HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:19:53] "OPTIONS /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:19:53] "OPTIONS /settlements/suggest HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:19:53] "OPTIONS /settlements/history HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:19:53] "GET /users HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:19:53] "GET /settlements/history HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:19:53] "GET /transactions HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:19:53] "GET /settlements/suggest HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jan/2026 00:19:53] "GET /balances HTTP/1.1" 200 -
+/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/multiprocessing/resource_tracker.py:216: UserWarning: resource_tracker: There appear to be 1 leaked semaphore objects to clean up at shutdown
+  warnings.warn('resource_tracker: There appear to be %d '
+/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/multiprocessing/resource_tracker.py:216: UserWarning: resource_tracker: There appear to be 1 leaked semaphore objects to clean up at shutdown
+  warnings.warn('resource_tracker: There appear to be %d '

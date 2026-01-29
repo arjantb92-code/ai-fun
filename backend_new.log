@@ -75,3 +75,27 @@ Starting Flask Server (Port 5001)...
  * Restarting with watchdog (fsevents)
  * Debugger is active!
  * Debugger PIN: 131-359-949
+ * Detected change in '/Users/arjantebrake/projects/own_projects/Ai/scripts/import_linear.py', reloading
+ * Restarting with watchdog (fsevents)
+ * Debugger is active!
+ * Debugger PIN: 131-359-949
+ * Detected change in '/Users/arjantebrake/projects/own_projects/Ai/scripts/import_linear.py', reloading
+ * Restarting with watchdog (fsevents)
+ * Debugger is active!
+ * Debugger PIN: 131-359-949
+ * Detected change in '/Users/arjantebrake/projects/own_projects/Ai/scripts/import_linear.py', reloading
+ * Restarting with watchdog (fsevents)
+ * Debugger is active!
+ * Debugger PIN: 131-359-949
+ * Detected change in '/Users/arjantebrake/projects/own_projects/Ai/backend/app.py', reloading
+ * Restarting with watchdog (fsevents)
+ * Debugger is active!
+ * Debugger PIN: 131-359-949
+./start-backend.sh: line 17: 40036 Killed: 9               python3 backend/app.py
+./start-backend.sh: line 18: 1: command not found
+./start-backend.sh: line 19: syntax error near unexpected token `fi'
+./start-backend.sh: line 19: `fi'
+/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/multiprocessing/resource_tracker.py:216: UserWarning: resource_tracker: There appear to be 1 leaked semaphore objects to clean up at shutdown
+  warnings.warn('resource_tracker: There appear to be %d '
+/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/multiprocessing/resource_tracker.py:216: UserWarning: resource_tracker: There appear to be 1 leaked semaphore objects to clean up at shutdown
+  warnings.warn('resource_tracker: There appear to be %d '
