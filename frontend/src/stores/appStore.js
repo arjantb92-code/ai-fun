@@ -1,7 +1,11 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
+import { getCategoryList } from '@/config/categories'
 
 export const useAppStore = defineStore('app', () => {
+  // ============================================
+  // STATE
+  // ============================================
   const users = ref([])
   const balances = ref([])
   const transactions = ref([])
@@ -9,20 +13,64 @@ export const useAppStore = defineStore('app', () => {
   const settlementsSuggestions = ref([])
   const settlementHistory = ref([])
   const activities = ref([])
-  const categories = ref([
-    { key: 'boodschappen', label: 'Boodschappen' },
-    { key: 'huishoudelijk', label: 'Huishoudelijk' },
-    { key: 'winkelen', label: 'Winkelen' },
-    { key: 'vervoer', label: 'Vervoer' },
-    { key: 'reizen_vrije_tijd', label: 'Reizen & Vrije Tijd' },
-    { key: 'overig', label: 'Overig' }
-  ])
+  const categories = ref(getCategoryList()) // Use centralized config
   const currentUser = ref(null)
   const token = ref(localStorage.getItem('wbw_token'))
   const backendStatus = ref('Connecting...')
 
+  // ============================================
+  // COMPUTED GETTERS
+  // ============================================
   const isAuthenticated = computed(() => !!token.value && !!currentUser.value)
   const groupMembers = computed(() => users.value.filter(u => u.is_group_member))
+  
+  // Active/archived activities
+  const activeActivities = computed(() => activities.value.filter(a => a.is_active))
+  const archivedActivities = computed(() => activities.value.filter(a => !a.is_active))
+
+  // ============================================
+  // HELPER METHODS
+  // ============================================
+  
+  /**
+   * Get user by ID
+   * @param {number} id - User ID
+   * @returns {Object|undefined} User object
+   */
+  const getUserById = (id) => users.value.find(u => u.id === id)
+  
+  /**
+   * Get user name by ID
+   * @param {number} id - User ID
+   * @returns {string} User name or 'Onbekend'
+   */
+  const getUserName = (id) => getUserById(id)?.name || 'Onbekend'
+  
+  /**
+   * Get activity by ID
+   * @param {number} id - Activity ID
+   * @returns {Object|undefined} Activity object
+   */
+  const getActivityById = (id) => activities.value.find(a => a.id === id)
+  
+  /**
+   * Get activity info for display (name, icon, color)
+   * @param {number} id - Activity ID
+   * @returns {Object|null} {name, icon, color} or null
+   */
+  const getActivityInfo = (id) => {
+    if (!id) return null
+    const a = getActivityById(id)
+    return a ? { name: a.name, icon: a.icon, color: a.color } : null
+  }
+  
+  /**
+   * Get balance for a specific user
+   * @param {number} userId - User ID
+   * @returns {number} Balance amount
+   */
+  const getBalanceForUser = (userId) => 
+    balances.value.find(b => b.user_id === userId)?.balance || 0
 
   const totalGroupSpend = computed(() => {
     return transactions.value.reduce((sum, t) => sum + t.amount, 0)
@@ -95,8 +143,14 @@ export const useAppStore = defineStore('app', () => {
   }
 
   return {
+    // State
     users, balances, transactions, settlementsSuggestions, settlementHistory, activities, categories,
-    deletedTransactions, currentUser, token, backendStatus, isAuthenticated, groupMembers, totalGroupSpend,
+    deletedTransactions, currentUser, token, backendStatus,
+    // Computed
+    isAuthenticated, groupMembers, totalGroupSpend, activeActivities, archivedActivities,
+    // Helpers
+    getUserById, getUserName, getActivityById, getActivityInfo, getBalanceForUser,
+    // Actions
     apiFetch, fetchData, fetchTrash, login, logout
   }
 })

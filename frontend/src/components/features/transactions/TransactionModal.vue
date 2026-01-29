@@ -1,15 +1,9 @@
 <script setup>
 import { ref, watch, computed } from 'vue'
 import ActivitySelector from '@/components/features/activities/ActivitySelector.vue'
+import { getCategoryList, getCategoryIcon } from '@/config/categories'
 
-const CATEGORIES = [
-  { key: 'boodschappen', label: 'Boodschappen', icon: '🛒' },
-  { key: 'huishoudelijk', label: 'Huishoudelijk', icon: '🏠' },
-  { key: 'winkelen', label: 'Winkelen', icon: '🛍️' },
-  { key: 'vervoer', label: 'Vervoer', icon: '🚗' },
-  { key: 'reizen_vrije_tijd', label: 'Reizen & Vrije Tijd', icon: '✈️' },
-  { key: 'overig', label: 'Overig', icon: '📦' }
-]
+const CATEGORIES = getCategoryList()
 
 const props = defineProps({
   isOpen: Boolean,
@@ -18,8 +12,6 @@ const props = defineProps({
   groupMembers: Array,
   activities: Array
 })
-
-const getCategoryIcon = (key) => CATEGORIES.find(c => c.key === key)?.icon || '📦'
 
 const emit = defineEmits(['close', 'save', 'delete', 'upload-receipt'])
 

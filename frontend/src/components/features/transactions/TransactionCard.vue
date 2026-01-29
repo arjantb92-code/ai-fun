@@ -1,14 +1,6 @@
 <script setup>
 import { computed } from 'vue'
-
-const CATEGORY_CONFIG = {
-  boodschappen: { label: 'Boodschappen', icon: '🛒', color: '#22c55e' },
-  huishoudelijk: { label: 'Huishoudelijk', icon: '🏠', color: '#f59e0b' },
-  winkelen: { label: 'Winkelen', icon: '🛍️', color: '#ec4899' },
-  vervoer: { label: 'Vervoer', icon: '🚗', color: '#3b82f6' },
-  reizen_vrije_tijd: { label: 'Reizen & Vrije Tijd', icon: '✈️', color: '#8b5cf6' },
-  overig: { label: 'Overig', icon: '📦', color: '#6b7280' }
-}
+import { getCategoryConfig } from '@/config/categories'
 
 const props = defineProps({
   transaction: {
@@ -36,7 +28,7 @@ const props = defineProps({
 const emit = defineEmits(['click', 'toggle-select'])
 
 const isIncome = computed(() => props.transaction.type === 'INCOME')
-const categoryConfig = computed(() => CATEGORY_CONFIG[props.transaction.category] || CATEGORY_CONFIG.overig)
+const categoryConfig = computed(() => getCategoryConfig(props.transaction.category))
 </script>
 
 <template>
