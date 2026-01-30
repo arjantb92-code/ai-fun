@@ -1,20 +1,20 @@
-<script setup>
-const props = defineProps({
-  settlements: {
-    type: Array,
-    required: true
-  },
-  activityName: {
-    type: String,
-    default: null
-  },
-  loading: {
-    type: Boolean,
-    default: false
-  }
+<script setup lang="ts">
+import type { SettlementSuggestion } from '@/types'
+
+interface Props {
+  settlements: SettlementSuggestion[]
+  activityName?: string | null
+  loading?: boolean
+}
+
+withDefaults(defineProps<Props>(), {
+  activityName: null,
+  loading: false
 })
 
-const emit = defineEmits(['settle'])
+const emit = defineEmits<{
+  (e: 'settle'): void
+}>()
 </script>
 
 <template>
@@ -29,6 +29,7 @@ const emit = defineEmits(['settle'])
         <div class="text-lg italic text-white mt-1">€ {{ s.amount.toFixed(2) }}</div>
       </div>
       <button 
+        type="button"
         @click="emit('settle')"
         :disabled="loading"
         class="w-full py-4 font-black uppercase italic bg-brand-red text-white hover:bg-red-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"

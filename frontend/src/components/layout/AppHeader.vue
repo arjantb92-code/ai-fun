@@ -1,8 +1,11 @@
-<script setup>
+<script setup lang="ts">
 import { useAppStore } from '@/stores/appStore'
+
 const store = useAppStore()
 
-defineEmits(['open-profile'])
+defineEmits<{
+  (e: 'open-profile'): void
+}>()
 </script>
 
 <template>

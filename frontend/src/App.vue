@@ -1,6 +1,16 @@
-<script setup>
+<script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue'
 import { useAppStore } from '@/stores/appStore'
+import type { 
+  Transaction, 
+  TransactionSplit, 
+  LoginCredentials, 
+  ActivityFormData,
+  ActivityDisplay,
+  BankImportRow,
+  TabType,
+  CategoryKey
+} from '@/types'
 
 // Composables
 import { useToast } from '@/composables/useToast'
@@ -35,17 +45,17 @@ const toast = useToast()
 const selection = useSelection()
 
 // --- UI State ---
-const currentTab = ref('ACTIVITY')
+const currentTab = ref<TabType>('ACTIVITY')
 const searchQuery = ref('')
-const selectedCategoryFilter = ref(null)
+const selectedCategoryFilter = ref<CategoryKey | null>(null)
 const showFilterDropdown = ref(false)
-const selectedActivityId = ref(null)
+const selectedActivityId = ref<number | null>(null)
 const isEditModalOpen = ref(false)
 const isImportModalOpen = ref(false)
 const isProfileModalOpen = ref(false)
 const isActivityModalOpen = ref(false)
-const selectedTransaction = ref(null)
-const selectedActivity = ref(null)
+const selectedTransaction = ref<Transaction | null>(null)
+const selectedActivity = ref<import('@/types').Activity | null>(null)
 const settleLoading = ref(false)
 const showTrash = ref(false)
 const isBulkActivityModalOpen = ref(false)
@@ -74,8 +84,12 @@ const filteredTransactions = computed(() => {
 })
 
 const groupedTransactions = computed(() => {
-  const groups = []
-  const groupMap = {}
+  interface TransactionGroup {
+    label: string
+    txs: Transaction[]
+  }
+  const groups: TransactionGroup[] = []
+  const groupMap: Record<string, Transaction[]> = {}
   filteredTransactions.value.forEach(t => {
     const date = new Date(t.date)
     const label = date.toLocaleDateString('nl-NL', { day: 'numeric', month: 'long', year: 'numeric' })
@@ -89,8 +103,7 @@ const groupedTransactions = computed(() => {
 })
 
 // --- Methods (using store helpers) ---
-
-const handleLogin = async (credentials) => {
+const handleLogin = async (credentials: LoginCredentials): Promise<void> => {
   loginError.value = ''
   try {
     const res = await fetch('http://localhost:5001/login', {
@@ -101,8 +114,6 @@ const handleLogin = async (credentials) => {
     const data = await res.json()
     if (res.ok) {
       store.login(data)
-      newAvatarUrl.value = data.user.avatar_url
-      newEmail.value = data.user.email
     } else {
       loginError.value = data.message
     }
@@ -111,17 +122,22 @@ const handleLogin = async (credentials) => {
   }
 }
 
-const openTransaction = (t) => {
+const openTransaction = (t: Transaction): void => {
   selectedTransaction.value = t
   isEditModalOpen.value = true
 }
 
-const createNewEntry = () => {
+const createNewEntry = (): void => {
+  const dateStr = new Date().toISOString().split('T')[0]
+  const timeStr = new Date().toTimeString().slice(0, 5)
   selectedTransaction.value = { 
-    id: null, description: 'Nieuwe uitgave', amount: 0, 
-    date: new Date().toISOString().split('T')[0],
-    time: new Date().toTimeString().slice(0, 5),
-    payer_id: store.currentUser?.id, type: 'EXPENSE',
+    id: null, 
+    description: 'Nieuwe uitgave', 
+    amount: 0, 
+    date: dateStr ?? '', 
+    time: timeStr,
+    payer_id: store.currentUser?.id || 0, 
+    type: 'EXPENSE',
     category: 'overig',
     activity_id: selectedActivityId.value,
     splits: store.groupMembers.map(u => ({ user_id: u.id, weight: 1 })) 
@@ -129,7 +145,7 @@ const createNewEntry = () => {
   isEditModalOpen.value = true
 }
 
-const handleSave = async (tx) => {
+const handleSave = async (tx: Transaction): Promise<void> => {
   const isNew = !tx.id
   try {
     const res = await store.apiFetch(isNew ? '/transactions' : `/transactions/${tx.id}`, {
@@ -143,11 +159,11 @@ const handleSave = async (tx) => {
   } catch { alert('Opslaan mislukt') }
 }
 
-const handleDelete = async (id) => {
+const handleDelete = async (id: number): Promise<void> => {
   if (!confirm('Naar prullenbak verplaatsen?')) return
   try {
     const res = await store.apiFetch(`/transactions/${id}`, { method: 'DELETE' })
-    const data = await res.json().catch(() => ({}))
+    const data = await res.json().catch(() => ({})) as { error?: string }
     if (res.ok) {
       toast.show('Verplaatst naar prullenbak')
       await store.fetchData(selectedActivityId.value)
@@ -163,20 +179,20 @@ const handleDelete = async (id) => {
   }
 }
 
-const handleRestore = async (id) => {
+const handleRestore = async (id: number): Promise<void> => {
   try {
     const res = await store.apiFetch(`/transactions/${id}/restore`, { method: 'POST' })
     if (res.ok) {
       await store.fetchData(selectedActivityId.value)
       await store.fetchTrash(selectedActivityId.value)
     } else {
-      const data = await res.json().catch(() => ({}))
+      const data = await res.json().catch(() => ({})) as { error?: string }
       alert(data.error || 'Herstellen mislukt')
     }
   } catch { alert('Herstellen mislukt') }
 }
 
-const handleDeletePermanent = async (id) => {
+const handleDeletePermanent = async (id: number): Promise<void> => {
   if (!confirm('Definitief verwijderen? Dit kan niet ongedaan.')) return
   try {
     const res = await store.apiFetch(`/transactions/${id}/permanent`, { method: 'DELETE' })
@@ -184,13 +200,13 @@ const handleDeletePermanent = async (id) => {
       await store.fetchData(selectedActivityId.value)
       await store.fetchTrash(selectedActivityId.value)
     } else {
-      const data = await res.json().catch(() => ({}))
+      const data = await res.json().catch(() => ({})) as { error?: string }
       alert(data.error || 'Definitief verwijderen mislukt')
     }
   } catch { alert('Definitief verwijderen mislukt') }
 }
 
-function onShowTrash(show) {
+function onShowTrash(show: boolean): void {
   showTrash.value = show
   if (show) store.fetchTrash(selectedActivityId.value)
   if (!show) selection.clear()
@@ -201,8 +217,7 @@ function selectAllVisible() {
   selection.selectAll(ids)
 }
 
-// Bulk activity assignment handler
-async function handleBulkActivityApply(activityId) {
+async function handleBulkActivityApply(activityId: number | null): Promise<void> {
   const ids = selection.getSelectedArray()
   if (!ids.length) return
   try {
@@ -215,14 +230,13 @@ async function handleBulkActivityApply(activityId) {
       isBulkActivityModalOpen.value = false
       await store.fetchData(selectedActivityId.value)
     } else {
-      const data = await res.json().catch(() => ({}))
+      const data = await res.json().catch(() => ({})) as { error?: string }
       alert(data.error || 'Bulk update mislukt')
     }
   } catch { alert('Bulk update mislukt') }
 }
 
-// Bulk splits assignment handler
-async function handleBulkSplitsApply(splits) {
+async function handleBulkSplitsApply(splits: TransactionSplit[]): Promise<void> {
   const ids = selection.getSelectedArray()
   if (!ids.length || !splits.length) return
   try {
@@ -235,38 +249,38 @@ async function handleBulkSplitsApply(splits) {
       isBulkSplitsModalOpen.value = false
       await store.fetchData(selectedActivityId.value)
     } else {
-      const data = await res.json().catch(() => ({}))
+      const data = await res.json().catch(() => ({})) as { error?: string }
       alert(data.error || 'Bulk update mislukt')
     }
   } catch { alert('Bulk update mislukt') }
 }
 
-async function handleSettlementRestore(sessionId) {
+async function handleSettlementRestore(sessionId: number): Promise<void> {
   try {
     const res = await store.apiFetch(`/settlements/${sessionId}/restore`, { method: 'POST' })
     if (res.ok) {
       await store.fetchData(selectedActivityId.value)
     } else {
-      const data = await res.json().catch(() => ({}))
+      const data = await res.json().catch(() => ({})) as { error?: string }
       alert(data.error || 'Herstellen mislukt')
     }
   } catch { alert('Herstellen mislukt') }
 }
 
-async function handleSettlementDeletePermanent(sessionId) {
+async function handleSettlementDeletePermanent(sessionId: number): Promise<void> {
   if (!confirm('Definitief verwijderen? Dit kan niet ongedaan.')) return
   try {
     const res = await store.apiFetch(`/settlements/${sessionId}/permanent`, { method: 'DELETE' })
     if (res.ok) {
       await store.fetchData(selectedActivityId.value)
     } else {
-      const data = await res.json().catch(() => ({}))
+      const data = await res.json().catch(() => ({})) as { error?: string }
       alert(data.error || 'Definitief verwijderen mislukt')
     }
   } catch { alert('Definitief verwijderen mislukt') }
 }
 
-async function handleSettlementDelete(sessionId) {
+async function handleSettlementDelete(sessionId: number): Promise<void> {
   if (!confirm('Afrekening ongedaan maken? Transacties komen terug in de lijst.')) return
   try {
     const res = await store.apiFetch(`/settlements/${sessionId}`, { method: 'DELETE' })
@@ -274,13 +288,13 @@ async function handleSettlementDelete(sessionId) {
       toast.show('Afrekening ongedaan gemaakt')
       await store.fetchData(selectedActivityId.value)
     } else {
-      const data = await res.json().catch(() => ({}))
+      const data = await res.json().catch(() => ({})) as { error?: string }
       alert(data.error || 'Ongedaan maken mislukt')
     }
   } catch { alert('Ongedaan maken mislukt') }
 }
 
-const handleBulkDelete = async () => {
+const handleBulkDelete = async (): Promise<void> => {
   if (!confirm(`${selection.count.value} transactie(s) verplaatsen naar prullenbak?`)) return
   try {
     let deleted = 0
@@ -294,7 +308,7 @@ const handleBulkDelete = async () => {
   } catch { alert('Verwijderen mislukt') }
 }
 
-const handleReceiptUpload = async (file) => {
+const handleReceiptUpload = async (file: File): Promise<void> => {
   const formData = new FormData()
   formData.append('file', file)
   try {
@@ -303,19 +317,21 @@ const handleReceiptUpload = async (file) => {
       headers: { 'Authorization': `Bearer ${store.token}` }, 
       body: formData 
     })
-    const result = await res.json()
-    if (res.ok) {
-       selectedTransaction.value.amount = result.data.extracted_data.total || selectedTransaction.value.amount
-       selectedTransaction.value.description = result.data.extracted_data.merchant !== 'Unknown Merchant' ? result.data.extracted_data.merchant : selectedTransaction.value.description
+    const result = await res.json() as { data?: { extracted_data?: { total?: number; merchant?: string } } }
+    if (res.ok && selectedTransaction.value) {
+       selectedTransaction.value.amount = result.data?.extracted_data?.total || selectedTransaction.value.amount
+       selectedTransaction.value.description = result.data?.extracted_data?.merchant !== 'Unknown Merchant' 
+         ? (result.data?.extracted_data?.merchant || selectedTransaction.value.description) 
+         : selectedTransaction.value.description
     }
   } catch { alert('OCR mislukt') }
 }
 
-const handleProfileSave = async ({ name, email }) => {
+const handleProfileSave = async ({ name, email }: { name: string; email: string }): Promise<void> => {
   try {
     const res = await store.apiFetch('/users/profile', { method: 'PUT', body: JSON.stringify({ name, email }) })
     if (res.ok) {
-      const data = await res.json()
+      const data = await res.json() as { user: import('@/types').User }
       store.currentUser = data.user
       localStorage.setItem('wbw_user', JSON.stringify(data.user))
       isProfileModalOpen.value = false
@@ -323,7 +339,7 @@ const handleProfileSave = async ({ name, email }) => {
   } catch { alert('Profiel opslaan mislukt') }
 }
 
-const handleBankImported = async (rows) => {
+const handleBankImported = async (rows: BankImportRow[]): Promise<void> => {
   if (!rows?.length || !store.currentUser || !store.groupMembers?.length) return
   try {
     let ok = 0
@@ -333,8 +349,8 @@ const handleBankImported = async (rows) => {
         amount: Math.abs(Number(r.amount)),
         date: r.date || new Date().toISOString().split('T')[0],
         payer_id: store.currentUser.id,
-        type: 'EXPENSE',
-        category: null, // Let backend auto-classify
+        type: 'EXPENSE' as const,
+        category: null as CategoryKey | null, // Let backend auto-classify
         activity_id: selectedActivityId.value,
         splits: store.groupMembers.map(u => ({ user_id: u.id, weight: 1 }))
       }
@@ -345,24 +361,24 @@ const handleBankImported = async (rows) => {
     isImportModalOpen.value = false
     alert(`${ok} transactie(s) geïmporteerd.`)
   } catch (e) {
-    alert('Import mislukt: ' + (e.message || 'onbekend'))
+    alert('Import mislukt: ' + ((e as Error).message || 'onbekend'))
   }
 }
 
-const selectActivity = (id) => {
+const selectActivity = (id: number | null): void => {
   selectedActivityId.value = id
   store.fetchData(id)
 }
 
-const openActivityModal = (activity = null) => {
+const openActivityModal = (activity: import('@/types').Activity | null = null): void => {
   selectedActivity.value = activity
   isActivityModalOpen.value = true
 }
 
-const handleActivitySave = async (data) => {
+const handleActivitySave = async (data: ActivityFormData): Promise<void> => {
   try {
     const isNew = !selectedActivity.value
-    const endpoint = isNew ? '/activities' : `/activities/${selectedActivity.value.id}`
+    const endpoint = isNew ? '/activities' : `/activities/${selectedActivity.value?.id}`
     const method = isNew ? 'POST' : 'PUT'
     const res = await store.apiFetch(endpoint, { method, body: JSON.stringify(data) })
     if (res.ok) {
@@ -373,15 +389,14 @@ const handleActivitySave = async (data) => {
   } catch { alert('Activiteit opslaan mislukt') }
 }
 
-// Use store helper for activity info
-const getActivityName = (id) => store.getActivityInfo(id)
+const getActivityName = (id: number | null) => store.getActivityInfo(id)
 
-const selectedActivityLabel = () => {
+const selectedActivityLabel = (): string | null => {
   const info = store.getActivityInfo(selectedActivityId.value)
   return info ? info.name : null
 }
 
-const handleSettle = async () => {
+const handleSettle = async (): Promise<void> => {
   settleLoading.value = true
   try {
     const body = selectedActivityId.value ? { activity_id: selectedActivityId.value } : {}
@@ -389,11 +404,11 @@ const handleSettle = async () => {
     if (res.ok) {
       await store.fetchData(selectedActivityId.value)
     } else {
-      const data = await res.json().catch(() => ({}))
+      const data = await res.json().catch(() => ({})) as { message?: string }
       alert(data.message || 'Afrekenen mislukt')
     }
   } catch (e) {
-    alert('Afrekenen mislukt: ' + (e.message || 'onbekend'))
+    alert('Afrekenen mislukt: ' + ((e as Error).message || 'onbekend'))
   } finally {
     settleLoading.value = false
   }
@@ -482,7 +497,7 @@ onMounted(() => store.fetchData())
                              Alle categorieën
                            </button>
                            <button v-for="cat in store.categories" :key="cat.key"
-                                   @click="selectedCategoryFilter = cat.key; showFilterDropdown = false"
+                                   @click="selectedCategoryFilter = cat.key as CategoryKey; showFilterDropdown = false"
                                    class="w-full text-left px-4 py-3 font-black uppercase italic text-xs transition-all hover:bg-zinc-900"
                                    :class="selectedCategoryFilter === cat.key ? 'text-brand-red bg-zinc-900' : 'text-zinc-400'">
                              {{ cat.label }}
@@ -507,7 +522,7 @@ onMounted(() => store.fetchData())
                  <div v-for="group in groupedTransactions" :key="group.label" class="space-y-4">
                     <h3 class="text-sm font-black uppercase tracking-[0.2em] text-white italic border-b border-zinc-800 pb-2 mb-4">{{ group.label }}</h3>
                     <div class="space-y-2">
-                       <TransactionCard v-for="t in group.txs" :key="t.id" 
+                       <TransactionCard v-for="t in group.txs" :key="t.id ?? `new-${Math.random()}`" 
                                        :transaction="t" 
                                        :payer-name="store.getUserName(t.payer_id)"
                                        :activity="getActivityName(t.activity_id)"
@@ -523,15 +538,15 @@ onMounted(() => store.fetchData())
                     <h3 class="text-xs uppercase font-black mb-4 tracking-[0.2em] border-b border-zinc-800 pb-2 text-brand-red">Prullenbak</h3>
                     <p v-if="!store.deletedTransactions.length" class="text-zinc-500 text-sm italic">Geen verwijderde transacties.</p>
                     <div v-else class="space-y-2">
-                       <div v-for="t in store.deletedTransactions" :key="t.id" class="flex items-center justify-between gap-4 p-4 bg-zinc-900/50 border border-zinc-800 rounded">
+                       <div v-for="t in store.deletedTransactions" :key="t.id ?? `deleted-${Math.random()}`" class="flex items-center justify-between gap-4 p-4 bg-zinc-900/50 border border-zinc-800 rounded">
                           <div>
                              <span class="font-black uppercase italic text-white">{{ t.description }}</span>
                              <span class="text-zinc-500 text-sm ml-2">€ {{ (t.amount || 0).toFixed(2) }}</span>
                              <span class="text-zinc-500 text-[10px] block mt-1">{{ store.getUserName(t.payer_id) }} · {{ t.deleted_at ? new Date(t.deleted_at).toLocaleDateString('nl-NL') : '' }}</span>
                           </div>
                           <div class="flex gap-2 shrink-0">
-                             <button type="button" class="px-4 py-2 text-[10px] font-black uppercase bg-zinc-700 text-white hover:bg-zinc-600 transition-all" @click="handleRestore(t.id)">Herstel</button>
-                             <button type="button" class="px-4 py-2 text-[10px] font-black uppercase bg-brand-red/80 text-white hover:bg-brand-red transition-all" @click="handleDeletePermanent(t.id)">Definitief verwijderen</button>
+                             <button type="button" class="px-4 py-2 text-[10px] font-black uppercase bg-zinc-700 text-white hover:bg-zinc-600 transition-all" @click="handleRestore(t.id!)">Herstel</button>
+                             <button type="button" class="px-4 py-2 text-[10px] font-black uppercase bg-brand-red/80 text-white hover:bg-brand-red transition-all" @click="handleDeletePermanent(t.id!)">Definitief verwijderen</button>
                           </div>
                        </div>
                     </div>
@@ -550,7 +565,7 @@ onMounted(() => store.fetchData())
                     <div class="space-y-6">
                       <div v-for="u in store.groupMembers" :key="u.id" class="flex items-center justify-between group">
                         <div class="flex items-center gap-4">
-                          <img :src="u.avatar_url" class="w-12 h-12 border border-zinc-800 grayscale object-cover" @error="u.avatar_url = null">
+                          <img :src="u.avatar_url || ''" class="w-12 h-12 border border-zinc-800 grayscale object-cover" @error="(e) => (e.target as HTMLImageElement).style.display = 'none'">
                           <span class="text-lg font-black uppercase italic tracking-tight">{{ u.name }}</span>
                         </div>
                         <div class="text-2xl font-black italic tracking-tighter" :class="store.getBalanceForUser(u.id) >= 0 ? 'text-zinc-400' : 'text-brand-red'">
@@ -599,7 +614,6 @@ onMounted(() => store.fetchData())
                      @close="isActivityModalOpen = false; selectedActivity = null"
                      @save="handleActivitySave" />
 
-      <!-- Bulk Operation Modals (extracted components) -->
       <BulkActivityModal 
         :is-open="isBulkActivityModalOpen"
         :activities="store.activities"
