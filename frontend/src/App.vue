@@ -12,6 +12,13 @@ import type {
   CategoryKey
 } from '@/types'
 
+// Composables
+import { useToast } from '@/composables/useToast'
+import { useSelection } from '@/composables/useSelection'
+
+// Config
+import { getCategoryLabel } from '@/config/categories'
+
 // Layout Components
 import AppHeader from '@/components/layout/AppHeader.vue'
 
@@ -26,9 +33,16 @@ import ProfileModal from '@/components/features/auth/ProfileModal.vue'
 import BankImportModal from '@/components/features/transactions/BankImportModal.vue'
 import ActivityList from '@/components/features/activities/ActivityList.vue'
 import ActivityModal from '@/components/features/activities/ActivityModal.vue'
-import ActivitySelector from '@/components/features/activities/ActivitySelector.vue'
+
+// Bulk operation components (extracted for DRY)
+import BulkActivityModal from '@/components/features/bulk/BulkActivityModal.vue'
+import BulkSplitsModal from '@/components/features/bulk/BulkSplitsModal.vue'
 
 const store = useAppStore()
+
+// --- Composables ---
+const toast = useToast()
+const selection = useSelection()
 
 // --- UI State ---
 const currentTab = ref<TabType>('ACTIVITY')
@@ -44,12 +58,8 @@ const selectedTransaction = ref<Transaction | null>(null)
 const selectedActivity = ref<import('@/types').Activity | null>(null)
 const settleLoading = ref(false)
 const showTrash = ref(false)
-const toastMessage = ref('')
-const selectedTransactionIds = ref<Set<number>>(new Set())
 const isBulkActivityModalOpen = ref(false)
 const isBulkSplitsModalOpen = ref(false)
-const bulkChosenActivityId = ref<number | null>(null)
-const bulkSplits = ref<TransactionSplit[]>([])
 const loginError = ref('')
 
 // --- Computed ---
@@ -66,17 +76,12 @@ const filteredTransactions = computed(() => {
     const q = searchQuery.value.toLowerCase()
     result = result.filter(t => 
       t.description.toLowerCase().includes(q) || 
-      getPayerName(t.payer_id).toLowerCase().includes(q)
+      store.getUserName(t.payer_id).toLowerCase().includes(q)
     )
   }
   
   return result
 })
-
-const getCategoryLabel = (key: CategoryKey | null): string => {
-  if (!key) return 'Overig'
-  return store.categories.find(c => c.key === key)?.label || 'Overig'
-}
 
 const groupedTransactions = computed(() => {
   interface TransactionGroup {
@@ -97,10 +102,7 @@ const groupedTransactions = computed(() => {
   return groups
 })
 
-// --- Methods ---
-const getPayerName = (id: number): string => store.users.find(u => u.id === id)?.name || 'Onbekend'
-const getBalanceForUser = (userId: number): number => store.balances.find(b => b.user_id === userId)?.balance || 0
-
+// --- Methods (using store helpers) ---
 const handleLogin = async (credentials: LoginCredentials): Promise<void> => {
   loginError.value = ''
   try {
@@ -163,8 +165,7 @@ const handleDelete = async (id: number): Promise<void> => {
     const res = await store.apiFetch(`/transactions/${id}`, { method: 'DELETE' })
     const data = await res.json().catch(() => ({})) as { error?: string }
     if (res.ok) {
-      toastMessage.value = 'Verplaatst naar prullenbak'
-      setTimeout(() => { toastMessage.value = '' }, 2500)
+      toast.show('Verplaatst naar prullenbak')
       await store.fetchData(selectedActivityId.value)
       if (showTrash.value) await store.fetchTrash(selectedActivityId.value)
       isEditModalOpen.value = false
@@ -208,40 +209,24 @@ const handleDeletePermanent = async (id: number): Promise<void> => {
 function onShowTrash(show: boolean): void {
   showTrash.value = show
   if (show) store.fetchTrash(selectedActivityId.value)
-  if (!show) clearSelection()
+  if (!show) selection.clear()
 }
 
-function toggleSelect(id: number): void {
-  const s = new Set(selectedTransactionIds.value)
-  if (s.has(id)) s.delete(id)
-  else s.add(id)
-  selectedTransactionIds.value = s
+function selectAllVisible() {
+  const ids = groupedTransactions.value.flatMap(g => g.txs.map(t => t.id))
+  selection.selectAll(ids)
 }
 
-function clearSelection(): void {
-  selectedTransactionIds.value = new Set()
-}
-
-function selectAllVisible(): void {
-  const ids = groupedTransactions.value.flatMap(g => g.txs.map(t => t.id).filter((id): id is number => id !== null))
-  selectedTransactionIds.value = new Set(ids)
-}
-
-function openBulkActivityModal(): void {
-  bulkChosenActivityId.value = selectedActivityId.value
-  isBulkActivityModalOpen.value = true
-}
-
-async function handleBulkActivityApply(): Promise<void> {
-  const ids = Array.from(selectedTransactionIds.value)
+async function handleBulkActivityApply(activityId: number | null): Promise<void> {
+  const ids = selection.getSelectedArray()
   if (!ids.length) return
   try {
     const res = await store.apiFetch('/transactions/bulk', {
       method: 'PATCH',
-      body: JSON.stringify({ transaction_ids: ids, activity_id: bulkChosenActivityId.value })
+      body: JSON.stringify({ transaction_ids: ids, activity_id: activityId })
     })
     if (res.ok) {
-      clearSelection()
+      selection.clear()
       isBulkActivityModalOpen.value = false
       await store.fetchData(selectedActivityId.value)
     } else {
@@ -251,40 +236,16 @@ async function handleBulkActivityApply(): Promise<void> {
   } catch { alert('Bulk update mislukt') }
 }
 
-function openBulkSplitsModal(): void {
-  bulkSplits.value = (store.groupMembers || []).map(u => ({ user_id: u.id, weight: 1 }))
-  isBulkSplitsModalOpen.value = true
-}
-
-function toggleUserInBulkSplits(userId: number): void {
-  const idx = bulkSplits.value.findIndex(s => s.user_id === userId)
-  if (idx !== -1) bulkSplits.value.splice(idx, 1)
-  else bulkSplits.value.push({ user_id: userId, weight: 1 })
-  bulkSplits.value = [...bulkSplits.value]
-}
-
-function incrementBulkWeight(userId: number): void {
-  const s = bulkSplits.value.find(s => s.user_id === userId)
-  if (s) s.weight++
-  bulkSplits.value = [...bulkSplits.value]
-}
-
-function decrementBulkWeight(userId: number): void {
-  const s = bulkSplits.value.find(s => s.user_id === userId)
-  if (s && s.weight > 1) s.weight--
-  bulkSplits.value = [...bulkSplits.value]
-}
-
-async function handleBulkSplitsApply(): Promise<void> {
-  const ids = Array.from(selectedTransactionIds.value)
-  if (!ids.length || !bulkSplits.value.length) return
+async function handleBulkSplitsApply(splits: TransactionSplit[]): Promise<void> {
+  const ids = selection.getSelectedArray()
+  if (!ids.length || !splits.length) return
   try {
     const res = await store.apiFetch('/transactions/bulk', {
       method: 'PATCH',
-      body: JSON.stringify({ transaction_ids: ids, splits: bulkSplits.value })
+      body: JSON.stringify({ transaction_ids: ids, splits })
     })
     if (res.ok) {
-      clearSelection()
+      selection.clear()
       isBulkSplitsModalOpen.value = false
       await store.fetchData(selectedActivityId.value)
     } else {
@@ -324,8 +285,7 @@ async function handleSettlementDelete(sessionId: number): Promise<void> {
   try {
     const res = await store.apiFetch(`/settlements/${sessionId}`, { method: 'DELETE' })
     if (res.ok) {
-      toastMessage.value = 'Afrekening ongedaan gemaakt'
-      setTimeout(() => { toastMessage.value = '' }, 2500)
+      toast.show('Afrekening ongedaan gemaakt')
       await store.fetchData(selectedActivityId.value)
     } else {
       const data = await res.json().catch(() => ({})) as { error?: string }
@@ -335,17 +295,16 @@ async function handleSettlementDelete(sessionId: number): Promise<void> {
 }
 
 const handleBulkDelete = async (): Promise<void> => {
-  if (!confirm(`${selectedTransactionIds.value.size} transactie(s) verplaatsen naar prullenbak?`)) return
+  if (!confirm(`${selection.count.value} transactie(s) verplaatsen naar prullenbak?`)) return
   try {
     let deleted = 0
-    for (const id of selectedTransactionIds.value) {
+    for (const id of selection.getSelectedArray()) {
       const res = await store.apiFetch(`/transactions/${id}`, { method: 'DELETE' })
       if (res.ok) deleted++
     }
     await store.fetchData(selectedActivityId.value)
-    clearSelection()
-    toastMessage.value = `${deleted} transactie(s) naar prullenbak`
-    setTimeout(() => { toastMessage.value = '' }, 2500)
+    selection.clear()
+    toast.show(`${deleted} transactie(s) naar prullenbak`)
   } catch { alert('Verwijderen mislukt') }
 }
 
@@ -430,16 +389,11 @@ const handleActivitySave = async (data: ActivityFormData): Promise<void> => {
   } catch { alert('Activiteit opslaan mislukt') }
 }
 
-const getActivityName = (id: number | null): ActivityDisplay | null => {
-  if (!id) return null
-  const a = store.activities.find(a => a.id === id)
-  return a ? { name: a.name, icon: a.icon, color: a.color } : null
-}
+const getActivityName = (id: number | null) => store.getActivityInfo(id)
 
 const selectedActivityLabel = (): string | null => {
-  if (!selectedActivityId.value) return null
-  const a = store.activities.find(a => a.id === selectedActivityId.value)
-  return a ? a.name : null
+  const info = store.getActivityInfo(selectedActivityId.value)
+  return info ? info.name : null
 }
 
 const handleSettle = async (): Promise<void> => {
@@ -458,10 +412,6 @@ const handleSettle = async (): Promise<void> => {
   } finally {
     settleLoading.value = false
   }
-}
-
-const updateBulkActivityId = (v: number | string | null): void => {
-  bulkChosenActivityId.value = (v === 'null' || v === '' || v == null) ? null : Number(v)
 }
 
 watch(selectedActivityId, () => {
@@ -558,15 +508,15 @@ onMounted(() => store.fetchData())
                  </div>
               </div>
               <template v-if="!showTrash">
-                 <div v-if="selectedTransactionIds.size > 0" class="flex flex-wrap items-center gap-4 p-4 bg-zinc-900/80 border border-zinc-800 rounded">
-                    <span class="font-black uppercase italic text-brand-red">{{ selectedTransactionIds.size }} geselecteerd</span>
+                 <div v-if="selection.hasSelection.value" class="flex flex-wrap items-center gap-4 p-4 bg-zinc-900/80 border border-zinc-800 rounded">
+                    <span class="font-black uppercase italic text-brand-red">{{ selection.count.value }} geselecteerd</span>
                     <span class="text-zinc-600 text-[10px] font-medium uppercase tracking-wider flex items-center gap-1">
                       <button type="button" class="hover:text-brand-red transition-colors" @click="selectAllVisible">Alles aanvinken</button>
                       <span class="opacity-50">·</span>
-                      <button type="button" class="hover:text-brand-red transition-colors" @click="clearSelection">Selectie leegmaken</button>
+                      <button type="button" class="hover:text-brand-red transition-colors" @click="selection.clear">Selectie leegmaken</button>
                     </span>
-                    <button type="button" class="px-4 py-2 text-[10px] font-black uppercase bg-industrial-gray border border-zinc-700 text-white hover:border-brand-red transition-all" @click="openBulkActivityModal">Koppel aan activiteit</button>
-                    <button type="button" class="px-4 py-2 text-[10px] font-black uppercase bg-industrial-gray border border-zinc-700 text-white hover:border-brand-red transition-all" @click="openBulkSplitsModal">Zelfde personen toepassen</button>
+                    <button type="button" class="btn-action" @click="isBulkActivityModalOpen = true">Koppel aan activiteit</button>
+                    <button type="button" class="btn-action" @click="isBulkSplitsModalOpen = true">Zelfde personen toepassen</button>
                     <button type="button" class="px-4 py-2 text-[10px] font-black uppercase bg-brand-red/80 text-white hover:bg-brand-red transition-all" @click="handleBulkDelete">Verwijderen</button>
                  </div>
                  <div v-for="group in groupedTransactions" :key="group.label" class="space-y-4">
@@ -574,12 +524,12 @@ onMounted(() => store.fetchData())
                     <div class="space-y-2">
                        <TransactionCard v-for="t in group.txs" :key="t.id ?? `new-${Math.random()}`" 
                                        :transaction="t" 
-                                       :payer-name="getPayerName(t.payer_id)"
+                                       :payer-name="store.getUserName(t.payer_id)"
                                        :activity="getActivityName(t.activity_id)"
                                        :selectable="true"
-                                       :selected="selectedTransactionIds.has(t.id!)"
+                                       :selected="selection.isSelected(t.id)"
                                        @click="openTransaction(t)"
-                                       @toggle-select="toggleSelect" />
+                                       @toggle-select="selection.toggle" />
                     </div>
                  </div>
               </template>
@@ -592,7 +542,7 @@ onMounted(() => store.fetchData())
                           <div>
                              <span class="font-black uppercase italic text-white">{{ t.description }}</span>
                              <span class="text-zinc-500 text-sm ml-2">€ {{ (t.amount || 0).toFixed(2) }}</span>
-                             <span class="text-zinc-500 text-[10px] block mt-1">{{ getPayerName(t.payer_id) }} · {{ t.deleted_at ? new Date(t.deleted_at).toLocaleDateString('nl-NL') : '' }}</span>
+                             <span class="text-zinc-500 text-[10px] block mt-1">{{ store.getUserName(t.payer_id) }} · {{ t.deleted_at ? new Date(t.deleted_at).toLocaleDateString('nl-NL') : '' }}</span>
                           </div>
                           <div class="flex gap-2 shrink-0">
                              <button type="button" class="px-4 py-2 text-[10px] font-black uppercase bg-zinc-700 text-white hover:bg-zinc-600 transition-all" @click="handleRestore(t.id!)">Herstel</button>
@@ -602,8 +552,8 @@ onMounted(() => store.fetchData())
                     </div>
                  </div>
               </template>
-              <div v-if="toastMessage" class="fixed bottom-8 left-1/2 -translate-x-1/2 bg-brand-red text-white px-6 py-3 font-black uppercase italic text-sm shadow-xl z-50 animate-in fade-in duration-300">
-                 {{ toastMessage }}
+              <div v-if="toast.isVisible.value" class="fixed bottom-8 left-1/2 -translate-x-1/2 bg-brand-red text-white px-6 py-3 font-black uppercase italic text-sm shadow-xl z-50 animate-in fade-in duration-300">
+                 {{ toast.message.value }}
               </div>
            </div>
 
@@ -618,8 +568,8 @@ onMounted(() => store.fetchData())
                           <img :src="u.avatar_url || ''" class="w-12 h-12 border border-zinc-800 grayscale object-cover" @error="(e) => (e.target as HTMLImageElement).style.display = 'none'">
                           <span class="text-lg font-black uppercase italic tracking-tight">{{ u.name }}</span>
                         </div>
-                        <div class="text-2xl font-black italic tracking-tighter" :class="getBalanceForUser(u.id) >= 0 ? 'text-zinc-400' : 'text-brand-red'">
-                           {{ getBalanceForUser(u.id) >= 0 ? '+' : '' }}{{ getBalanceForUser(u.id).toFixed(2) }}
+                        <div class="text-2xl font-black italic tracking-tighter" :class="store.getBalanceForUser(u.id) >= 0 ? 'text-zinc-400' : 'text-brand-red'">
+                           {{ store.getBalanceForUser(u.id) >= 0 ? '+' : '' }}{{ store.getBalanceForUser(u.id).toFixed(2) }}
                         </div>
                       </div>
                     </div>
@@ -664,50 +614,20 @@ onMounted(() => store.fetchData())
                      @close="isActivityModalOpen = false; selectedActivity = null"
                      @save="handleActivitySave" />
 
-      <Transition name="fade">
-        <div v-if="isBulkActivityModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div class="absolute inset-0 bg-black/95 backdrop-blur-md" @click="isBulkActivityModalOpen = false"></div>
-          <div class="bg-industrial-gray w-full max-w-md border border-zinc-800 shadow-2xl relative p-8 text-white">
-            <h3 class="text-lg font-black uppercase italic mb-4">Koppel aan activiteit</h3>
-            <ActivitySelector v-if="store.activities?.length"
-                              :activities="store.activities"
-                              :selected-id="bulkChosenActivityId"
-                              @update:selected-id="updateBulkActivityId" />
-            <div class="mt-6 flex gap-4">
-              <button type="button" class="px-6 py-3 border border-zinc-700 text-zinc-400 font-black uppercase text-sm" @click="isBulkActivityModalOpen = false">Annuleren</button>
-              <button type="button" class="flex-1 bg-brand-red text-white py-3 font-black uppercase text-sm" @click="handleBulkActivityApply">Toepassen</button>
-            </div>
-          </div>
-        </div>
-      </Transition>
+      <BulkActivityModal 
+        :is-open="isBulkActivityModalOpen"
+        :activities="store.activities"
+        :initial-activity-id="selectedActivityId"
+        @close="isBulkActivityModalOpen = false"
+        @apply="handleBulkActivityApply"
+      />
 
-      <Transition name="fade">
-        <div v-if="isBulkSplitsModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div class="absolute inset-0 bg-black/95 backdrop-blur-md" @click="isBulkSplitsModalOpen = false"></div>
-          <div class="bg-industrial-gray w-full max-w-md border border-zinc-800 shadow-2xl relative p-8 text-white max-h-[90vh] overflow-y-auto">
-            <h3 class="text-lg font-black uppercase italic mb-4">Zelfde personen toepassen</h3>
-            <div class="space-y-2">
-              <div v-for="u in store.groupMembers" :key="u.id"
-                   class="flex items-center justify-between p-4 border border-zinc-800 transition-all"
-                   :class="bulkSplits.some(s => s.user_id === u.id) ? 'bg-zinc-900 border-brand-red/50' : 'opacity-50'">
-                <div class="flex items-center gap-4 cursor-pointer" @click="toggleUserInBulkSplits(u.id)">
-                  <div class="w-1.5 h-4" :class="bulkSplits.some(s => s.user_id === u.id) ? 'bg-brand-red' : 'bg-zinc-700'"></div>
-                  <span class="font-black uppercase text-[11px] italic">{{ u.name }}</span>
-                </div>
-                <div v-if="bulkSplits.some(s => s.user_id === u.id)" class="flex items-center gap-2">
-                  <button type="button" class="w-6 h-6 hover:text-brand-red font-black text-xs" @click="decrementBulkWeight(u.id)">−</button>
-                  <span class="font-black text-brand-red text-sm w-6 text-center">{{ bulkSplits.find(s => s.user_id === u.id)?.weight ?? 1 }}</span>
-                  <button type="button" class="w-6 h-6 hover:text-brand-red font-black text-xs" @click="incrementBulkWeight(u.id)">+</button>
-                </div>
-              </div>
-            </div>
-            <div class="mt-6 flex gap-4">
-              <button type="button" class="px-6 py-3 border border-zinc-700 text-zinc-400 font-black uppercase text-sm" @click="isBulkSplitsModalOpen = false">Annuleren</button>
-              <button type="button" class="flex-1 bg-brand-red text-white py-3 font-black uppercase text-sm" @click="handleBulkSplitsApply">Toepassen</button>
-            </div>
-          </div>
-        </div>
-      </Transition>
+      <BulkSplitsModal 
+        :is-open="isBulkSplitsModalOpen"
+        :group-members="store.groupMembers"
+        @close="isBulkSplitsModalOpen = false"
+        @apply="handleBulkSplitsApply"
+      />
     </template>
   </div>
 </template>

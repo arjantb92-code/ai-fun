@@ -26,3 +26,95 @@ body {
   scrollbar-width: thin;
   scrollbar-color: #E30613 #1A1A1A;
 }
+
+/* ============================================
+   REUSABLE COMPONENT CLASSES (DRY)
+   Use these to maintain consistent styling
+   ============================================ */
+
+@layer components {
+  /* Input field - industrial style */
+  .input-industrial {
+    @apply w-full bg-zinc-900 border border-zinc-800 p-4 font-black uppercase 
+           outline-none italic text-sm text-white focus:border-brand-red transition-all;
+  }
+
+  /* Label - industrial style */
+  .label-industrial {
+    @apply block text-xs font-black uppercase tracking-widest text-zinc-500 mb-2;
+  }
+
+  /* Primary button - brand red */
+  .btn-primary {
+    @apply bg-brand-red text-white py-4 font-black uppercase italic 
+           hover:bg-red-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  /* Secondary/cancel button */
+  .btn-secondary {
+    @apply border border-zinc-700 text-zinc-400 py-4 font-black uppercase italic
+           hover:text-white hover:border-zinc-500 transition-all;
+  }
+
+  /* Danger/delete button */
+  .btn-danger {
+    @apply border-2 border-zinc-800 text-zinc-600 font-black uppercase italic
+           hover:text-red-500 hover:border-red-500 transition-all;
+  }
+
+  /* Small action button */
+  .btn-action {
+    @apply px-4 py-2 text-[10px] font-black uppercase bg-industrial-gray 
+           border border-zinc-700 text-white hover:border-brand-red transition-all;
+  }
+
+  /* Card container - industrial style */
+  .card-industrial {
+    @apply bg-industrial-gray border border-zinc-800 p-8 shadow-xl;
+  }
+
+  /* Section header */
+  .section-header {
+    @apply text-xs uppercase font-black tracking-[0.2em] border-b border-zinc-800 pb-2 text-brand-red;
+  }
+
+  /* Nav tab button */
+  .nav-tab {
+    @apply w-full text-left px-6 py-4 font-black uppercase italic tracking-widest text-sm 
+           transition-all border-r-4 text-white;
+  }
+
+  .nav-tab-active {
+    @apply bg-industrial-gray border-brand-red;
+  }
+
+  .nav-tab-inactive {
+    @apply border-transparent text-zinc-600 hover:text-zinc-400;
+  }
+
+  /* Split user row */
+  .split-row {
+    @apply flex items-center justify-between p-4 border border-zinc-800 transition-all;
+  }
+
+  .split-row-active {
+    @apply bg-zinc-900 border-brand-red/50 shadow-inner;
+  }
+
+  .split-row-inactive {
+    @apply opacity-20;
+  }
+
+  /* Weight indicator bar */
+  .weight-indicator {
+    @apply w-1.5 h-4;
+  }
+
+  .weight-indicator-active {
+    @apply bg-brand-red shadow-glow;
+  }
+
+  .weight-indicator-inactive {
+    @apply bg-zinc-700;
+  }
+}

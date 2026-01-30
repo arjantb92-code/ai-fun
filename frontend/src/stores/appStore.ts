@@ -116,6 +116,18 @@ export const useAppStore = defineStore('app', () => {
     localStorage.removeItem('wbw_user')
   }
 
+  const getUserName = (id: number): string =>
+    users.value.find(u => u.id === id)?.name ?? 'Onbekend'
+
+  const getBalanceForUser = (userId: number): number =>
+    balances.value.find(b => b.user_id === userId)?.balance ?? 0
+
+  const getActivityInfo = (id: number | null): { name: string; icon: string; color: string } | null => {
+    if (!id) return null
+    const a = activities.value.find(a => a.id === id)
+    return a ? { name: a.name, icon: a.icon ?? '📋', color: a.color ?? '#E30613' } : null
+  }
+
   return {
     // State
     users, 
@@ -138,6 +150,9 @@ export const useAppStore = defineStore('app', () => {
     fetchData, 
     fetchTrash, 
     login, 
-    logout
+    logout,
+    getUserName,
+    getBalanceForUser,
+    getActivityInfo
   }
 })

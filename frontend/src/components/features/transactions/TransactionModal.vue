@@ -1,24 +1,12 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import ActivitySelector from '@/components/features/activities/ActivitySelector.vue'
+import { getCategoryList, getCategoryIcon } from '@/config/categories'
 import type { Transaction, User, Activity, TransactionType } from '@/types'
 
 type CategoryKey = 'boodschappen' | 'huishoudelijk' | 'winkelen' | 'vervoer' | 'reizen_vrije_tijd' | 'overig'
 
-interface Category {
-  key: CategoryKey
-  label: string
-  icon: string
-}
-
-const CATEGORIES: Category[] = [
-  { key: 'boodschappen', label: 'Boodschappen', icon: '🛒' },
-  { key: 'huishoudelijk', label: 'Huishoudelijk', icon: '🏠' },
-  { key: 'winkelen', label: 'Winkelen', icon: '🛍️' },
-  { key: 'vervoer', label: 'Vervoer', icon: '🚗' },
-  { key: 'reizen_vrije_tijd', label: 'Reizen & Vrije Tijd', icon: '✈️' },
-  { key: 'overig', label: 'Overig', icon: '📦' }
-]
+const CATEGORIES = getCategoryList()
 
 interface Props {
   isOpen: boolean

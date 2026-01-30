@@ -471,3 +471,619 @@
 5:19:12 PM [vite] (client) hmr update /src/components/features/transactions/TransactionModal.vue, /src/assets/main.css
 5:19:13 PM [vite] (client) hmr update /src/components/features/transactions/TransactionModal.vue, /src/assets/main.css
 5:19:18 PM [vite] (client) hmr update /src/components/features/transactions/TransactionModal.vue, /src/assets/main.css
+10:31:25 AM [vite] (client) hmr update /src/assets/main.css
+10:31:25 AM [vite] (client) hmr update /src/App.vue, /src/components/layout/AppHeader.vue, /src/assets/main.css
+10:31:27 AM [vite] (client) hmr update /src/App.vue, /src/assets/main.css
+10:31:27 AM [vite] (client) hmr update /src/components/features/transactions/TransactionCard.vue, /src/assets/main.css
+10:31:27 AM [vite] (client) hmr update /src/components/features/transactions/TransactionModal.vue, /src/assets/main.css
+10:31:28 AM [vite] Internal server error: [postcss] /Users/arjantebrake/projects/own_projects/Ai/frontend/src/assets/main.css:114:5: The `shadow-glow` class does not exist. If `shadow-glow` is a custom class, make sure it is defined within a `@layer` directive.
+  Plugin: vite:css
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/assets/main.css:114:4
+  112 |  
+  113 |    .weight-indicator-active {
+  114 |      @apply bg-brand-red shadow-glow;
+      |      ^
+  115 |    }
+  116 |  
+      at Input.error (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/postcss/lib/input.js:135:16)
+      at AtRule.error (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/postcss/lib/node.js:146:32)
+      at processApply (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/lib/expandApplyAtRules.js:380:29)
+      at /Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/lib/expandApplyAtRules.js:551:9
+      at /Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/processTailwindFeatures.js:55:50
+      at async plugins (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/plugin.js:38:17)
+      at async LazyResult.runAsync (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/postcss/lib/lazy-result.js:293:11)
+      at async runPostCSS (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:30145:19)
+      at async compilePostCSS (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:30129:6)
+      at async compileCSS (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:30059:26)
+10:31:29 AM [vite] Internal server error: [postcss] /Users/arjantebrake/projects/own_projects/Ai/frontend/src/assets/main.css:114:5: The `shadow-glow` class does not exist. If `shadow-glow` is a custom class, make sure it is defined within a `@layer` directive.
+  Plugin: vite:css
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/assets/main.css:114:4
+  112 |  
+  113 |    .weight-indicator-active {
+  114 |      @apply bg-brand-red shadow-glow;
+      |      ^
+  115 |    }
+  116 |  
+      at Input.error (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/postcss/lib/input.js:135:16)
+      at AtRule.error (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/postcss/lib/node.js:146:32)
+      at processApply (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/lib/expandApplyAtRules.js:380:29)
+      at /Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/lib/expandApplyAtRules.js:551:9
+      at /Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/processTailwindFeatures.js:55:50
+      at async plugins (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/plugin.js:38:17)
+      at async LazyResult.runAsync (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/postcss/lib/lazy-result.js:293:11)
+      at async runPostCSS (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:30145:19)
+      at async compilePostCSS (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:30129:6)
+      at async compileCSS (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:30059:26)
+10:31:29 AM [vite] Internal server error: [postcss] /Users/arjantebrake/projects/own_projects/Ai/frontend/src/assets/main.css:114:5: The `shadow-glow` class does not exist. If `shadow-glow` is a custom class, make sure it is defined within a `@layer` directive.
+  Plugin: vite:css
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/assets/main.css:114:4
+  112 |  
+  113 |    .weight-indicator-active {
+  114 |      @apply bg-brand-red shadow-glow;
+      |      ^
+  115 |    }
+  116 |  
+      at Input.error (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/postcss/lib/input.js:135:16)
+      at AtRule.error (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/postcss/lib/node.js:146:32)
+      at processApply (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/lib/expandApplyAtRules.js:380:29)
+      at /Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/lib/expandApplyAtRules.js:551:9
+      at /Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/processTailwindFeatures.js:55:50
+      at async plugins (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/plugin.js:38:17)
+      at async LazyResult.runAsync (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/postcss/lib/lazy-result.js:293:11)
+      at async runPostCSS (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:30145:19)
+      at async compilePostCSS (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:30129:6)
+      at async compileCSS (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:30059:26)
+10:31:29 AM [vite] Internal server error: [postcss] /Users/arjantebrake/projects/own_projects/Ai/frontend/src/assets/main.css:114:5: The `shadow-glow` class does not exist. If `shadow-glow` is a custom class, make sure it is defined within a `@layer` directive.
+  Plugin: vite:css
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/assets/main.css:114:4
+  112 |  
+  113 |    .weight-indicator-active {
+  114 |      @apply bg-brand-red shadow-glow;
+      |      ^
+  115 |    }
+  116 |  
+      at Input.error (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/postcss/lib/input.js:135:16)
+      at AtRule.error (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/postcss/lib/node.js:146:32)
+      at processApply (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/lib/expandApplyAtRules.js:380:29)
+      at /Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/lib/expandApplyAtRules.js:551:9
+      at /Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/processTailwindFeatures.js:55:50
+      at async plugins (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/plugin.js:38:17)
+      at async LazyResult.runAsync (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/postcss/lib/lazy-result.js:293:11)
+      at async runPostCSS (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:30145:19)
+      at async compilePostCSS (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:30129:6)
+      at async compileCSS (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:30059:26)
+10:31:29 AM [vite] Internal server error: [postcss] /Users/arjantebrake/projects/own_projects/Ai/frontend/src/assets/main.css:114:5: The `shadow-glow` class does not exist. If `shadow-glow` is a custom class, make sure it is defined within a `@layer` directive.
+  Plugin: vite:css
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/assets/main.css:114:4
+  112 |  
+  113 |    .weight-indicator-active {
+  114 |      @apply bg-brand-red shadow-glow;
+      |      ^
+  115 |    }
+  116 |  
+      at Input.error (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/postcss/lib/input.js:135:16)
+      at AtRule.error (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/postcss/lib/node.js:146:32)
+      at processApply (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/lib/expandApplyAtRules.js:380:29)
+      at /Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/lib/expandApplyAtRules.js:551:9
+      at /Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/processTailwindFeatures.js:55:50
+      at async plugins (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/plugin.js:38:17)
+      at async LazyResult.runAsync (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/postcss/lib/lazy-result.js:293:11)
+      at async runPostCSS (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:30145:19)
+      at async compilePostCSS (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:30129:6)
+      at async compileCSS (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:30059:26)
+11:17:13 AM [vite] (client) Pre-transform error: [postcss] /Users/arjantebrake/projects/own_projects/Ai/frontend/src/assets/main.css:114:5: The `shadow-glow` class does not exist. If `shadow-glow` is a custom class, make sure it is defined within a `@layer` directive.
+  Plugin: vite:css
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/assets/main.css:114:4
+  112 |  
+  113 |    .weight-indicator-active {
+  114 |      @apply bg-brand-red shadow-glow;
+      |      ^
+  115 |    }
+  116 |  
+11:17:13 AM [vite] Internal server error: [postcss] /Users/arjantebrake/projects/own_projects/Ai/frontend/src/assets/main.css:114:5: The `shadow-glow` class does not exist. If `shadow-glow` is a custom class, make sure it is defined within a `@layer` directive.
+  Plugin: vite:css
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/assets/main.css:114:4
+  112 |  
+  113 |    .weight-indicator-active {
+  114 |      @apply bg-brand-red shadow-glow;
+      |      ^
+  115 |    }
+  116 |  
+      at Input.error (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/postcss/lib/input.js:135:16)
+      at AtRule.error (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/postcss/lib/node.js:146:32)
+      at processApply (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/lib/expandApplyAtRules.js:380:29)
+      at /Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/lib/expandApplyAtRules.js:551:9
+      at /Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/processTailwindFeatures.js:55:50
+      at async plugins (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/plugin.js:38:17)
+      at async LazyResult.runAsync (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/postcss/lib/lazy-result.js:293:11)
+      at async runPostCSS (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:30145:19)
+      at async compilePostCSS (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:30129:6)
+      at async compileCSS (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:30059:26)
+11:54:05 AM [vite] (client) hmr update /src/assets/main.css
+11:54:05 AM [vite] changed tsconfig file detected: /Users/arjantebrake/projects/own_projects/Ai/frontend/tsconfig.json - Clearing cache and forcing full-reload to ensure TypeScript is compiled with updated config values.
+11:54:06 AM [vite] (client) hmr update /src/components/features/activities/ActivitySelector.vue, /src/assets/main.css
+11:54:07 AM [vite] (client) hmr update /src/components/features/activities/ActivityModal.vue, /src/assets/main.css
+11:54:08 AM [vite] (client) hmr update /src/components/features/auth/LoginView.vue, /src/assets/main.css
+11:54:08 AM [vite] (client) hmr update /src/components/features/auth/ProfileModal.vue, /src/assets/main.css
+11:54:08 AM [vite] (client) hmr update /src/components/features/balance/SettlementPlan.vue, /src/assets/main.css
+11:54:08 AM [vite] (client) hmr update /src/components/layout/AppHeader.vue, /src/assets/main.css
+11:54:09 AM [vite] (client) hmr update /src/components/features/transactions/BankImportModal.vue, /src/assets/main.css
+11:54:09 AM [vite] (client) hmr update /src/components/features/activities/ActivityList.vue, /src/assets/main.css
+11:54:09 AM [vite] (client) hmr update /src/components/features/balance/SettlementHistory.vue, /src/assets/main.css
+11:54:09 AM [vite] (client) hmr update /src/components/features/balance/BalanceCard.vue, /src/assets/main.css
+11:54:09 AM [vite] (client) Pre-transform error: Attribute name cannot contain U+0022 ("), U+0027 ('), and U+003C (<).
+  Plugin: vite-plugin-vue-inspector
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/App.vue
+11:54:09 AM [vite] (client) Pre-transform error: Attribute name cannot contain U+0022 ("), U+0027 ('), and U+003C (<).
+  Plugin: vite-plugin-vue-inspector
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/App.vue
+11:54:10 AM [vite] (client) Pre-transform error: [postcss] /Users/arjantebrake/projects/own_projects/Ai/frontend/src/assets/main.css:114:5: The `shadow-glow` class does not exist. If `shadow-glow` is a custom class, make sure it is defined within a `@layer` directive.
+  Plugin: vite:css
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/assets/main.css:114:4
+  112 |  
+  113 |    .weight-indicator-active {
+  114 |      @apply bg-brand-red shadow-glow;
+      |      ^
+  115 |    }
+  116 |  
+11:54:10 AM [vite] Internal server error: [postcss] /Users/arjantebrake/projects/own_projects/Ai/frontend/src/assets/main.css:114:5: The `shadow-glow` class does not exist. If `shadow-glow` is a custom class, make sure it is defined within a `@layer` directive.
+  Plugin: vite:css
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/assets/main.css:114:4
+  112 |  
+  113 |    .weight-indicator-active {
+  114 |      @apply bg-brand-red shadow-glow;
+      |      ^
+  115 |    }
+  116 |  
+      at Input.error (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/postcss/lib/input.js:135:16)
+      at AtRule.error (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/postcss/lib/node.js:146:32)
+      at processApply (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/lib/expandApplyAtRules.js:380:29)
+      at /Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/lib/expandApplyAtRules.js:551:9
+      at /Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/processTailwindFeatures.js:55:50
+      at async plugins (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/plugin.js:38:17)
+      at async LazyResult.runAsync (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/postcss/lib/lazy-result.js:293:11)
+      at async runPostCSS (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:30145:19)
+      at async compilePostCSS (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:30129:6)
+      at async compileCSS (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:30059:26)
+11:54:10 AM [vite] Internal server error: Attribute name cannot contain U+0022 ("), U+0027 ('), and U+003C (<).
+  Plugin: vite-plugin-vue-inspector
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/App.vue
+      at createCompilerError (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:1378:17)
+      at Object.emitError [as onerr] (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:3014:5)
+      at Tokenizer.stateInAttrName (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:868:16)
+      at Tokenizer.parse (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:1117:16)
+      at Object.baseParse (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:3053:13)
+      at parse (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-dom/dist/compiler-dom.cjs.js:910:23)
+      at result (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite-plugin-vue-inspector/dist/index.mjs:29:21)
+      at new Promise (<anonymous>)
+      at compileSFCTemplate (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite-plugin-vue-inspector/dist/index.mjs:26:24)
+      at TransformPluginContext.transform (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite-plugin-vue-inspector/dist/index.mjs:203:18)
+11:56:17 AM [vite] (client) hmr update /src/App.vue, /src/assets/main.css
+11:56:17 AM [vite] (client) Pre-transform error: Attribute name cannot contain U+0022 ("), U+0027 ('), and U+003C (<).
+  Plugin: vite-plugin-vue-inspector
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/App.vue
+11:56:17 AM [vite] (client) Pre-transform error: Attribute name cannot contain U+0022 ("), U+0027 ('), and U+003C (<).
+  Plugin: vite-plugin-vue-inspector
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/App.vue
+11:56:17 AM [vite] (client) Pre-transform error: [postcss] /Users/arjantebrake/projects/own_projects/Ai/frontend/src/assets/main.css:114:5: The `shadow-glow` class does not exist. If `shadow-glow` is a custom class, make sure it is defined within a `@layer` directive.
+  Plugin: vite:css
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/assets/main.css:114:4
+  112 |  
+  113 |    .weight-indicator-active {
+  114 |      @apply bg-brand-red shadow-glow;
+      |      ^
+  115 |    }
+  116 |  
+11:56:17 AM [vite] Internal server error: [postcss] /Users/arjantebrake/projects/own_projects/Ai/frontend/src/assets/main.css:114:5: The `shadow-glow` class does not exist. If `shadow-glow` is a custom class, make sure it is defined within a `@layer` directive.
+  Plugin: vite:css
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/assets/main.css:114:4
+  112 |  
+  113 |    .weight-indicator-active {
+  114 |      @apply bg-brand-red shadow-glow;
+      |      ^
+  115 |    }
+  116 |  
+      at Input.error (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/postcss/lib/input.js:135:16)
+      at AtRule.error (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/postcss/lib/node.js:146:32)
+      at processApply (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/lib/expandApplyAtRules.js:380:29)
+      at /Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/lib/expandApplyAtRules.js:551:9
+      at /Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/processTailwindFeatures.js:55:50
+      at async plugins (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/plugin.js:38:17)
+      at async LazyResult.runAsync (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/postcss/lib/lazy-result.js:293:11)
+      at async runPostCSS (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:30145:19)
+      at async compilePostCSS (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:30129:6)
+      at async compileCSS (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:30059:26)
+11:56:17 AM [vite] Internal server error: Attribute name cannot contain U+0022 ("), U+0027 ('), and U+003C (<).
+  Plugin: vite-plugin-vue-inspector
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/App.vue
+      at createCompilerError (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:1378:17)
+      at Object.emitError [as onerr] (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:3014:5)
+      at Tokenizer.stateInAttrName (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:868:16)
+      at Tokenizer.parse (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:1117:16)
+      at Object.baseParse (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:3053:13)
+      at parse (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-dom/dist/compiler-dom.cjs.js:910:23)
+      at result (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite-plugin-vue-inspector/dist/index.mjs:29:21)
+      at new Promise (<anonymous>)
+      at compileSFCTemplate (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite-plugin-vue-inspector/dist/index.mjs:26:24)
+      at TransformPluginContext.transform (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite-plugin-vue-inspector/dist/index.mjs:203:18)
+11:56:20 AM [vite] (client) hmr update /src/App.vue, /src/assets/main.css
+11:56:21 AM [vite] (client) Pre-transform error: Attribute name cannot contain U+0022 ("), U+0027 ('), and U+003C (<).
+  Plugin: vite-plugin-vue-inspector
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/App.vue
+11:56:21 AM [vite] (client) Pre-transform error: Attribute name cannot contain U+0022 ("), U+0027 ('), and U+003C (<).
+  Plugin: vite-plugin-vue-inspector
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/App.vue
+11:56:21 AM [vite] (client) Pre-transform error: [postcss] /Users/arjantebrake/projects/own_projects/Ai/frontend/src/assets/main.css:114:5: The `shadow-glow` class does not exist. If `shadow-glow` is a custom class, make sure it is defined within a `@layer` directive.
+  Plugin: vite:css
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/assets/main.css:114:4
+  112 |  
+  113 |    .weight-indicator-active {
+  114 |      @apply bg-brand-red shadow-glow;
+      |      ^
+  115 |    }
+  116 |  
+11:56:22 AM [vite] Internal server error: [postcss] /Users/arjantebrake/projects/own_projects/Ai/frontend/src/assets/main.css:114:5: The `shadow-glow` class does not exist. If `shadow-glow` is a custom class, make sure it is defined within a `@layer` directive.
+  Plugin: vite:css
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/assets/main.css:114:4
+  112 |  
+  113 |    .weight-indicator-active {
+  114 |      @apply bg-brand-red shadow-glow;
+      |      ^
+  115 |    }
+  116 |  
+      at Input.error (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/postcss/lib/input.js:135:16)
+      at AtRule.error (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/postcss/lib/node.js:146:32)
+      at processApply (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/lib/expandApplyAtRules.js:380:29)
+      at /Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/lib/expandApplyAtRules.js:551:9
+      at /Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/processTailwindFeatures.js:55:50
+      at async plugins (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/plugin.js:38:17)
+      at async LazyResult.runAsync (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/postcss/lib/lazy-result.js:293:11)
+      at async runPostCSS (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:30145:19)
+      at async compilePostCSS (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:30129:6)
+      at async compileCSS (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:30059:26)
+11:56:22 AM [vite] Internal server error: Attribute name cannot contain U+0022 ("), U+0027 ('), and U+003C (<).
+  Plugin: vite-plugin-vue-inspector
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/App.vue
+      at createCompilerError (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:1378:17)
+      at Object.emitError [as onerr] (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:3014:5)
+      at Tokenizer.stateInAttrName (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:868:16)
+      at Tokenizer.parse (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:1117:16)
+      at Object.baseParse (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:3053:13)
+      at parse (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-dom/dist/compiler-dom.cjs.js:910:23)
+      at result (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite-plugin-vue-inspector/dist/index.mjs:29:21)
+      at new Promise (<anonymous>)
+      at compileSFCTemplate (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite-plugin-vue-inspector/dist/index.mjs:26:24)
+      at TransformPluginContext.transform (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite-plugin-vue-inspector/dist/index.mjs:203:18)
+11:56:26 AM [vite] (client) hmr update /src/App.vue, /src/assets/main.css
+11:56:26 AM [vite] (client) Pre-transform error: Attribute name cannot contain U+0022 ("), U+0027 ('), and U+003C (<).
+  Plugin: vite-plugin-vue-inspector
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/App.vue
+11:56:26 AM [vite] (client) Pre-transform error: Attribute name cannot contain U+0022 ("), U+0027 ('), and U+003C (<).
+  Plugin: vite-plugin-vue-inspector
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/App.vue
+11:56:27 AM [vite] (client) Pre-transform error: [postcss] /Users/arjantebrake/projects/own_projects/Ai/frontend/src/assets/main.css:114:5: The `shadow-glow` class does not exist. If `shadow-glow` is a custom class, make sure it is defined within a `@layer` directive.
+  Plugin: vite:css
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/assets/main.css:114:4
+  112 |  
+  113 |    .weight-indicator-active {
+  114 |      @apply bg-brand-red shadow-glow;
+      |      ^
+  115 |    }
+  116 |  
+11:56:27 AM [vite] Internal server error: [postcss] /Users/arjantebrake/projects/own_projects/Ai/frontend/src/assets/main.css:114:5: The `shadow-glow` class does not exist. If `shadow-glow` is a custom class, make sure it is defined within a `@layer` directive.
+  Plugin: vite:css
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/assets/main.css:114:4
+  112 |  
+  113 |    .weight-indicator-active {
+  114 |      @apply bg-brand-red shadow-glow;
+      |      ^
+  115 |    }
+  116 |  
+      at Input.error (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/postcss/lib/input.js:135:16)
+      at AtRule.error (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/postcss/lib/node.js:146:32)
+      at processApply (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/lib/expandApplyAtRules.js:380:29)
+      at /Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/lib/expandApplyAtRules.js:551:9
+      at /Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/processTailwindFeatures.js:55:50
+      at async plugins (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/plugin.js:38:17)
+      at async LazyResult.runAsync (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/postcss/lib/lazy-result.js:293:11)
+      at async runPostCSS (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:30145:19)
+      at async compilePostCSS (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:30129:6)
+      at async compileCSS (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:30059:26)
+11:56:27 AM [vite] Internal server error: Attribute name cannot contain U+0022 ("), U+0027 ('), and U+003C (<).
+  Plugin: vite-plugin-vue-inspector
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/App.vue
+      at createCompilerError (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:1378:17)
+      at Object.emitError [as onerr] (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:3014:5)
+      at Tokenizer.stateInAttrName (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:868:16)
+      at Tokenizer.parse (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:1117:16)
+      at Object.baseParse (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-core/dist/compiler-core.cjs.js:3053:13)
+      at parse (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@vue/compiler-dom/dist/compiler-dom.cjs.js:910:23)
+      at result (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite-plugin-vue-inspector/dist/index.mjs:29:21)
+      at new Promise (<anonymous>)
+      at compileSFCTemplate (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite-plugin-vue-inspector/dist/index.mjs:26:24)
+      at TransformPluginContext.transform (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite-plugin-vue-inspector/dist/index.mjs:203:18)
+11:56:46 AM [vite] (client) hmr update /src/App.vue, /src/assets/main.css
+11:56:47 AM [vite] (client) Pre-transform error: [postcss] /Users/arjantebrake/projects/own_projects/Ai/frontend/src/assets/main.css:114:5: The `shadow-glow` class does not exist. If `shadow-glow` is a custom class, make sure it is defined within a `@layer` directive.
+  Plugin: vite:css
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/assets/main.css:114:4
+  112 |  
+  113 |    .weight-indicator-active {
+  114 |      @apply bg-brand-red shadow-glow;
+      |      ^
+  115 |    }
+  116 |  
+11:56:47 AM [vite] Internal server error: [postcss] /Users/arjantebrake/projects/own_projects/Ai/frontend/src/assets/main.css:114:5: The `shadow-glow` class does not exist. If `shadow-glow` is a custom class, make sure it is defined within a `@layer` directive.
+  Plugin: vite:css
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/assets/main.css:114:4
+  112 |  
+  113 |    .weight-indicator-active {
+  114 |      @apply bg-brand-red shadow-glow;
+      |      ^
+  115 |    }
+  116 |  
+      at Input.error (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/postcss/lib/input.js:135:16)
+      at AtRule.error (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/postcss/lib/node.js:146:32)
+      at processApply (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/lib/expandApplyAtRules.js:380:29)
+      at /Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/lib/expandApplyAtRules.js:551:9
+      at /Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/processTailwindFeatures.js:55:50
+      at async plugins (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/plugin.js:38:17)
+      at async LazyResult.runAsync (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/postcss/lib/lazy-result.js:293:11)
+      at async runPostCSS (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:30145:19)
+      at async compilePostCSS (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:30129:6)
+      at async compileCSS (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:30059:26)
+11:56:48 AM [vite] (client) Pre-transform error: [vue/compiler-sfc] Unexpected token (3:0)
+
+/Users/arjantebrake/projects/own_projects/Ai/frontend/src/components/features/transactions/TransactionCard.vue
+1  |  <script setup lang="ts">
+2  |  import { computed } from 'vue'
+   |                                 ^
+3  |  <<<<<<< HEAD
+   |  ^
+4  |  import { getCategoryConfig } from '@/config/categories'
+  Plugin: vite:vue
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/components/features/transactions/TransactionCard.vue:3:0
+  1  |  <script setup lang="ts">
+  2  |  import { computed } from 'vue'
+     |         ^
+  3  |  <<<<<<< HEAD
+  4  |  import { getCategoryConfig } from '@/config/categories'
+11:56:48 AM [vite] (client) Pre-transform error: [vue/compiler-sfc] Unexpected token (4:0)
+
+/Users/arjantebrake/projects/own_projects/Ai/frontend/src/components/features/transactions/TransactionModal.vue
+1  |  <script setup lang="ts">
+2  |  import { ref, watch } from 'vue'
+3  |  import ActivitySelector from '@/components/features/activities/ActivitySelector.vue'
+   |                                                                                       ^
+4  |  <<<<<<< HEAD
+   |  ^
+5  |  import { getCategoryList, getCategoryIcon } from '@/config/categories'
+  Plugin: vite:vue
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/components/features/transactions/TransactionModal.vue:4:0
+  1  |  <script setup lang="ts">
+  2  |  import { ref, watch } from 'vue'
+  3  |  import ActivitySelector from '@/components/features/activities/ActivitySelector.vue'
+     |                                                               ^
+  4  |  <<<<<<< HEAD
+  5  |  import { getCategoryList, getCategoryIcon } from '@/config/categories'
+11:57:05 AM [vite] (client) hmr update /src/components/features/transactions/TransactionCard.vue, /src/assets/main.css
+11:57:06 AM [vite] (client) Pre-transform error: [vue/compiler-sfc] Unexpected token (4:0)
+
+/Users/arjantebrake/projects/own_projects/Ai/frontend/src/components/features/transactions/TransactionModal.vue
+1  |  <script setup lang="ts">
+2  |  import { ref, watch } from 'vue'
+3  |  import ActivitySelector from '@/components/features/activities/ActivitySelector.vue'
+   |                                                                                       ^
+4  |  <<<<<<< HEAD
+   |  ^
+5  |  import { getCategoryList, getCategoryIcon } from '@/config/categories'
+  Plugin: vite:vue
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/components/features/transactions/TransactionModal.vue:4:0
+  1  |  <script setup lang="ts">
+  2  |  import { ref, watch } from 'vue'
+  3  |  import ActivitySelector from '@/components/features/activities/ActivitySelector.vue'
+     |                                                               ^
+  4  |  <<<<<<< HEAD
+  5  |  import { getCategoryList, getCategoryIcon } from '@/config/categories'
+11:57:06 AM [vite] (client) Pre-transform error: [postcss] /Users/arjantebrake/projects/own_projects/Ai/frontend/src/assets/main.css:114:5: The `shadow-glow` class does not exist. If `shadow-glow` is a custom class, make sure it is defined within a `@layer` directive.
+  Plugin: vite:css
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/assets/main.css:114:4
+  112 |  
+  113 |    .weight-indicator-active {
+  114 |      @apply bg-brand-red shadow-glow;
+      |      ^
+  115 |    }
+  116 |  
+11:57:06 AM [vite] Internal server error: [postcss] /Users/arjantebrake/projects/own_projects/Ai/frontend/src/assets/main.css:114:5: The `shadow-glow` class does not exist. If `shadow-glow` is a custom class, make sure it is defined within a `@layer` directive.
+  Plugin: vite:css
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/assets/main.css:114:4
+  112 |  
+  113 |    .weight-indicator-active {
+  114 |      @apply bg-brand-red shadow-glow;
+      |      ^
+  115 |    }
+  116 |  
+      at Input.error (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/postcss/lib/input.js:135:16)
+      at AtRule.error (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/postcss/lib/node.js:146:32)
+      at processApply (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/lib/expandApplyAtRules.js:380:29)
+      at /Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/lib/expandApplyAtRules.js:551:9
+      at /Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/processTailwindFeatures.js:55:50
+      at async plugins (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/plugin.js:38:17)
+      at async LazyResult.runAsync (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/postcss/lib/lazy-result.js:293:11)
+      at async runPostCSS (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:30145:19)
+      at async compilePostCSS (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:30129:6)
+      at async compileCSS (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:30059:26)
+11:57:07 AM [vite] Internal server error: [vue/compiler-sfc] Unexpected token (4:0)
+
+/Users/arjantebrake/projects/own_projects/Ai/frontend/src/components/features/transactions/TransactionModal.vue
+1  |  <script setup lang="ts">
+2  |  import { ref, watch } from 'vue'
+3  |  import ActivitySelector from '@/components/features/activities/ActivitySelector.vue'
+   |                                                                                       ^
+4  |  <<<<<<< HEAD
+   |  ^
+5  |  import { getCategoryList, getCategoryIcon } from '@/config/categories'
+  Plugin: vite:vue
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/components/features/transactions/TransactionModal.vue:4:0
+  1  |  <script setup lang="ts">
+  2  |  import { ref, watch } from 'vue'
+  3  |  import ActivitySelector from '@/components/features/activities/ActivitySelector.vue'
+     |                                                               ^
+  4  |  <<<<<<< HEAD
+  5  |  import { getCategoryList, getCategoryIcon } from '@/config/categories'
+      at constructor (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@babel/parser/lib/index.js:365:19)
+      at TypeScriptParserMixin.raise (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@babel/parser/lib/index.js:6599:19)
+      at TypeScriptParserMixin.unexpected (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@babel/parser/lib/index.js:6619:16)
+      at TypeScriptParserMixin.parseExprAtom (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@babel/parser/lib/index.js:11432:22)
+      at TypeScriptParserMixin.parseExprSubscripts (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@babel/parser/lib/index.js:11071:23)
+      at TypeScriptParserMixin.parseUpdate (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@babel/parser/lib/index.js:11056:21)
+      at TypeScriptParserMixin.parseMaybeUnary (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@babel/parser/lib/index.js:11036:23)
+      at TypeScriptParserMixin.parseMaybeUnary (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@babel/parser/lib/index.js:9827:18)
+      at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@babel/parser/lib/index.js:10889:61)
+      at TypeScriptParserMixin.parseExprOps (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/@babel/parser/lib/index.js:10894:23)
+11:57:16 AM [vite] (client) hmr update /src/components/features/transactions/TransactionModal.vue, /src/assets/main.css
+11:57:17 AM [vite] (client) Pre-transform error: [postcss] /Users/arjantebrake/projects/own_projects/Ai/frontend/src/assets/main.css:114:5: The `shadow-glow` class does not exist. If `shadow-glow` is a custom class, make sure it is defined within a `@layer` directive.
+  Plugin: vite:css
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/assets/main.css:114:4
+  112 |  
+  113 |    .weight-indicator-active {
+  114 |      @apply bg-brand-red shadow-glow;
+      |      ^
+  115 |    }
+  116 |  
+11:57:17 AM [vite] Internal server error: [postcss] /Users/arjantebrake/projects/own_projects/Ai/frontend/src/assets/main.css:114:5: The `shadow-glow` class does not exist. If `shadow-glow` is a custom class, make sure it is defined within a `@layer` directive.
+  Plugin: vite:css
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/assets/main.css:114:4
+  112 |  
+  113 |    .weight-indicator-active {
+  114 |      @apply bg-brand-red shadow-glow;
+      |      ^
+  115 |    }
+  116 |  
+      at Input.error (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/postcss/lib/input.js:135:16)
+      at AtRule.error (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/postcss/lib/node.js:146:32)
+      at processApply (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/lib/expandApplyAtRules.js:380:29)
+      at /Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/lib/expandApplyAtRules.js:551:9
+      at /Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/processTailwindFeatures.js:55:50
+      at async plugins (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/plugin.js:38:17)
+      at async LazyResult.runAsync (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/postcss/lib/lazy-result.js:293:11)
+      at async runPostCSS (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:30145:19)
+      at async compilePostCSS (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:30129:6)
+      at async compileCSS (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:30059:26)
+11:57:29 AM [vite] (client) hmr update /src/App.vue, /src/components/layout/AppHeader.vue, /src/assets/main.css
+11:57:29 AM [vite] (client) Pre-transform error: Failed to load url /src/stores/appStore.js (resolved id: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/stores/appStore.js) in /Users/arjantebrake/projects/own_projects/Ai/frontend/src/App.vue. Does the file exist?
+11:57:29 AM [vite] (client) Pre-transform error: Failed to load url /src/stores/appStore.js (resolved id: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/stores/appStore.js) in /Users/arjantebrake/projects/own_projects/Ai/frontend/src/App.vue. Does the file exist?
+11:57:29 AM [vite] (client) Pre-transform error: [postcss] /Users/arjantebrake/projects/own_projects/Ai/frontend/src/assets/main.css:114:5: The `shadow-glow` class does not exist. If `shadow-glow` is a custom class, make sure it is defined within a `@layer` directive.
+  Plugin: vite:css
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/assets/main.css:114:4
+  112 |  
+  113 |    .weight-indicator-active {
+  114 |      @apply bg-brand-red shadow-glow;
+      |      ^
+  115 |    }
+  116 |  
+11:57:29 AM [vite] Internal server error: [postcss] /Users/arjantebrake/projects/own_projects/Ai/frontend/src/assets/main.css:114:5: The `shadow-glow` class does not exist. If `shadow-glow` is a custom class, make sure it is defined within a `@layer` directive.
+  Plugin: vite:css
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/assets/main.css:114:4
+  112 |  
+  113 |    .weight-indicator-active {
+  114 |      @apply bg-brand-red shadow-glow;
+      |      ^
+  115 |    }
+  116 |  
+      at Input.error (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/postcss/lib/input.js:135:16)
+      at AtRule.error (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/postcss/lib/node.js:146:32)
+      at processApply (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/lib/expandApplyAtRules.js:380:29)
+      at /Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/lib/expandApplyAtRules.js:551:9
+      at /Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/processTailwindFeatures.js:55:50
+      at async plugins (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/plugin.js:38:17)
+      at async LazyResult.runAsync (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/postcss/lib/lazy-result.js:293:11)
+      at async runPostCSS (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:30145:19)
+      at async compilePostCSS (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:30129:6)
+      at async compileCSS (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:30059:26)
+11:58:09 AM [vite] (client) hmr update /src/App.vue, /src/assets/main.css
+11:58:10 AM [vite] (client) Pre-transform error: [postcss] /Users/arjantebrake/projects/own_projects/Ai/frontend/src/assets/main.css:114:5: The `shadow-glow` class does not exist. If `shadow-glow` is a custom class, make sure it is defined within a `@layer` directive.
+  Plugin: vite:css
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/assets/main.css:114:4
+  112 |  
+  113 |    .weight-indicator-active {
+  114 |      @apply bg-brand-red shadow-glow;
+      |      ^
+  115 |    }
+  116 |  
+11:58:10 AM [vite] Internal server error: [postcss] /Users/arjantebrake/projects/own_projects/Ai/frontend/src/assets/main.css:114:5: The `shadow-glow` class does not exist. If `shadow-glow` is a custom class, make sure it is defined within a `@layer` directive.
+  Plugin: vite:css
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/assets/main.css:114:4
+  112 |  
+  113 |    .weight-indicator-active {
+  114 |      @apply bg-brand-red shadow-glow;
+      |      ^
+  115 |    }
+  116 |  
+      at Input.error (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/postcss/lib/input.js:135:16)
+      at AtRule.error (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/postcss/lib/node.js:146:32)
+      at processApply (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/lib/expandApplyAtRules.js:380:29)
+      at /Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/lib/expandApplyAtRules.js:551:9
+      at /Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/processTailwindFeatures.js:55:50
+      at async plugins (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/plugin.js:38:17)
+      at async LazyResult.runAsync (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/postcss/lib/lazy-result.js:293:11)
+      at async runPostCSS (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:30145:19)
+      at async compilePostCSS (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:30129:6)
+      at async compileCSS (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:30059:26)
+12:07:24 PM [vite] Internal server error: [postcss] /Users/arjantebrake/projects/own_projects/Ai/frontend/src/assets/main.css:114:5: The `shadow-glow` class does not exist. If `shadow-glow` is a custom class, make sure it is defined within a `@layer` directive.
+  Plugin: vite:css
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/assets/main.css:114:4
+  112 |  
+  113 |    .weight-indicator-active {
+  114 |      @apply bg-brand-red shadow-glow;
+      |      ^
+  115 |    }
+  116 |  
+      at Input.error (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/postcss/lib/input.js:135:16)
+      at AtRule.error (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/postcss/lib/node.js:146:32)
+      at processApply (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/lib/expandApplyAtRules.js:380:29)
+      at /Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/lib/expandApplyAtRules.js:551:9
+      at /Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/processTailwindFeatures.js:55:50
+      at async plugins (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/plugin.js:38:17)
+      at async LazyResult.runAsync (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/postcss/lib/lazy-result.js:293:11)
+      at async runPostCSS (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:30145:19)
+      at async compilePostCSS (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:30129:6)
+      at async compileCSS (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:30059:26)
+1:34:45 PM [vite] Internal server error: [postcss] /Users/arjantebrake/projects/own_projects/Ai/frontend/src/assets/main.css:114:5: The `shadow-glow` class does not exist. If `shadow-glow` is a custom class, make sure it is defined within a `@layer` directive.
+  Plugin: vite:css
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/assets/main.css:114:4
+  112 |  
+  113 |    .weight-indicator-active {
+  114 |      @apply bg-brand-red shadow-glow;
+      |      ^
+  115 |    }
+  116 |  
+      at Input.error (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/postcss/lib/input.js:135:16)
+      at AtRule.error (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/postcss/lib/node.js:146:32)
+      at processApply (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/lib/expandApplyAtRules.js:380:29)
+      at /Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/lib/expandApplyAtRules.js:551:9
+      at /Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/processTailwindFeatures.js:55:50
+      at async plugins (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/plugin.js:38:17)
+      at async LazyResult.runAsync (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/postcss/lib/lazy-result.js:293:11)
+      at async runPostCSS (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:30145:19)
+      at async compilePostCSS (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:30129:6)
+      at async compileCSS (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:30059:26)
+1:34:46 PM [vite] Internal server error: [postcss] /Users/arjantebrake/projects/own_projects/Ai/frontend/src/assets/main.css:114:5: The `shadow-glow` class does not exist. If `shadow-glow` is a custom class, make sure it is defined within a `@layer` directive.
+  Plugin: vite:css
+  File: /Users/arjantebrake/projects/own_projects/Ai/frontend/src/assets/main.css:114:4
+  112 |  
+  113 |    .weight-indicator-active {
+  114 |      @apply bg-brand-red shadow-glow;
+      |      ^
+  115 |    }
+  116 |  
+      at Input.error (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/postcss/lib/input.js:135:16)
+      at AtRule.error (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/postcss/lib/node.js:146:32)
+      at processApply (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/lib/expandApplyAtRules.js:380:29)
+      at /Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/lib/expandApplyAtRules.js:551:9
+      at /Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/processTailwindFeatures.js:55:50
+      at async plugins (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/tailwindcss/lib/plugin.js:38:17)
+      at async LazyResult.runAsync (/Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/postcss/lib/lazy-result.js:293:11)
+      at async runPostCSS (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:30145:19)
+      at async compilePostCSS (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:30129:6)
+      at async compileCSS (file:///Users/arjantebrake/projects/own_projects/Ai/frontend/node_modules/vite/dist/node/chunks/config.js:30059:26)
+1:35:34 PM [vite] (client) hmr update /src/assets/main.css, /node_modules/vite-plugin-vue-inspector/src/Overlay.vue?vue&type=style&index=0&scoped=31d1379f&lang.css, /@id/virtual:vue-devtools-path:overlay/devtools-overlay.css?direct, /src/App.vue?vue&type=style&index=0&lang.css

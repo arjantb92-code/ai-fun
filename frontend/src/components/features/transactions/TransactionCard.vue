@@ -1,23 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { getCategoryConfig } from '@/config/categories'
 import type { Transaction, ActivityDisplay } from '@/types'
-
-type CategoryKey = 'boodschappen' | 'huishoudelijk' | 'winkelen' | 'vervoer' | 'reizen_vrije_tijd' | 'overig'
-
-interface CategoryConfig {
-  label: string
-  icon: string
-  color: string
-}
-
-const CATEGORY_CONFIG: Record<CategoryKey, CategoryConfig> = {
-  boodschappen: { label: 'Boodschappen', icon: '🛒', color: '#22c55e' },
-  huishoudelijk: { label: 'Huishoudelijk', icon: '🏠', color: '#f59e0b' },
-  winkelen: { label: 'Winkelen', icon: '🛍️', color: '#ec4899' },
-  vervoer: { label: 'Vervoer', icon: '🚗', color: '#3b82f6' },
-  reizen_vrije_tijd: { label: 'Reizen & Vrije Tijd', icon: '✈️', color: '#8b5cf6' },
-  overig: { label: 'Overig', icon: '📦', color: '#6b7280' }
-}
 
 interface Props {
   transaction: Transaction
@@ -40,10 +24,7 @@ const emit = defineEmits<{
 }>()
 
 const isIncome = computed(() => props.transaction.type === 'INCOME')
-const categoryConfig = computed(() => {
-  const category = (props.transaction as Transaction & { category?: CategoryKey }).category
-  return CATEGORY_CONFIG[category ?? 'overig'] ?? CATEGORY_CONFIG.overig
-})
+const categoryConfig = computed(() => getCategoryConfig(props.transaction.category))
 </script>
 
 <template>
