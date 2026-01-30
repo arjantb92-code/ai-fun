@@ -27,6 +27,12 @@ body {
   scrollbar-color: #E30613 #1A1A1A;
 }
 
+@layer utilities {
+  .shadow-glow {
+    box-shadow: 0 0 15px rgba(227, 6, 19, 0.4);
+  }
+}
+
 /* ============================================
    REUSABLE COMPONENT CLASSES (DRY)
    Use these to maintain consistent styling
