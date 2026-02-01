@@ -4,7 +4,7 @@
  * Uses useSplits composable to manage split state.
  */
 import { watch } from 'vue'
-import BaseModal from '@/components/shared/BaseModal.vue'
+import BaseModal from '@/components/common/BaseModal.vue'
 import { useSplits } from '@/composables/useSplits'
 
 const props = defineProps({

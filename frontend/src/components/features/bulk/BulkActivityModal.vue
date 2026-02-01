@@ -4,7 +4,7 @@
  * Extracted from App.vue for better code organization.
  */
 import { ref, watch } from 'vue'
-import BaseModal from '@/components/shared/BaseModal.vue'
+import BaseModal from '@/components/common/BaseModal.vue'
 import ActivitySelector from '@/components/features/activities/ActivitySelector.vue'
 
 const props = defineProps({
