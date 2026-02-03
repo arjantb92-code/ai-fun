@@ -1,4 +1,4 @@
-import { ref, watch, onMounted } from 'vue'
+import { ref, watch, onMounted, onUnmounted } from 'vue'
 import { useAppStore } from '@/stores/appStore'
 import { useToast } from '@/composables/useToast'
 import { useSelection } from '@/composables/useSelection'
@@ -50,11 +50,22 @@ export function useMainPage() {
     loginError
   )
 
+  let fetchDebounceId: ReturnType<typeof setTimeout> | null = null
+  const FETCH_DEBOUNCE_MS = 200
+
   watch(selectedActivityId, () => {
-    store.fetchData(selectedActivityId.value)
+    if (fetchDebounceId) clearTimeout(fetchDebounceId)
+    fetchDebounceId = setTimeout(() => {
+      store.fetchData(selectedActivityId.value)
+      fetchDebounceId = null
+    }, FETCH_DEBOUNCE_MS)
   })
 
   onMounted(() => store.fetchData())
+
+  onUnmounted(() => {
+    if (fetchDebounceId) clearTimeout(fetchDebounceId)
+  })
 
   return {
     store,
