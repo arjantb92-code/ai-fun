@@ -11,6 +11,7 @@ import BankImportModal from '@/components/features/transactions/BankImportModal.
 import ActivityModal from '@/components/features/activities/ActivityModal.vue'
 import BulkActivityModal from '@/components/features/bulk/BulkActivityModal.vue'
 import BulkSplitsModal from '@/components/features/bulk/BulkSplitsModal.vue'
+import ConfirmModal from '@/components/common/ConfirmModal.vue'
 
 const {
   store,
@@ -129,6 +130,7 @@ const {
         @close="isBulkSplitsModalOpen = false"
         @apply="handleBulkSplitsApply"
       />
+      <ConfirmModal />
 
       <div v-if="toast.isVisible.value" class="fixed bottom-8 left-1/2 -translate-x-1/2 bg-brand-red text-white px-6 py-3 font-black uppercase italic text-sm shadow-xl z-50 animate-in fade-in duration-300">
         {{ toast.message.value }}
@@ -136,15 +138,3 @@ const {
     </template>
   </div>
 </template>
-
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;700;900&display=swap');
-.text-shadow-glow { text-shadow: 0 0 15px rgba(227, 6, 19, 0.4); }
-.shadow-glow { box-shadow: 0 0 15px rgba(227, 6, 19, 0.4); }
-.fade-enter-active, .fade-leave-active { transition: opacity 0.3s ease; }
-.fade-enter-from, .fade-leave-to { opacity: 0; }
-input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
-.custom-scrollbar::-webkit-scrollbar { width: 5px; }
-.custom-scrollbar::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
-.custom-scrollbar::-webkit-scrollbar-thumb { background: #E30613; }
-</style>

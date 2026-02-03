@@ -2,12 +2,14 @@
 import { ref, computed } from 'vue'
 import { useAppStore } from '@/stores/appStore'
 import { useToast } from '@/composables/useToast'
+import { useConfirm } from '@/composables/useConfirm'
 import { getCategoryLabel } from '@/config/categories'
 import TransactionCard from '@/components/features/transactions/TransactionCard.vue'
 import type { Transaction, CategoryKey } from '@/types'
 
 const store = useAppStore()
 const toast = useToast()
+const { showConfirm } = useConfirm()
 
 const props = defineProps<{
   transactions: Transaction[]
@@ -78,7 +80,8 @@ function selectAllVisible() {
 }
 
 async function handleBulkDelete() {
-  if (!confirm(`${props.selection.count.value} transactie(s) verplaatsen naar prullenbak?`)) return
+  const ok = await showConfirm({ message: `${props.selection.count.value} transactie(s) verplaatsen naar prullenbak?` })
+  if (!ok) return
   try {
     let deleted = 0
     for (const id of props.selection.getSelectedArray()) {
@@ -90,7 +93,7 @@ async function handleBulkDelete() {
     props.selection.clear()
     toast.show(`${deleted} transactie(s) naar prullenbak`)
   } catch {
-    alert('Verwijderen mislukt')
+    toast.show('Verwijderen mislukt')
   }
 }
 
@@ -102,15 +105,16 @@ async function handleRestore(id: number) {
       await store.fetchTrash(props.selectedActivityId)
     } else {
       const data = await res.json().catch(() => ({})) as { error?: string }
-      alert(data.error || 'Herstellen mislukt')
+      toast.show(data.error || 'Herstellen mislukt')
     }
   } catch {
-    alert('Herstellen mislukt')
+    toast.show('Herstellen mislukt')
   }
 }
 
 async function handleDeletePermanent(id: number) {
-  if (!confirm('Definitief verwijderen? Dit kan niet ongedaan.')) return
+  const ok = await showConfirm({ message: 'Definitief verwijderen? Dit kan niet ongedaan.' })
+  if (!ok) return
   try {
     const res = await store.apiFetch(`/transactions/${id}/permanent`, { method: 'DELETE' })
     if (res.ok) {
@@ -118,10 +122,10 @@ async function handleDeletePermanent(id: number) {
       await store.fetchTrash(props.selectedActivityId)
     } else {
       const data = await res.json().catch(() => ({})) as { error?: string }
-      alert(data.error || 'Definitief verwijderen mislukt')
+      toast.show(data.error || 'Definitief verwijderen mislukt')
     }
   } catch {
-    alert('Definitief verwijderen mislukt')
+    toast.show('Definitief verwijderen mislukt')
   }
 }
 

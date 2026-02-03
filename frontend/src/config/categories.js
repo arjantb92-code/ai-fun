@@ -8,7 +8,7 @@ export const CATEGORIES = {
     key: 'boodschappen',
     label: 'Boodschappen',
     icon: '🛒',
-    color: '#22c55e'
+    color: '#71717a'
   },
   huishoudelijk: {
     key: 'huishoudelijk',
