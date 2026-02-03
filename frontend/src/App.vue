@@ -13,6 +13,7 @@ import BulkActivityModal from '@/components/features/bulk/BulkActivityModal.vue'
 import BulkSplitsModal from '@/components/features/bulk/BulkSplitsModal.vue'
 import ConfirmModal from '@/components/common/ConfirmModal.vue'
 
+
 const {
   store,
   toast,
