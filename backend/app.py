@@ -141,7 +141,7 @@ def upload_avatar(current_user):
     if not f or not f.filename: return jsonify({"error": "No file"}), 400
     fn = f"user_{current_user.id}_{secure_filename(f.filename)}"
     f.save(os.path.join(app.config['AVATAR_FOLDER'], fn))
-    current_user.avatar_url = f"http://127.0.0.1:5000/static/{fn}"
+    current_user.avatar_url = f"{request.host_url.rstrip('/')}/static/{fn}"
     db.session.commit()
     return jsonify({"status": "success", "avatar_url": current_user.avatar_url, "user": {"id": current_user.id, "name": current_user.name, "avatar_url": current_user.avatar_url}})
 

@@ -1,11 +1,20 @@
 @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;700;900&display=swap');
 
+/* Theme: single source for colors used in raw CSS (Tailwind theme in tailwind.config.js) */
+:root {
+  --color-primary: #E30613;
+  --color-bg-dark: #000000;
+  --color-industrial: #1A1A1A;
+  --color-glow: rgba(227, 6, 19, 0.4);
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 html {
   scroll-behavior: smooth;
+  font-family: 'Oswald', sans-serif;
 }
 
 body {
@@ -26,15 +35,15 @@ body {
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: #E30613 #1A1A1A;
+  scrollbar-color: var(--color-primary) var(--color-industrial);
 }
 
 @layer utilities {
   .shadow-glow {
-    box-shadow: 0 0 15px rgba(227, 6, 19, 0.4);
+    box-shadow: 0 0 15px var(--color-glow);
   }
   .text-shadow-glow {
-    text-shadow: 0 0 15px rgba(227, 6, 19, 0.4);
+    text-shadow: 0 0 15px var(--color-glow);
   }
 }
 
@@ -63,7 +72,7 @@ input[type=number]::-webkit-outer-spin-button {
   background: rgba(0, 0, 0, 0.1);
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #E30613;
+  background: var(--color-primary);
 }
 
 /* ============================================

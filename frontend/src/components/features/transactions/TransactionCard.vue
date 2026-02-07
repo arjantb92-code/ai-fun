@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { getCategoryConfig } from '@/config/categories'
+import { BRAND_RED } from '@/config/theme'
 import type { Transaction, ActivityDisplay } from '@/types'
 
 interface Props {
@@ -52,7 +53,7 @@ const categoryConfig = computed(() => getCategoryConfig(props.transaction.catego
           </div>
           <div v-if="activity" 
                class="text-[10px] font-black px-2 py-0.5 border tracking-tighter uppercase italic"
-               :style="{ color: activity.color || '#E30613', borderColor: activity.color || '#E30613' }">
+               :style="{ color: activity.color || BRAND_RED, borderColor: activity.color || BRAND_RED }">
             {{ activity.icon || '📋' }} {{ activity.name }}
           </div>
           <div v-if="transaction.time && transaction.time !== '00:00'" 

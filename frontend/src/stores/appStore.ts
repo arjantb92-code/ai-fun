@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
+import { BRAND_RED } from '@/config/theme'
 import type { 
   User, 
   Balance, 
@@ -125,7 +126,7 @@ export const useAppStore = defineStore('app', () => {
   const getActivityInfo = (id: number | null): { name: string; icon: string; color: string } | null => {
     if (!id) return null
     const a = activities.value.find(a => a.id === id)
-    return a ? { name: a.name, icon: a.icon ?? '📋', color: a.color ?? '#E30613' } : null
+    return a ? { name: a.name, icon: a.icon ?? '📋', color: a.color ?? BRAND_RED } : null
   }
 
   return {
