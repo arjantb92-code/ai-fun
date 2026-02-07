@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import type { Activity } from '@/types'
 
 interface Props {
@@ -13,6 +14,9 @@ const emit = defineEmits<{
   (e: 'new'): void
   (e: 'archive', id: number): void
 }>()
+
+const activeActivities = computed(() => props.activities.filter(a => a.is_active))
+const archivedActivities = computed(() => props.activities.filter(a => !a.is_active))
 
 const selectActivity = (id: number | null): void => {
   emit('select', id === props.selectedId ? null : id)
@@ -33,7 +37,7 @@ const selectActivity = (id: number | null): void => {
       Alle transacties
     </button>
     <button 
-      v-for="a in activities.filter(a => a.is_active)" 
+      v-for="a in activeActivities" 
       :key="a.id"
       @click="selectActivity(a.id)"
       class="w-full text-left px-4 py-3 font-black uppercase italic tracking-widest text-xs transition-all border-l-4 text-white group"
@@ -45,10 +49,10 @@ const selectActivity = (id: number | null): void => {
       </div>
       <div v-if="a.total_amount" class="text-[10px] text-zinc-500 mt-1">€{{ a.total_amount.toFixed(2) }}</div>
     </button>
-    <div v-if="activities.filter(a => !a.is_active).length > 0" class="pt-4 border-t border-zinc-800 mt-4">
+    <div v-if="archivedActivities.length > 0" class="pt-4 border-t border-zinc-800 mt-4">
       <div class="text-[10px] uppercase font-black tracking-widest text-zinc-600 mb-2">Gearchiveerd</div>
       <button 
-        v-for="a in activities.filter(a => !a.is_active)" 
+        v-for="a in archivedActivities" 
         :key="a.id"
         class="w-full text-left px-4 py-2 text-xs text-zinc-600 opacity-50"
       >

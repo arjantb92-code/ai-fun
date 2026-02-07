@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import type { BankImportRow, BankType } from '@/types'
 
 interface Props {
@@ -67,7 +67,7 @@ const toggleAll = (v: boolean): void => {
   previewRows.value.forEach(r => { r.selected = v })
 }
 
-const selectedCount = (): number => previewRows.value.filter(r => r.selected).length
+const selectedCount = computed(() => previewRows.value.filter(r => r.selected).length)
 
 const closeModal = (): void => {
   step.value = 1
@@ -173,7 +173,7 @@ const confirmImport = (): void => {
               <div class="pt-6">
                 <button type="button" @click="confirmImport" 
                         class="w-full py-5 font-black uppercase italic tracking-[0.2em] text-xl bg-brand-red text-white hover:bg-red-600 transition-all shadow-glow hover:scale-[1.01] active:scale-[0.99]">
-                  Commit {{ selectedCount() }} Segments
+                  Commit {{ selectedCount }} Segments
                 </button>
               </div>
             </div>
