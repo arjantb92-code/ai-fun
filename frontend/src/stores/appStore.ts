@@ -38,6 +38,7 @@ export const useAppStore = defineStore('app', () => {
   const currentUser = ref<User | null>(null)
   const token = ref<string | null>(localStorage.getItem('wbw_token'))
   const backendStatus = ref<BackendStatus>('Connecting...')
+  const isLoading = ref(false)
 
   // --- Computed ---
   const isAuthenticated = computed(() => !!token.value && !!currentUser.value)
@@ -64,6 +65,7 @@ export const useAppStore = defineStore('app', () => {
 
   const fetchData = async (activityId: number | null = null): Promise<void> => {
     if (!token.value) return
+    isLoading.value = true
     try {
       const results = await Promise.all([
         apiFetch('/users'), 
@@ -88,6 +90,8 @@ export const useAppStore = defineStore('app', () => {
       if (savedUserStr) currentUser.value = JSON.parse(savedUserStr) as User
     } catch {
       backendStatus.value = 'Offline'
+    } finally {
+      isLoading.value = false
     }
   }
 
@@ -102,19 +106,40 @@ export const useAppStore = defineStore('app', () => {
     }
   }
 
+  const setCurrentUser = (user: User | null): void => {
+    currentUser.value = user
+    if (user) {
+      localStorage.setItem('wbw_user', JSON.stringify(user))
+    } else {
+      localStorage.removeItem('wbw_user')
+    }
+  }
+
   const login = (data: LoginResponse): void => {
     token.value = data.token
-    currentUser.value = data.user
+    setCurrentUser(data.user)
     localStorage.setItem('wbw_token', data.token)
-    localStorage.setItem('wbw_user', JSON.stringify(data.user))
     fetchData()
   }
 
-  const logout = (): void => {
-    token.value = null
+  const $reset = (): void => {
+    users.value = []
+    balances.value = []
+    transactions.value = []
+    deletedTransactions.value = []
+    settlementsSuggestions.value = []
+    settlementHistory.value = []
+    activities.value = []
     currentUser.value = null
+    token.value = null
+    backendStatus.value = 'Connecting...'
+    isLoading.value = false
     localStorage.removeItem('wbw_token')
     localStorage.removeItem('wbw_user')
+  }
+
+  const logout = (): void => {
+    $reset()
   }
 
   const getUserName = (id: number): string =>
@@ -141,7 +166,8 @@ export const useAppStore = defineStore('app', () => {
     deletedTransactions, 
     currentUser, 
     token, 
-    backendStatus, 
+    backendStatus,
+    isLoading,
     // Computed
     isAuthenticated, 
     groupMembers, 
@@ -152,6 +178,8 @@ export const useAppStore = defineStore('app', () => {
     fetchTrash, 
     login, 
     logout,
+    setCurrentUser,
+    $reset,
     getUserName,
     getBalanceForUser,
     getActivityInfo
