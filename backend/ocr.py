@@ -1,10 +1,19 @@
-import easyocr
 import os
 import re
 import ssl
 
+try:
+    import easyocr
+    EASYOCR_AVAILABLE = True
+except ImportError:
+    EASYOCR_AVAILABLE = False
+    easyocr = None
+
+
 class OCRService:
     def __init__(self):
+        if not EASYOCR_AVAILABLE:
+            raise RuntimeError("easyocr not installed (optional in production)")
         ssl._create_default_https_context = ssl._create_unverified_context
         self.reader = easyocr.Reader(['nl', 'en'])
 
@@ -63,6 +72,6 @@ ocr_service = None
 
 def get_ocr_service():
     global ocr_service
-    if ocr_service is None:
+    if ocr_service is None and EASYOCR_AVAILABLE:
         ocr_service = OCRService()
     return ocr_service

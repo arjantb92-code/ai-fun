@@ -797,8 +797,11 @@ def process_receipt(current_user):
     fp = os.path.join(app.config["UPLOAD_FOLDER"], fn)
     f.save(fp)
     try:
+        svc = get_ocr_service()
+        if svc is None:
+            return jsonify({"error": "OCR not available (easyocr not installed)"}), 503
         return jsonify(
-            {"status": "success", "data": get_ocr_service().process_receipt(fp)}
+            {"status": "success", "data": svc.process_receipt(fp)}
         )
     except Exception as e:
         return jsonify({"error": str(e)}), 500
