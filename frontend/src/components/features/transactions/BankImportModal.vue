@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { API_BASE } from '@/config/api'
 import type { BankImportRow, BankType } from '@/types'
 
 interface Props {
@@ -44,7 +45,7 @@ const doUpload = async (): Promise<void> => {
     const formData = new FormData()
     formData.append('file', file.value)
     formData.append('bank_type', bankType.value)
-    const res = await fetch('http://localhost:5001/import/bank', {
+    const res = await fetch(`${API_BASE}/import/bank`, {
       method: 'POST',
       headers: getAuthHeader(),
       body: formData

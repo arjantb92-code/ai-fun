@@ -1,6 +1,7 @@
 import { useAppStore } from '@/stores/appStore'
 import { useToast } from '@/composables/useToast'
 import { useConfirm } from '@/composables/useConfirm'
+import { API_BASE } from '@/config/api'
 import type { Transaction, TransactionSplit, BankImportRow, CategoryKey } from '@/types'
 import type { Ref } from 'vue'
 
@@ -122,7 +123,7 @@ export function useMainPageTransactions(
     const formData = new FormData()
     formData.append('file', file)
     try {
-      const res = await fetch('http://localhost:5001/ocr/process', {
+      const res = await fetch(`${API_BASE}/ocr/process`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${store.token}` },
         body: formData

@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
+import { API_BASE } from '@/config/api'
 import { BRAND_RED } from '@/config/theme'
 import type { 
   User, 
@@ -54,8 +55,7 @@ export const useAppStore = defineStore('app', () => {
     }
     if (token.value) headers['Authorization'] = `Bearer ${token.value}`
     
-    const base = (import.meta.env.VITE_API_URL ?? '').replace(/\/$/, '') || 'http://localhost:5001'
-    const response = await fetch(`${base}${endpoint}`, { ...options, headers })
+    const response = await fetch(`${API_BASE}${endpoint}`, { ...options, headers })
     if (response.status === 401) {
       logout()
       throw new Error('Unauthorized')

@@ -1,5 +1,6 @@
 import { useAppStore } from '@/stores/appStore'
 import { useToast } from '@/composables/useToast'
+import { API_BASE } from '@/config/api'
 import type { LoginCredentials, ActivityFormData, Activity } from '@/types'
 import type { Ref } from 'vue'
 
@@ -15,7 +16,7 @@ export function useMainPageAuth(
   const handleLogin = async (credentials: LoginCredentials): Promise<void> => {
     loginError.value = ''
     try {
-      const res = await fetch('http://localhost:5001/login', {
+      const res = await fetch(`${API_BASE}/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(credentials)

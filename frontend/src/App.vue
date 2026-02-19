@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { API_BASE as apiBase } from '@/config/api'
 import { useMainPage } from '@/composables/useMainPage'
 import AppHeader from '@/components/layouts/AppHeader.vue'
 import TabNav from '@/components/layouts/TabNav.vue'
@@ -58,7 +59,7 @@ const {
       <div v-if="store.backendStatus === 'Offline'" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
         <div class="bg-red-700 text-white p-8 rounded-lg shadow-2xl text-center">
           <h2 class="text-2xl font-bold mb-4">Verbinding Verbroken!</h2>
-          <p class="mb-4">De backend server is niet bereikbaar op <span class="font-mono bg-black/30 p-1 rounded">http://localhost:5001</span>.</p>
+          <p class="mb-4">De backend server is niet bereikbaar op <span class="font-mono bg-black/30 p-1 rounded">{{ apiBase }}</span>.</p>
           <p>Controleer of de server draait en probeer het opnieuw.</p>
         </div>
       </div>
