@@ -27,8 +27,11 @@ from flask_limiter.util import get_remote_address
 load_dotenv(os.path.join(os.path.dirname(os.path.dirname(__file__)), ".env"))
 
 app = Flask(__name__)
-_frontend_origin = os.getenv("FRONTEND_URL", "*")
-CORS(app, origins=[_frontend_origin] if _frontend_origin != "*" else None)
+_frontend_origin = (os.getenv("FRONTEND_URL") or "").strip()
+if _frontend_origin:
+    CORS(app, origins=[_frontend_origin])
+else:
+    CORS(app)
 
 _secret = os.getenv("SECRET_KEY", "dev-secret-key-12345")
 if os.getenv("FLASK_ENV") == "production" or os.getenv("DATABASE_URL"):
