@@ -1,5 +1,4 @@
-version: '3.8'
-
+# Optioneel: alleen voor lokale dev-DB. Bij Supabase (DATABASE_URL gezet) wordt deze niet gestart.
 services:
   db:
     image: postgres:15-alpine

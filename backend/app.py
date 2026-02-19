@@ -21,13 +21,20 @@ from bank_parser import BankParser
 from category_classifier import classify_transaction, get_all_categories
 from sqlalchemy import func
 from flask_migrate import Migrate
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 load_dotenv(os.path.join(os.path.dirname(os.path.dirname(__file__)), ".env"))
 
 app = Flask(__name__)
-CORS(app)
+_frontend_origin = os.getenv("FRONTEND_URL", "*")
+CORS(app, origins=[_frontend_origin] if _frontend_origin != "*" else None)
 
-app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "dev-secret-key-12345")
+_secret = os.getenv("SECRET_KEY", "dev-secret-key-12345")
+if os.getenv("FLASK_ENV") == "production" or os.getenv("DATABASE_URL"):
+    if _secret == "dev-secret-key-12345" or len(_secret) < 32:
+        raise RuntimeError("Set a strong SECRET_KEY (≥32 chars) in production.")
+app.config["SECRET_KEY"] = _secret
 UPLOAD_FOLDER = "uploads"
 AVATAR_FOLDER = "avatars"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -57,6 +64,17 @@ app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
 db.init_app(app)
 migrate = Migrate(app, db)
 
+limiter = Limiter(get_remote_address, app=app, default_limits=["300 per minute"])
+
+
+@app.after_request
+def security_headers(response):
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["X-XSS-Protection"] = "1; mode=block"
+    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    return response
+
 
 def token_required(f):
     @wraps(f)
@@ -69,12 +87,14 @@ def token_required(f):
         if not token:
             return jsonify({"message": "Missing token"}), 401
         try:
-            data = jwt.decode(token, app.config["SECRET_KEY"], algorithms=["HS256"])
-            user = db.session.get(User, data["user_id"])
+            data = jwt.decode(
+                token, app.config["SECRET_KEY"], algorithms=["HS256"]
+            )
+            user = db.session.get(User, data.get("user_id"))
             if not user:
-                return jsonify({"message": "User not found"}), 401
-        except Exception as e:
-            return jsonify({"message": "Invalid token", "error": str(e)}), 401
+                return jsonify({"message": "Invalid token"}), 401
+        except Exception:
+            return jsonify({"message": "Invalid token"}), 401
         return f(user, *args, **kwargs)
 
     return decorated
@@ -134,18 +154,21 @@ def health():
 
 
 @app.route("/login", methods=["POST"])
+@limiter.limit("10 per minute")
 def login():
-    auth = request.json
-    if not auth:
+    auth = request.get_json(silent=True) or {}
+    username = (auth.get("username") or "").strip()
+    password = auth.get("password")
+    if not username or not password:
         return jsonify({"message": "Missing"}), 400
-    u_lower = auth["username"].lower()
+    u_lower = username.lower()
     user = User.query.filter(
         (func.lower(User.name) == u_lower) | (func.lower(User.email) == u_lower)
     ).first()
     if (
         not user
         or not user.password_hash
-        or not check_password_hash(user.password_hash, auth["password"])
+        or not check_password_hash(user.password_hash, password)
     ):
         return jsonify({"message": "Invalid"}), 401
     tk = jwt.encode(
@@ -1017,4 +1040,5 @@ def commit_activity_settlement(current_user, activity_id):
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5001)
+    port = int(os.getenv("PORT", "5001"))
+    app.run(debug=True, host="0.0.0.0", port=port)

@@ -54,7 +54,8 @@ export const useAppStore = defineStore('app', () => {
     }
     if (token.value) headers['Authorization'] = `Bearer ${token.value}`
     
-    const response = await fetch(`http://localhost:5001${endpoint}`, { ...options, headers })
+    const base = (import.meta.env.VITE_API_URL ?? '').replace(/\/$/, '') || 'http://localhost:5001'
+    const response = await fetch(`${base}${endpoint}`, { ...options, headers })
     if (response.status === 401) {
       logout()
       throw new Error('Unauthorized')
