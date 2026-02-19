@@ -1,15 +1,9 @@
 import { ref, onUnmounted } from 'vue'
 
-/**
- * Composable for showing toast notifications.
- *
- * @param {number} defaultDuration - Default duration in ms (default: 2500)
- * @returns {Object} Toast management functions and state
- */
 export function useToast(defaultDuration = 2500) {
   const message = ref('')
   const isVisible = ref(false)
-  let timeoutId = null
+  let timeoutId: ReturnType<typeof setTimeout> | null = null
 
   const clearTimer = () => {
     if (timeoutId) {
@@ -22,12 +16,7 @@ export function useToast(defaultDuration = 2500) {
     clearTimer()
   })
 
-  /**
-   * Show a toast message
-   * @param {string} msg - Message to display
-   * @param {number} duration - Duration in ms (optional)
-   */
-  const show = (msg, duration = defaultDuration) => {
+  const show = (msg: string, duration = defaultDuration) => {
     clearTimer()
     message.value = msg
     isVisible.value = true
@@ -38,9 +27,6 @@ export function useToast(defaultDuration = 2500) {
     }, duration)
   }
 
-  /**
-   * Hide toast immediately
-   */
   const hide = () => {
     clearTimer()
     message.value = ''

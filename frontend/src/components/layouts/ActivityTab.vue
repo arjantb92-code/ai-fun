@@ -15,15 +15,7 @@ const props = defineProps<{
   transactions: Transaction[]
   deletedTransactions: Transaction[]
   selectedActivityId: number | null
-  selection: {
-    hasSelection: { value: boolean }
-    count: { value: number }
-    isSelected: (id: number | null) => boolean
-    toggle: (id: number | null) => void
-    clear: () => void
-    selectAll: (ids: (number | null)[]) => void
-    getSelectedArray: () => (number | null)[]
-  }
+  selection: ReturnType<typeof import('@/composables/useSelection').useSelection>
 }>()
 
 const emit = defineEmits<{

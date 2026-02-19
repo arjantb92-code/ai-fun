@@ -40,31 +40,15 @@ export const CATEGORIES = {
     icon: '📦',
     color: '#6b7280'
   }
-}
+} as const
 
-/**
- * Get category configuration by key
- * @param {string} key - Category key
- * @returns {Object} Category config with key, label, icon, color
- */
-export const getCategoryConfig = (key) => CATEGORIES[key] || CATEGORIES.overig
+type CategoryKey = keyof typeof CATEGORIES
 
-/**
- * Get all categories as an array
- * @returns {Array} Array of category objects
- */
+export const getCategoryConfig = (key: string | null | undefined) =>
+  (key ? CATEGORIES[key as CategoryKey] : null) ?? CATEGORIES.overig
+
 export const getCategoryList = () => Object.values(CATEGORIES)
 
-/**
- * Get category label by key
- * @param {string} key - Category key
- * @returns {string} Category label
- */
-export const getCategoryLabel = (key) => getCategoryConfig(key).label
+export const getCategoryLabel = (key: string) => getCategoryConfig(key).label
 
-/**
- * Get category icon by key
- * @param {string} key - Category key
- * @returns {string} Category icon (emoji)
- */
-export const getCategoryIcon = (key) => getCategoryConfig(key).icon
+export const getCategoryIcon = (key: string) => getCategoryConfig(key).icon
