@@ -67,7 +67,8 @@ app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
 db.init_app(app)
 migrate = Migrate(app, db)
 
-limiter = Limiter(get_remote_address, app=app, default_limits=["300 per minute"])
+# Geen default_limits: alleen /login heeft @limiter.limit. Minder kans dat limiter cold start blokkeert.
+limiter = Limiter(get_remote_address, app=app, default_limits=None)
 
 
 @app.after_request
@@ -104,7 +105,9 @@ def token_required(f):
 
 
 @app.route("/")
+@limiter.exempt
 def health():
+    """Minimal health check: no DB, no limiter. Used by Render and clients."""
     return jsonify({"status": "ok"})
 
 
