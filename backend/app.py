@@ -622,7 +622,10 @@ def _google_callback_error(message: str, status: int, *, detail: str = None, nee
     if request.method == "GET" and frontend_url:
         from urllib.parse import urlencode
         params = {"google_error": "needs_invite" if needs_invite else "error", "google_message": message}
-        return redirect(f"{frontend_url}/?{urlencode(params)}", code=302)
+        resp = redirect(f"{frontend_url}/?{urlencode(params)}", code=302)
+        # CORS: fetch() that gets a redirect needs Access-Control-Allow-Origin on the 302 response
+        resp.headers["Access-Control-Allow-Origin"] = frontend_url
+        return resp
     return jsonify(payload), status
 
 
