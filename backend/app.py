@@ -114,52 +114,95 @@ def health():
     return jsonify({"status": "ok"})
 
 
-# @app.route("/init-db")
-# def init_db():
-#     try:
-#         db.drop_all(); db.create_all()
-#         pw = generate_password_hash('wbw2026')
-#         m1 = User(); m1.name='Arjan'; m1.email='arjan@example.com'; m1.avatar_url='http://127.0.0.1:5000/static/user_1_1636579358798.jpeg'; m1.is_group_member=True; m1.password_hash=pw
-#         m2 = User(); m2.name='Emma'; m2.email='emma@example.com'; m2.avatar_url='https://i.pravatar.cc/150?u=emma'; m2.is_group_member=True; m2.password_hash=pw
-#         m3 = User(); m3.name='Lars'; m3.email='lars@example.com'; m3.avatar_url='https://i.pravatar.cc/150?u=lars'; m3.is_group_member=True; m3.password_hash=pw
-#         m4 = User(); m4.name='Friend'; m4.is_group_member=False; m4.email=None; m4.password_hash=None
-#         db.session.add_all([m1, m2, m3, m4]); db.session.flush()
+@app.route("/init-db")
+@limiter.exempt
+def init_db():
+    """Seed demo data (BalanceList, users, trip, transactions). Dev only; does not touch schema (migrations own that)."""
+    if os.getenv("DATABASE_URL") and os.getenv("FLASK_ENV") == "production":
+        return jsonify({"error": "init-db disabled in production (set FLASK_ENV or unset DATABASE_URL for dev)"}), 403
+    try:
+        pw = generate_password_hash("wbw2026")
+        # Get or create users: Arjan, Fardau, Demo (all login with wbw2026)
+        m1 = User.query.filter_by(email="arjan@example.com").first()
+        if not m1:
+            m1 = User(name="Arjan", email="arjan@example.com", avatar_url="https://gravatar.com/avatar/ec8da171a095998421d4b15519c3ed42?s=400&d=robohash&r=x", is_group_member=True, password_hash=pw)
+            db.session.add(m1)
+        m2 = User.query.filter_by(email="fardau@example.com").first()
+        if not m2:
+            m2 = User(name="Fardau", email="fardau@example.com", avatar_url="https://gravatar.com/avatar/578d464ecbe91a131cafc9dcfe6323a7?s=400&d=robohash&r=x", is_group_member=True, password_hash=pw)
+            db.session.add(m2)
+        m3 = User.query.filter_by(email="demo@example.com").first()
+        if not m3:
+            m3 = User(name="Demo", email="demo@example.com", avatar_url="https://robohash.org/9699d97bfad1d597dc44a043286474e0?set=set4&bgset=&size=400x400", is_group_member=True, password_hash=pw)
+            db.session.add(m3)
+        db.session.flush()
 
-#         today = datetime.utcnow().date()
-#         yesterday = today - timedelta(days=1)
-#         last_week = today - timedelta(days=7)
-#         last_month = today - timedelta(days=30)
+        # One balance list with members (so "Mijn balansen" has something)
+        bl = BalanceList.query.filter_by(name="Demo Groep").first()
+        if not bl:
+            bl = BalanceList(name="Demo Groep", currency="EUR", created_by_id=m1.id)
+            db.session.add(bl)
+            db.session.flush()
+            for u, role in [(m1, "owner"), (m2, "member"), (m3, "member")]:
+                db.session.add(BalanceListMember(balance_list_id=bl.id, user_id=u.id, role=role))
+        db.session.flush()
 
-#         sess = SettlementSession(); sess.date = datetime.utcnow() - timedelta(days=15); sess.description = "Weekendje Ardennen"
-#         db.session.add(sess); db.session.flush()
+        today = datetime.utcnow().date()
+        yesterday = today - timedelta(days=1)
+        last_week = today - timedelta(days=7)
+        last_month = today - timedelta(days=30)
 
-#         t_old = Transaction(); t_old.description="Huur Huisje"; t_old.amount=450.0; t_old.date=last_month; t_old.payer_id=m1.id; t_old.settlement_session_id=sess.id
-#         db.session.add(t_old); db.session.flush()
-#         for u in [m1, m2, m3]:
-#             s = TransactionSplit(); s.transaction_id=t_old.id; s.user_id=u.id; s.weight=1; db.session.add(s)
+        # Trip for the balance list
+        trip = Trip.query.filter_by(name="Weekendje Ardennen", balance_list_id=bl.id).first()
+        if not trip:
+            trip = Trip(name="Weekendje Ardennen", description="Weekend weg", balance_list_id=bl.id, is_active=True)
+            db.session.add(trip)
+            db.session.flush()
 
-#         hs1 = HistoricalSettlement(); hs1.settlement_session_id=sess.id; hs1.from_user_id=m2.id; hs1.to_user_id=m1.id; hs1.amount=150.0
-#         hs2 = HistoricalSettlement(); hs2.settlement_session_id=sess.id; hs2.from_user_id=m3.id; hs2.to_user_id=m1.id; hs2.amount=150.0
-#         db.session.add_all([hs1, hs2])
+        sess = SettlementSession.query.filter_by(description="Weekendje Ardennen", balance_list_id=bl.id).first()
+        if not sess:
+            sess = SettlementSession(date=datetime.utcnow() - timedelta(days=15), description="Weekendje Ardennen", balance_list_id=bl.id, trip_id=trip.id)
+            db.session.add(sess)
+            db.session.flush()
 
-#         t1 = Transaction(); t1.description="Lunch bij Loetje"; t1.amount=65.50; t1.date=today; t1.payer_id=m1.id; t1.type='EXPENSE'
-#         db.session.add(t1); db.session.flush()
-#         for u in [m1, m2, m3]:
-#             s = TransactionSplit(); s.transaction_id=t1.id; s.user_id=u.id; s.weight=1; db.session.add(s)
+            t_old = Transaction(description="Huur Huisje", amount=450.0, date=last_month, payer_id=m1.id, settlement_session_id=sess.id, balance_list_id=bl.id, trip_id=trip.id, type="EXPENSE")
+            db.session.add(t_old)
+            db.session.flush()
+            for u in [m1, m2, m3]:
+                db.session.add(TransactionSplit(transaction_id=t_old.id, user_id=u.id, weight=1))
+            db.session.add_all([
+                HistoricalSettlement(settlement_session_id=sess.id, from_user_id=m2.id, to_user_id=m1.id, amount=150.0),
+                HistoricalSettlement(settlement_session_id=sess.id, from_user_id=m3.id, to_user_id=m1.id, amount=150.0),
+            ])
 
-#         t2 = Transaction(); t2.description="Boodschappen AH"; t2.amount=42.10; t2.date=yesterday; t2.payer_id=m2.id; t2.type='EXPENSE'
-#         db.session.add(t2); db.session.flush()
-#         for u in [m1, m2]:
-#             s = TransactionSplit(); s.transaction_id=t2.id; s.user_id=u.id; s.weight=1; db.session.add(s)
+        # Unsaved transactions (only if not already seeded)
+        if not Transaction.query.filter_by(balance_list_id=bl.id, description="Lunch bij Loetje").first():
+            t1 = Transaction(description="Lunch bij Loetje", amount=65.50, date=today, payer_id=m1.id, type="EXPENSE", balance_list_id=bl.id, trip_id=trip.id)
+            db.session.add(t1)
+            db.session.flush()
+            for u in [m1, m2, m3]:
+                db.session.add(TransactionSplit(transaction_id=t1.id, user_id=u.id, weight=1))
+            t2 = Transaction(description="Boodschappen AH", amount=42.10, date=yesterday, payer_id=m2.id, type="EXPENSE", balance_list_id=bl.id)
+            db.session.add(t2)
+            db.session.flush()
+            for u in [m1, m2]:
+                db.session.add(TransactionSplit(transaction_id=t2.id, user_id=u.id, weight=1))
+            t3 = Transaction(description="Benzine", amount=85.00, date=last_week, payer_id=m3.id, type="EXPENSE", balance_list_id=bl.id)
+            db.session.add(t3)
+            db.session.flush()
+            db.session.add(TransactionSplit(transaction_id=t3.id, user_id=m1.id, weight=2))
+            db.session.add(TransactionSplit(transaction_id=t3.id, user_id=m3.id, weight=1))
 
-#         t3 = Transaction(); t3.description="Benzine"; t3.amount=85.00; t3.date=last_week; t3.payer_id=m3.id; t3.type='EXPENSE'
-#         db.session.add(t3); db.session.flush()
-#         s3a = TransactionSplit(); s3a.transaction_id=t3.id; s3a.user_id=m1.id; s3a.weight=2; db.session.add(s3a)
-#         s3b = TransactionSplit(); s3b.transaction_id=t3.id; s3b.user_id=m3.id; s3b.weight=1; db.session.add(s3b)
-
-#         db.session.commit()
-#         return jsonify({"status": "success"})
-#     except Exception as e: return jsonify({"error": str(e)}), 500
+        db.session.commit()
+        return jsonify({
+            "status": "success",
+            "balance_list_id": bl.id,
+            "message": "Seed data added. Log in with arjan@example.com / wbw2026 and open Demo Groep.",
+        })
+    except Exception as e:
+        db.session.rollback()
+        app.logger.exception("init-db failed")
+        return jsonify({"error": str(e)}), 500
 
 
 @app.route("/login", methods=["POST"])

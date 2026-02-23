@@ -3,8 +3,9 @@ import { useAppStore } from '@/stores/appStore'
 
 const store = useAppStore()
 
-defineEmits<{
+const emit = defineEmits<{
   (e: 'open-profile'): void
+  (e: 'logout'): void
 }>()
 </script>
 
@@ -13,15 +14,21 @@ defineEmits<{
     <div class="flex items-center gap-6">
       <h1 class="text-4xl font-bold tracking-tighter uppercase italic text-brand-red text-shadow-glow">Better WBW</h1>
       
-      <div v-if="store.currentUser" @click="$emit('open-profile')" 
-           class="flex items-center gap-3 cursor-pointer group bg-zinc-900/50 px-4 py-2 border border-zinc-800 hover:border-brand-red transition-all">
-        <div class="w-8 h-8 bg-black border border-zinc-700 overflow-hidden flex items-center justify-center">
-          <img v-if="store.currentUser.avatar_url" :src="store.currentUser.avatar_url" 
-               class="w-full h-full grayscale group-hover:grayscale-0 transition-all object-cover" 
-               @error="store.currentUser.avatar_url = null">
-          <span v-else class="text-[10px] font-black text-brand-red italic">{{ store.currentUser.name[0] }}</span>
+      <div v-if="store.currentUser" class="flex items-center gap-2">
+        <div @click="emit('open-profile')" 
+             class="flex items-center gap-3 cursor-pointer group bg-zinc-900/50 px-4 py-2 border border-zinc-800 hover:border-brand-red transition-all">
+          <div class="w-8 h-8 bg-black border border-zinc-700 overflow-hidden flex items-center justify-center">
+            <img v-if="store.currentUser.avatar_url" :src="store.currentUser.avatar_url" 
+                 class="w-full h-full grayscale group-hover:grayscale-0 transition-all object-cover" 
+                 @error="store.currentUser.avatar_url = null">
+            <span v-else class="text-[10px] font-black text-brand-red italic">{{ store.currentUser.name[0] }}</span>
+          </div>
+          <span class="text-xs font-black uppercase tracking-widest text-white">{{ store.currentUser.name }}</span>
         </div>
-        <span class="text-xs font-black uppercase tracking-widest text-white">{{ store.currentUser.name }}</span>
+        <button type="button" @click.stop="emit('logout')" 
+                class="text-[10px] font-bold uppercase tracking-wider text-zinc-500 hover:text-brand-red border border-zinc-800 hover:border-brand-red px-3 py-1.5 transition-all">
+          Uitloggen
+        </button>
       </div>
 
       <span :class="store.backendStatus === 'Online' ? 'text-brand-red border-brand-red' : 'text-zinc-500 border-zinc-800'" 

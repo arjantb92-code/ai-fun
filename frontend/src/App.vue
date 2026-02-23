@@ -118,7 +118,7 @@ watch(() => store.isAuthenticated, (isAuth) => {
           </div>
         </div>
 
-        <AppHeader @open-profile="isProfileModalOpen = true">
+        <AppHeader @open-profile="isProfileModalOpen = true" @logout="store.logout()">
           <template #actions>
             <div class="flex gap-4 w-full md:w-auto text-white items-center">
               <button
@@ -141,6 +141,7 @@ watch(() => store.isAuthenticated, (isAuth) => {
             </div>
           </template>
         </AppHeader>
+
 
         <div class="flex-1 max-w-[1600px] mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-8">
           <TabNav
@@ -186,7 +187,7 @@ watch(() => store.isAuthenticated, (isAuth) => {
           @delete="handleDelete"
           @upload-receipt="handleReceiptUpload"
         />
-        <ProfileModal :is-open="isProfileModalOpen" :user="store.currentUser" @close="isProfileModalOpen = false" @save="handleProfileSave" />
+        <ProfileModal :is-open="isProfileModalOpen" :user="store.currentUser" @close="isProfileModalOpen = false" @save="handleProfileSave" @logout="isProfileModalOpen = false; store.logout()" />
         <BankImportModal :is-open="isImportModalOpen" @close="isImportModalOpen = false" @imported="handleBankImported" />
         <ActivityModal :is-open="isActivityModalOpen" :activity="selectedActivity" @close="isActivityModalOpen = false; selectedActivity = null" @save="handleActivitySave" />
         <BulkActivityModal

@@ -12,6 +12,7 @@ const props = defineProps<Props>()
 const emit = defineEmits<{
   (e: 'close'): void
   (e: 'save', data: { name: string; email: string }): void
+  (e: 'logout'): void
 }>()
 
 const name = ref('')
@@ -54,6 +55,9 @@ watch(() => props.user, (u) => {
             <div class="flex gap-4 pt-4">
               <button @click="$emit('close')" class="flex-1 py-4 font-black uppercase italic border border-zinc-700 text-zinc-400 hover:text-white hover:border-zinc-500 transition-all">Annuleren</button>
               <button @click="$emit('save', { name, email })" class="flex-1 py-4 font-black uppercase italic bg-brand-red text-white hover:bg-red-600 transition-all">Opslaan</button>
+            </div>
+            <div class="mt-6 pt-4 border-t border-zinc-800">
+              <button type="button" @click="$emit('logout')" class="w-full py-3 text-xs font-bold uppercase tracking-wider text-zinc-500 hover:text-brand-red transition-colors">Uitloggen</button>
             </div>
           </div>
         </div>
