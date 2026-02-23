@@ -2,6 +2,7 @@
   "name": "better-wbw",
   "compatibility_date": "2026-02-19",
   "assets": {
-    "directory": "./dist"
+    "directory": "./dist",
+    "not_found_handling": "single-page-application"
   }
 }
