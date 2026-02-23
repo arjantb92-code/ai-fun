@@ -1,5 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
+from datetime import datetime, timedelta
 import secrets
 
 db = SQLAlchemy()
@@ -19,6 +19,15 @@ class User(db.Model):
     is_group_member = db.Column(db.Boolean, default=True)
     password_hash = db.Column(db.String(255), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # OAuth fields
+    oauth_provider = db.Column(db.String(50), nullable=True)  # 'google', etc.
+    oauth_id = db.Column(db.String(255), nullable=True)  # Provider's user ID
+    
+    # Activation fields
+    email_verified = db.Column(db.Boolean, default=False)
+    activation_token = db.Column(db.String(64), nullable=True)
+    activation_token_expires = db.Column(db.DateTime, nullable=True)
 
     balance_list_memberships = db.relationship("BalanceListMember", back_populates="user")
 
@@ -29,8 +38,23 @@ class User(db.Model):
             "name": self.name,
             "email": self.email,
             "avatar_url": self.avatar_url,
-            "is_group_member": self.is_group_member
+            "is_group_member": self.is_group_member,
+            "email_verified": self.email_verified
         }
+    
+    def generate_activation_token(self):
+        """Generate a secure activation token."""
+        self.activation_token = secrets.token_urlsafe(32)
+        self.activation_token_expires = datetime.utcnow() + timedelta(days=7)
+        return self.activation_token
+    
+    def verify_activation_token(self, token):
+        """Verify the activation token is valid and not expired."""
+        if not self.activation_token or self.activation_token != token:
+            return False
+        if self.activation_token_expires and self.activation_token_expires < datetime.utcnow():
+            return False
+        return True
 
 
 class BalanceList(db.Model):

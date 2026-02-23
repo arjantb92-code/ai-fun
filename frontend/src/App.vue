@@ -1,13 +1,15 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { API_BASE as apiBase } from '@/config/api'
+import { API_BASE as apiBase, API_BASE } from '@/config/api'
 import { useMainPage } from '@/composables/useMainPage'
 import AppHeader from '@/components/layouts/AppHeader.vue'
 import TabNav from '@/components/layouts/TabNav.vue'
 import ActivityTab from '@/components/layouts/ActivityTab.vue'
 import BalanceTab from '@/components/layouts/BalanceTab.vue'
 import LoginView from '@/components/features/auth/LoginView.vue'
+import JoinLandingView from '@/components/features/auth/JoinLandingView.vue'
+import ActivationView from '@/components/features/auth/ActivationView.vue'
 import TransactionModal from '@/components/features/transactions/TransactionModal.vue'
 import ProfileModal from '@/components/features/auth/ProfileModal.vue'
 import BankImportModal from '@/components/features/transactions/BankImportModal.vue'
@@ -58,6 +60,16 @@ const {
 
 const isInviteModalOpen = ref(false)
 const pendingInviteCode = ref<string | null>(null)
+const requiresActivation = ref(false)
+const activationEmail = ref('')
+
+// Check if we're on the join route with invite code
+const isJoinRoute = computed(() => route.name === 'join' && route.params.inviteCode)
+const inviteCodeFromRoute = computed(() => route.params.inviteCode as string || '')
+
+// Check if we're on the activation route
+const isActivationRoute = computed(() => route.name === 'activate' && route.query.token)
+const activationToken = computed(() => route.query.token as string || '')
 
 const handleBackToBalanceLists = () => {
   store.selectBalanceList(null)
@@ -78,17 +90,175 @@ const handleJoinFromUrl = async () => {
     toast.show(result.message || 'Kon niet deelnemen aan balans')
   }
   
-  // Clear the URL
   router.replace('/')
 }
 
-// Handle invite code from URL
-watch(() => route.params.inviteCode, (inviteCode) => {
-  if (inviteCode && typeof inviteCode === 'string') {
-    pendingInviteCode.value = inviteCode
-    if (store.isAuthenticated) {
-      handleJoinFromUrl()
+// Handle login from join page
+const handleJoinLogin = async (credentials: { username: string; password: string }) => {
+  requiresActivation.value = false
+  try {
+    const res = await fetch(`${API_BASE}/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(credentials)
+    })
+    const data = await res.json()
+    if (res.ok) {
+      store.login(data)
+      // After login, join the balance list
+      if (inviteCodeFromRoute.value) {
+        pendingInviteCode.value = inviteCodeFromRoute.value
+        handleJoinFromUrl()
+      }
+    } else if (res.status === 403 && data.requires_activation) {
+      requiresActivation.value = true
+      activationEmail.value = data.email || ''
+    } else {
+      toast.show(data.message || 'Login failed')
     }
+  } catch {
+    toast.show('Server Offline')
+  }
+}
+
+// Handle registration from join page
+const handleJoinRegister = async (data: { name: string; email: string; password: string; invite_code: string }) => {
+  try {
+    const res = await fetch(`${API_BASE}/auth/register-from-invite`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    })
+    const result = await res.json()
+    if (res.ok) {
+      store.login({ token: result.token, user: result.user })
+      if (result.balance_list) {
+        store.selectBalanceList(result.balance_list.id)
+        store.fetchData()
+      }
+      toast.show('Account created! Check your email to activate for future logins.')
+      router.replace('/')
+    } else {
+      toast.show(result.error || 'Registration failed')
+    }
+  } catch {
+    toast.show('Server Offline')
+  }
+}
+
+// Handle Google login
+const handleGoogleLogin = async (inviteCode?: string) => {
+  try {
+    const url = inviteCode 
+      ? `${API_BASE}/auth/google?invite_code=${inviteCode}`
+      : `${API_BASE}/auth/google`
+    const res = await fetch(url)
+    const data = await res.json()
+    if (data.auth_url) {
+      window.location.href = data.auth_url
+    } else {
+      toast.show(data.error || 'Google login not available')
+    }
+  } catch {
+    toast.show('Could not initiate Google login')
+  }
+}
+
+// Handle Google callback (if code is in URL)
+const handleGoogleCallback = async () => {
+  const code = route.query.code as string
+  const state = route.query.state as string
+  if (!code) return
+  
+  try {
+    const res = await fetch(`${API_BASE}/auth/google/callback?code=${code}&state=${state || ''}`)
+    const data = await res.json()
+    if (res.ok && data.token) {
+      store.login({ token: data.token, user: data.user })
+      toast.show('Logged in with Google!')
+      router.replace('/')
+    } else if (data.needs_invite) {
+      toast.show('Registration requires an invite link')
+      router.replace('/')
+    } else {
+      const msg = data.detail ? `${data.error}: ${data.detail}` : (data.error || 'Google login failed')
+      toast.show(msg)
+      router.replace('/')
+    }
+  } catch {
+    toast.show('Google login failed')
+    router.replace('/')
+  }
+}
+
+// Handle activation complete
+const handleActivated = () => {
+  toast.show('Account activated! You can now log in.')
+  router.replace('/')
+}
+
+// Handle resend activation
+const handleResendActivation = async (email: string) => {
+  try {
+    const res = await fetch(`${API_BASE}/auth/resend-activation`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    })
+    const data = await res.json()
+    toast.show(data.message || 'Activation email sent')
+  } catch {
+    toast.show('Could not resend activation email')
+  }
+}
+
+// Enhanced login handler with activation check
+const handleLoginWithActivationCheck = async (credentials: { username: string; password: string }) => {
+  requiresActivation.value = false
+  try {
+    const res = await fetch(`${API_BASE}/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(credentials)
+    })
+    const data = await res.json()
+    if (res.ok) {
+      store.login(data)
+    } else if (res.status === 403 && data.requires_activation) {
+      requiresActivation.value = true
+      activationEmail.value = data.email || ''
+    } else {
+      // Use the original handleLogin for error handling
+      handleLogin(credentials)
+    }
+  } catch {
+    handleLogin(credentials)
+  }
+}
+
+// Check for Google OAuth callback on mount
+watch(() => route.query.code, (code) => {
+  if (code && !store.isAuthenticated) {
+    handleGoogleCallback()
+  }
+}, { immediate: true })
+
+// Show toast when redirected from backend after Google callback error (e.g. 403 needs_invite)
+watch(() => [route.query.google_error, route.query.google_message], ([err, msg]) => {
+  if (err && msg) {
+    toast.show(typeof msg === 'string' ? msg : 'Google login failed')
+    const q = { ...route.query }
+    delete q.google_error
+    delete q.google_message
+    router.replace({ path: route.path, query: q })
+  }
+}, { immediate: true })
+
+// Handle invite code from URL (for authenticated users)
+watch(() => route.params.inviteCode, (inviteCode) => {
+  if (inviteCode && typeof inviteCode === 'string' && store.isAuthenticated) {
+    pendingInviteCode.value = inviteCode
+    handleJoinFromUrl()
   }
 }, { immediate: true })
 
@@ -102,7 +272,33 @@ watch(() => store.isAuthenticated, (isAuth) => {
 
 <template>
   <div class="min-h-screen bg-trainmore-dark text-white font-industrial flex flex-col">
-    <LoginView v-if="!store.isAuthenticated" :error="loginError" @login="handleLogin" />
+    <!-- Activation Page -->
+    <ActivationView 
+      v-if="isActivationRoute" 
+      :token="activationToken"
+      @activated="handleActivated"
+      @go-login="router.replace('/')"
+    />
+
+    <!-- Join Landing Page (unauthenticated users with invite code) -->
+    <JoinLandingView
+      v-else-if="isJoinRoute && !store.isAuthenticated"
+      :invite-code="inviteCodeFromRoute"
+      @login="handleJoinLogin"
+      @register="handleJoinRegister"
+      @google-login="handleGoogleLogin"
+    />
+
+    <!-- Regular Login -->
+    <LoginView 
+      v-else-if="!store.isAuthenticated" 
+      :error="loginError"
+      :requires-activation="requiresActivation"
+      :activation-email="activationEmail"
+      @login="handleLoginWithActivationCheck" 
+      @google-login="() => handleGoogleLogin()"
+      @resend-activation="handleResendActivation"
+    />
 
     <!-- Balance List Selection Screen -->
     <BalanceListsView v-else-if="!store.hasSelectedBalanceList" />

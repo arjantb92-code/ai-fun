@@ -1,8 +1,11 @@
 from datetime import datetime, timedelta
+import logging
 import os
+import time
+import json
 import jwt
 from functools import wraps
-from flask import Flask, jsonify, request, send_from_directory
+from flask import Flask, g, jsonify, request, send_from_directory, redirect
 from flask_cors import CORS
 from dotenv import load_dotenv
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -30,6 +33,21 @@ from flask_limiter.util import get_remote_address
 load_dotenv(os.path.join(os.path.dirname(os.path.dirname(__file__)), ".env"))
 
 app = Flask(__name__)
+
+# Request logging to console
+logging.basicConfig(level=logging.INFO)
+app.logger.setLevel(logging.INFO)
+if not app.logger.handlers:
+    h = logging.StreamHandler()
+    h.setFormatter(logging.Formatter("%(asctime)s %(levelname)s [%(name)s] %(message)s"))
+    app.logger.addHandler(h)
+
+
+@app.before_request
+def before_request():
+    g.request_start = time.perf_counter()
+
+
 _frontend_origin = (os.getenv("FRONTEND_URL") or "").strip()
 if _frontend_origin:
     CORS(app, origins=[_frontend_origin])
@@ -75,11 +93,20 @@ limiter = Limiter(get_remote_address, app=app, default_limits=None)
 
 
 @app.after_request
-def security_headers(response):
+def after_request(response):
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["X-Frame-Options"] = "DENY"
     response.headers["X-XSS-Protection"] = "1; mode=block"
     response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    # Request log
+    elapsed = (time.perf_counter() - getattr(g, "request_start", time.perf_counter())) * 1000
+    app.logger.info(
+        "%s %s %s %.0fms",
+        request.method,
+        request.path,
+        response.status_code,
+        elapsed,
+    )
     return response
 
 
@@ -226,6 +253,16 @@ def login():
         or not check_password_hash(user.password_hash, password)
     ):
         return jsonify({"message": "Invalid"}), 401
+    
+    # Check email verification (skip for first login - when email_verified is None/False and no activation_token)
+    # Users who registered but never activated need to verify their email for subsequent logins
+    if user.activation_token and not user.email_verified:
+        return jsonify({
+            "message": "Email not verified",
+            "requires_activation": True,
+            "email": user.email
+        }), 403
+    
     tk = jwt.encode(
         {"user_id": user.id, "exp": datetime.utcnow() + timedelta(hours=24)},
         app.config["SECRET_KEY"],
@@ -239,9 +276,354 @@ def login():
                 "name": user.name,
                 "email": user.email,
                 "avatar_url": user.avatar_url,
+                "email_verified": user.email_verified,
             },
         }
     )
+
+
+@app.route("/auth/register-from-invite", methods=["POST"])
+@limiter.limit("5 per minute")
+def register_from_invite():
+    """Register a new account via invite code (invite-only signup)."""
+    data = request.get_json(silent=True) or {}
+    invite_code = data.get("invite_code", "").strip()
+    name = data.get("name", "").strip()
+    email = data.get("email", "").strip().lower()
+    password = data.get("password", "")
+    
+    if not invite_code:
+        return jsonify({"error": "Invite code is required"}), 400
+    if not name or len(name) < 2:
+        return jsonify({"error": "Name is required (min 2 characters)"}), 400
+    if not email or "@" not in email:
+        return jsonify({"error": "Valid email is required"}), 400
+    if not password or len(password) < 6:
+        return jsonify({"error": "Password is required (min 6 characters)"}), 400
+    
+    # Verify invite code
+    bl = BalanceList.query.filter_by(invite_code=invite_code).first()
+    if not bl:
+        return jsonify({"error": "Invalid invite code"}), 404
+    
+    # Check if email already exists
+    existing = User.query.filter(func.lower(User.email) == email).first()
+    if existing:
+        return jsonify({"error": "Email already registered"}), 409
+    
+    try:
+        # Create user
+        user = User()
+        user.name = name
+        user.email = email
+        user.password_hash = generate_password_hash(password)
+        user.is_group_member = True
+        user.email_verified = False
+        user.generate_activation_token()
+        db.session.add(user)
+        db.session.flush()
+        
+        # Auto-join the balance list
+        member = BalanceListMember()
+        member.balance_list_id = bl.id
+        member.user_id = user.id
+        member.role = "member"
+        db.session.add(member)
+        db.session.commit()
+        
+        # Generate token for immediate login (first login allowed without activation)
+        tk = jwt.encode(
+            {"user_id": user.id, "exp": datetime.utcnow() + timedelta(hours=24)},
+            app.config["SECRET_KEY"],
+            algorithm="HS256",
+        )
+        
+        # TODO: Send activation email with user.activation_token
+        # For now, log the activation URL
+        frontend_url = os.getenv("FRONTEND_URL", "http://localhost:5173")
+        activation_url = f"{frontend_url}/activate?token={user.activation_token}"
+        app.logger.info(f"Activation URL for {email}: {activation_url}")
+        
+        return jsonify({
+            "status": "success",
+            "message": "Account created. Check your email to activate for future logins.",
+            "token": tk,
+            "user": user.to_dict(),
+            "balance_list": bl.to_dict(),
+            "activation_url": activation_url if os.getenv("FLASK_ENV") != "production" else None
+        }), 201
+        
+    except Exception as e:
+        db.session.rollback()
+        app.logger.exception("register-from-invite failed")
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/auth/activate", methods=["POST"])
+@limiter.limit("10 per minute")
+def activate_account():
+    """Activate account by setting password and verifying email."""
+    data = request.get_json(silent=True) or {}
+    token = data.get("token", "").strip()
+    new_password = data.get("password", "")
+    
+    if not token:
+        return jsonify({"error": "Activation token is required"}), 400
+    
+    user = User.query.filter_by(activation_token=token).first()
+    if not user:
+        return jsonify({"error": "Invalid activation token"}), 404
+    
+    if not user.verify_activation_token(token):
+        return jsonify({"error": "Activation token expired"}), 410
+    
+    try:
+        # If password provided, update it
+        if new_password:
+            if len(new_password) < 6:
+                return jsonify({"error": "Password must be at least 6 characters"}), 400
+            user.password_hash = generate_password_hash(new_password)
+        
+        # Mark email as verified and clear token
+        user.email_verified = True
+        user.activation_token = None
+        user.activation_token_expires = None
+        db.session.commit()
+        
+        return jsonify({
+            "status": "success",
+            "message": "Account activated successfully",
+            "user": user.to_dict()
+        })
+        
+    except Exception as e:
+        db.session.rollback()
+        app.logger.exception("activate failed")
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/auth/resend-activation", methods=["POST"])
+@limiter.limit("3 per minute")
+def resend_activation():
+    """Resend activation email."""
+    data = request.get_json(silent=True) or {}
+    email = data.get("email", "").strip().lower()
+    
+    if not email:
+        return jsonify({"error": "Email is required"}), 400
+    
+    user = User.query.filter(func.lower(User.email) == email).first()
+    if not user:
+        # Don't reveal if email exists
+        return jsonify({"status": "success", "message": "If the email exists, an activation link was sent."})
+    
+    if user.email_verified:
+        return jsonify({"error": "Account already activated"}), 400
+    
+    try:
+        user.generate_activation_token()
+        db.session.commit()
+        
+        # TODO: Send activation email
+        frontend_url = os.getenv("FRONTEND_URL", "http://localhost:5173")
+        activation_url = f"{frontend_url}/activate?token={user.activation_token}"
+        app.logger.info(f"Activation URL for {email}: {activation_url}")
+        
+        return jsonify({
+            "status": "success",
+            "message": "Activation email sent",
+            "activation_url": activation_url if os.getenv("FLASK_ENV") != "production" else None
+        })
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/auth/google", methods=["GET"])
+@limiter.exempt
+def google_auth():
+    """Initiate Google OAuth flow."""
+    google_client_id = os.getenv("GOOGLE_CLIENT_ID")
+    if not google_client_id:
+        return jsonify({"error": "Google OAuth not configured"}), 503
+    
+    invite_code = request.args.get("invite_code", "")
+    redirect_uri = os.getenv("GOOGLE_REDIRECT_URI", f"{request.host_url.rstrip('/')}/auth/google/callback")
+    
+    # Build state with invite_code if provided
+    state_data = {"invite_code": invite_code} if invite_code else {}
+    state = jwt.encode(state_data, app.config["SECRET_KEY"], algorithm="HS256")
+    
+    auth_url = (
+        "https://accounts.google.com/o/oauth2/v2/auth?"
+        f"client_id={google_client_id}&"
+        f"redirect_uri={redirect_uri}&"
+        "response_type=code&"
+        "scope=openid%20email%20profile&"
+        "prompt=consent&"  # Altijd consent/accountkeuze tonen na uitloggen
+        f"state={state}"
+    )
+    
+    return jsonify({"auth_url": auth_url})
+
+
+@app.route("/auth/google/callback", methods=["GET", "POST"])
+@limiter.exempt
+def google_callback():
+    """Handle Google OAuth callback."""
+    google_client_id = os.getenv("GOOGLE_CLIENT_ID")
+    google_client_secret = os.getenv("GOOGLE_CLIENT_SECRET")
+    
+    if not google_client_id or not google_client_secret:
+        return jsonify({"error": "Google OAuth not configured"}), 503
+    
+    code = request.args.get("code") or (request.json or {}).get("code")
+    state = request.args.get("state") or (request.json or {}).get("state")
+    
+    if not code:
+        return _google_callback_error("Missing authorization code", 400)
+    
+    # Decode state to get invite_code
+    invite_code = None
+    if state:
+        try:
+            state_data = jwt.decode(state, app.config["SECRET_KEY"], algorithms=["HS256"])
+            invite_code = state_data.get("invite_code")
+        except Exception:
+            pass
+    
+    redirect_uri = os.getenv("GOOGLE_REDIRECT_URI", f"{request.host_url.rstrip('/')}/auth/google/callback")
+    
+    try:
+        # Exchange code for tokens
+        import requests as http_requests
+        token_response = http_requests.post(
+            "https://oauth2.googleapis.com/token",
+            data={
+                "code": code,
+                "client_id": google_client_id,
+                "client_secret": google_client_secret,
+                "redirect_uri": redirect_uri,
+                "grant_type": "authorization_code"
+            },
+            headers={"Content-Type": "application/x-www-form-urlencoded"},
+        )
+        
+        if not token_response.ok:
+            try:
+                err_body = token_response.json()
+                msg = err_body.get("error_description") or err_body.get("error") or "Failed to exchange code for token"
+            except Exception:
+                msg = token_response.text or "Failed to exchange code for token"
+            app.logger.warning("Google token exchange failed: %s %s", token_response.status_code, msg)
+            return _google_callback_error("Failed to exchange code for token", 400, detail=msg)
+        
+        tokens = token_response.json()
+        id_token = tokens.get("id_token")
+        
+        if not id_token:
+            return _google_callback_error("No ID token received", 400)
+        
+        # Decode ID token to get user info (without verification for simplicity)
+        # In production, should verify with Google's public keys
+        import base64
+        payload = id_token.split(".")[1]
+        # Add padding if needed
+        payload += "=" * (4 - len(payload) % 4)
+        user_info = json.loads(base64.urlsafe_b64decode(payload))
+        
+        google_id = user_info.get("sub")
+        email = user_info.get("email", "").lower()
+        name = user_info.get("name", email.split("@")[0])
+        picture = user_info.get("picture")
+        
+        if not google_id or not email:
+            return _google_callback_error("Invalid user info from Google", 400)
+        
+        # Find or create user
+        user = User.query.filter(
+            (User.oauth_provider == "google") & (User.oauth_id == google_id)
+        ).first()
+        
+        if not user:
+            # Check if email exists (link accounts)
+            user = User.query.filter(func.lower(User.email) == email).first()
+            if user:
+                # Link existing account to Google
+                user.oauth_provider = "google"
+                user.oauth_id = google_id
+                user.email_verified = True
+            else:
+                # Create new user - but only if invite_code provided
+                if not invite_code:
+                    return _google_callback_error(
+                        "Registration requires an invite link",
+                        403,
+                        needs_invite=True,
+                    )
+                
+                # Verify invite code
+                bl = BalanceList.query.filter_by(invite_code=invite_code).first()
+                if not bl:
+                    return _google_callback_error("Invalid invite code", 404)
+                
+                user = User()
+                user.name = name
+                user.email = email
+                user.avatar_url = picture
+                user.oauth_provider = "google"
+                user.oauth_id = google_id
+                user.is_group_member = True
+                user.email_verified = True  # Google emails are pre-verified
+                db.session.add(user)
+                db.session.flush()
+                
+                # Auto-join balance list
+                member = BalanceListMember()
+                member.balance_list_id = bl.id
+                member.user_id = user.id
+                member.role = "member"
+                db.session.add(member)
+        
+        # Update avatar if changed
+        if picture and user.avatar_url != picture:
+            user.avatar_url = picture
+        
+        db.session.commit()
+        
+        # Generate JWT
+        tk = jwt.encode(
+            {"user_id": user.id, "exp": datetime.utcnow() + timedelta(hours=24)},
+            app.config["SECRET_KEY"],
+            algorithm="HS256",
+        )
+        
+        return jsonify({
+            "status": "success",
+            "token": tk,
+            "user": user.to_dict()
+        })
+        
+    except Exception as e:
+        db.session.rollback()
+        app.logger.exception("google callback failed")
+        return _google_callback_error(str(e), 500)
+
+
+def _google_callback_error(message: str, status: int, *, detail: str = None, needs_invite: bool = False):
+    """Return error for Google callback. If browser GET, redirect to frontend with error param."""
+    payload = {"error": message}
+    if detail:
+        payload["detail"] = detail
+    if needs_invite:
+        payload["needs_invite"] = True
+    frontend_url = os.getenv("FRONTEND_URL", "").rstrip("/")
+    if request.method == "GET" and frontend_url:
+        from urllib.parse import urlencode
+        params = {"google_error": "needs_invite" if needs_invite else "error", "google_message": message}
+        return redirect(f"{frontend_url}/?{urlencode(params)}", code=302)
+    return jsonify(payload), status
 
 
 @app.route("/users", methods=["GET"])
@@ -680,6 +1062,23 @@ def lookup_balance_list(current_user, invite_code):
         "currency": bl.currency,
         "member_count": len(bl.members),
         "is_member": is_member
+    })
+
+
+@app.route("/balance-lists/public-preview/<invite_code>", methods=["GET"])
+@limiter.exempt
+def public_preview_balance_list(invite_code):
+    """Public endpoint: preview a balance list by invite code (no auth required)."""
+    bl = BalanceList.query.filter_by(invite_code=invite_code).first()
+    if not bl:
+        return jsonify({"error": "Invalid invite code"}), 404
+    
+    return jsonify({
+        "id": bl.id,
+        "name": bl.name,
+        "currency": bl.currency,
+        "member_count": len(bl.members),
+        "created_by_name": bl.created_by.name if bl.created_by else None,
     })
 
 

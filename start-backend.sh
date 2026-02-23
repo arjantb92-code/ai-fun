@@ -43,7 +43,6 @@ source venv/bin/activate
 export PYTHONPATH=$PYTHONPATH:.
 cd backend && flask db upgrade && cd ..
 
-# 4. Start Flask
+# 4. Start Flask (logs live in terminal)
 echo "Starting Flask Server (Port 5001)..."
-mkdir -p logs
-python3 backend/app.py > logs/backend_$(date +%Y%m%d_%H%M%S).log 2>&1
+python3 backend/app.py
