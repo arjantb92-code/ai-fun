@@ -15,6 +15,9 @@ from models import (
     SettlementSession,
     HistoricalSettlement,
     Trip,
+    BalanceList,
+    BalanceListMember,
+    generate_invite_code,
 )
 from ocr import get_ocr_service
 from bank_parser import BankParser
@@ -198,6 +201,16 @@ def login():
 @app.route("/users", methods=["GET"])
 @token_required
 def get_users(current_user):
+    balance_list_id = request.args.get("balance_list_id", type=int)
+    
+    if balance_list_id:
+        # Return only members of this balance list
+        members = BalanceListMember.query.filter_by(balance_list_id=balance_list_id).all()
+        users = [m.user for m in members if m.user]
+    else:
+        # Return all users (fallback for backward compatibility)
+        users = User.query.all()
+    
     return jsonify(
         [
             {
@@ -207,7 +220,7 @@ def get_users(current_user):
                 "avatar_url": u.avatar_url,
                 "is_group_member": u.is_group_member,
             }
-            for u in User.query.all()
+            for u in users
         ]
     )
 
@@ -259,6 +272,371 @@ def upload_avatar(current_user):
     )
 
 
+# ===== BALANCE LISTS ENDPOINTS =====
+
+
+def _get_balance_list_stats(balance_list, current_user):
+    """Calculate stats for a balance list including user's balance."""
+    txs = Transaction.query.filter_by(
+        balance_list_id=balance_list.id,
+        settlement_session_id=None
+    ).filter(Transaction.deleted_at.is_(None)).all()
+    
+    total_amount = sum(t.amount for t in txs)
+    
+    # Calculate current user's balance within this list
+    member_ids = [m.user_id for m in balance_list.members]
+    bals = {uid: 0.0 for uid in member_ids}
+    
+    for t in txs:
+        amt = t.amount
+        tp = t.type or "EXPENSE"
+        if t.payer_id in bals:
+            if tp in ["EXPENSE", "TRANSFER"]:
+                bals[t.payer_id] += amt
+            else:
+                bals[t.payer_id] -= amt
+        tw = sum(s.weight for s in t.splits if s.user_id in member_ids)
+        if tw > 0:
+            ppw = amt / tw
+            for s in t.splits:
+                if s.user_id in bals:
+                    if tp in ["EXPENSE", "TRANSFER"]:
+                        bals[s.user_id] -= ppw * s.weight
+                    else:
+                        bals[s.user_id] += ppw * s.weight
+    
+    my_balance = bals.get(current_user.id, 0.0)
+    
+    return {
+        "total_transactions": len(txs),
+        "total_amount": round(total_amount, 2),
+        "my_balance": round(my_balance, 2),
+    }
+
+
+@app.route("/balance-lists", methods=["GET"])
+@token_required
+def get_balance_lists(current_user):
+    """Get all balance lists for the current user."""
+    memberships = BalanceListMember.query.filter_by(user_id=current_user.id).all()
+    result = []
+    for m in memberships:
+        bl = m.balance_list
+        stats = _get_balance_list_stats(bl, current_user)
+        data = bl.to_dict()
+        data.update(stats)
+        data["my_role"] = m.role
+        result.append(data)
+    return jsonify(result)
+
+
+@app.route("/balance-lists", methods=["POST"])
+@token_required
+def create_balance_list(current_user):
+    """Create a new balance list."""
+    d = request.json or {}
+    name = d.get("name", "").strip()
+    if not name:
+        return jsonify({"error": "Name is required"}), 400
+    
+    currency = d.get("currency", "EUR").upper()[:3]
+    
+    try:
+        bl = BalanceList()
+        bl.name = name
+        bl.currency = currency
+        bl.created_by_id = current_user.id
+        db.session.add(bl)
+        db.session.flush()
+        
+        # Add creator as owner
+        member = BalanceListMember()
+        member.balance_list_id = bl.id
+        member.user_id = current_user.id
+        member.role = "owner"
+        db.session.add(member)
+        
+        db.session.commit()
+        
+        return jsonify({
+            "status": "success",
+            "balance_list": bl.to_dict(include_members=True)
+        }), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/balance-lists/<int:bl_id>", methods=["GET"])
+@token_required
+def get_balance_list(current_user, bl_id):
+    """Get a specific balance list."""
+    bl = db.session.get(BalanceList, bl_id)
+    if not bl:
+        return jsonify({"error": "Not found"}), 404
+    
+    # Check membership
+    membership = BalanceListMember.query.filter_by(
+        balance_list_id=bl_id, user_id=current_user.id
+    ).first()
+    if not membership:
+        return jsonify({"error": "Access denied"}), 403
+    
+    data = bl.to_dict(include_members=True)
+    stats = _get_balance_list_stats(bl, current_user)
+    data.update(stats)
+    data["my_role"] = membership.role
+    return jsonify(data)
+
+
+@app.route("/balance-lists/<int:bl_id>", methods=["PUT"])
+@token_required
+def update_balance_list(current_user, bl_id):
+    """Update a balance list (name, currency)."""
+    bl = db.session.get(BalanceList, bl_id)
+    if not bl:
+        return jsonify({"error": "Not found"}), 404
+    
+    membership = BalanceListMember.query.filter_by(
+        balance_list_id=bl_id, user_id=current_user.id
+    ).first()
+    if not membership or membership.role not in ["owner", "admin"]:
+        return jsonify({"error": "Only owner or admin can edit"}), 403
+    
+    d = request.json or {}
+    try:
+        if "name" in d:
+            bl.name = d["name"].strip()
+        if "currency" in d:
+            bl.currency = d["currency"].upper()[:3]
+        db.session.commit()
+        return jsonify({"status": "success", "balance_list": bl.to_dict()})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/balance-lists/<int:bl_id>", methods=["DELETE"])
+@token_required
+def delete_balance_list(current_user, bl_id):
+    """Delete a balance list (owner only)."""
+    bl = db.session.get(BalanceList, bl_id)
+    if not bl:
+        return jsonify({"error": "Not found"}), 404
+    
+    membership = BalanceListMember.query.filter_by(
+        balance_list_id=bl_id, user_id=current_user.id
+    ).first()
+    if not membership or membership.role != "owner":
+        return jsonify({"error": "Only owner can delete"}), 403
+    
+    try:
+        db.session.delete(bl)
+        db.session.commit()
+        return jsonify({"status": "success"})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/balance-lists/<int:bl_id>/members", methods=["GET"])
+@token_required
+def get_balance_list_members(current_user, bl_id):
+    """Get all members of a balance list."""
+    bl = db.session.get(BalanceList, bl_id)
+    if not bl:
+        return jsonify({"error": "Not found"}), 404
+    
+    membership = BalanceListMember.query.filter_by(
+        balance_list_id=bl_id, user_id=current_user.id
+    ).first()
+    if not membership:
+        return jsonify({"error": "Access denied"}), 403
+    
+    return jsonify([m.to_dict() for m in bl.members])
+
+
+@app.route("/balance-lists/<int:bl_id>/members", methods=["POST"])
+@token_required
+def add_balance_list_member(current_user, bl_id):
+    """Add a member to a balance list by user_id."""
+    bl = db.session.get(BalanceList, bl_id)
+    if not bl:
+        return jsonify({"error": "Not found"}), 404
+    
+    membership = BalanceListMember.query.filter_by(
+        balance_list_id=bl_id, user_id=current_user.id
+    ).first()
+    if not membership or membership.role not in ["owner", "admin"]:
+        return jsonify({"error": "Only owner or admin can add members"}), 403
+    
+    d = request.json or {}
+    user_id = d.get("user_id")
+    if not user_id:
+        return jsonify({"error": "user_id required"}), 400
+    
+    user = db.session.get(User, user_id)
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+    
+    existing = BalanceListMember.query.filter_by(
+        balance_list_id=bl_id, user_id=user_id
+    ).first()
+    if existing:
+        return jsonify({"error": "User is already a member"}), 400
+    
+    try:
+        member = BalanceListMember()
+        member.balance_list_id = bl_id
+        member.user_id = user_id
+        member.role = d.get("role", "member")
+        db.session.add(member)
+        db.session.commit()
+        return jsonify({"status": "success", "member": member.to_dict()}), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/balance-lists/<int:bl_id>/members/<int:user_id>", methods=["DELETE"])
+@token_required
+def remove_balance_list_member(current_user, bl_id, user_id):
+    """Remove a member from a balance list."""
+    bl = db.session.get(BalanceList, bl_id)
+    if not bl:
+        return jsonify({"error": "Not found"}), 404
+    
+    membership = BalanceListMember.query.filter_by(
+        balance_list_id=bl_id, user_id=current_user.id
+    ).first()
+    
+    # Can remove yourself, or owner/admin can remove others
+    is_self = current_user.id == user_id
+    is_admin = membership and membership.role in ["owner", "admin"]
+    if not is_self and not is_admin:
+        return jsonify({"error": "Permission denied"}), 403
+    
+    target = BalanceListMember.query.filter_by(
+        balance_list_id=bl_id, user_id=user_id
+    ).first()
+    if not target:
+        return jsonify({"error": "Member not found"}), 404
+    
+    # Cannot remove the owner
+    if target.role == "owner" and not is_self:
+        return jsonify({"error": "Cannot remove owner"}), 403
+    
+    try:
+        db.session.delete(target)
+        db.session.commit()
+        return jsonify({"status": "success"})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/balance-lists/<int:bl_id>/invite-code", methods=["GET"])
+@token_required
+def get_invite_code(current_user, bl_id):
+    """Get the invite code for a balance list."""
+    bl = db.session.get(BalanceList, bl_id)
+    if not bl:
+        return jsonify({"error": "Not found"}), 404
+    
+    membership = BalanceListMember.query.filter_by(
+        balance_list_id=bl_id, user_id=current_user.id
+    ).first()
+    if not membership:
+        return jsonify({"error": "Access denied"}), 403
+    
+    return jsonify({
+        "invite_code": bl.invite_code,
+        "balance_list_id": bl.id,
+        "balance_list_name": bl.name
+    })
+
+
+@app.route("/balance-lists/<int:bl_id>/invite-code/regenerate", methods=["POST"])
+@token_required
+def regenerate_invite_code(current_user, bl_id):
+    """Regenerate the invite code for a balance list."""
+    bl = db.session.get(BalanceList, bl_id)
+    if not bl:
+        return jsonify({"error": "Not found"}), 404
+    
+    membership = BalanceListMember.query.filter_by(
+        balance_list_id=bl_id, user_id=current_user.id
+    ).first()
+    if not membership or membership.role not in ["owner", "admin"]:
+        return jsonify({"error": "Only owner or admin can regenerate invite code"}), 403
+    
+    try:
+        bl.invite_code = generate_invite_code()
+        db.session.commit()
+        return jsonify({
+            "status": "success",
+            "invite_code": bl.invite_code
+        })
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/balance-lists/join/<invite_code>", methods=["POST"])
+@token_required
+def join_balance_list(current_user, invite_code):
+    """Join a balance list via invite code."""
+    bl = BalanceList.query.filter_by(invite_code=invite_code).first()
+    if not bl:
+        return jsonify({"error": "Invalid invite code"}), 404
+    
+    existing = BalanceListMember.query.filter_by(
+        balance_list_id=bl.id, user_id=current_user.id
+    ).first()
+    if existing:
+        return jsonify({
+            "status": "already_member",
+            "balance_list": bl.to_dict()
+        })
+    
+    try:
+        member = BalanceListMember()
+        member.balance_list_id = bl.id
+        member.user_id = current_user.id
+        member.role = "member"
+        db.session.add(member)
+        db.session.commit()
+        return jsonify({
+            "status": "success",
+            "balance_list": bl.to_dict()
+        })
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/balance-lists/lookup/<invite_code>", methods=["GET"])
+@token_required
+def lookup_balance_list(current_user, invite_code):
+    """Look up a balance list by invite code (for preview before joining)."""
+    bl = BalanceList.query.filter_by(invite_code=invite_code).first()
+    if not bl:
+        return jsonify({"error": "Invalid invite code"}), 404
+    
+    is_member = BalanceListMember.query.filter_by(
+        balance_list_id=bl.id, user_id=current_user.id
+    ).first() is not None
+    
+    return jsonify({
+        "id": bl.id,
+        "name": bl.name,
+        "currency": bl.currency,
+        "member_count": len(bl.members),
+        "is_member": is_member
+    })
+
+
 @app.route("/static/<path:filename>")
 def serve_static(filename):
     if os.path.exists(os.path.join(app.config["AVATAR_FOLDER"], filename)):
@@ -275,9 +653,19 @@ def _tx_not_deleted(query):
 @token_required
 def get_balances(current_user):
     activity_id = request.args.get("activity_id", type=int)
-    users = User.query.all()
+    balance_list_id = request.args.get("balance_list_id", type=int)
+    
+    if balance_list_id:
+        # Get only members of this balance list
+        members = BalanceListMember.query.filter_by(balance_list_id=balance_list_id).all()
+        users = [m.user for m in members if m.user]
+    else:
+        users = User.query.all()
+    
     query = Transaction.query.filter_by(settlement_session_id=None)
     query = _tx_not_deleted(query)
+    if balance_list_id is not None:
+        query = query.filter_by(balance_list_id=balance_list_id)
     if activity_id is not None:
         query = query.filter_by(trip_id=activity_id)
     txs = query.all()
@@ -308,6 +696,7 @@ def get_balances(current_user):
 @token_required
 def get_transactions(current_user):
     activity_id = request.args.get("activity_id", type=int)
+    balance_list_id = request.args.get("balance_list_id", type=int)
     category = request.args.get("category", type=str)
     deleted = request.args.get("deleted", "false").lower() == "true"
     query = Transaction.query.filter_by(settlement_session_id=None)
@@ -315,6 +704,8 @@ def get_transactions(current_user):
         query = query.filter(Transaction.deleted_at.isnot(None))
     else:
         query = _tx_not_deleted(query)
+    if balance_list_id is not None:
+        query = query.filter_by(balance_list_id=balance_list_id)
     if activity_id is not None:
         query = query.filter_by(trip_id=activity_id)
     if category:
@@ -338,6 +729,7 @@ def get_transactions(current_user):
                 "category": t.category or "overig",
                 "payer_id": t.payer_id,
                 "activity_id": t.trip_id,
+                "balance_list_id": t.balance_list_id,
                 "deleted_at": t.deleted_at.isoformat() if t.deleted_at else None,
                 "splits": [
                     {"user_id": s.user_id, "weight": s.weight} for s in t.splits
@@ -368,6 +760,8 @@ def add_transaction(current_user):
         t.category = d.get("category") or classify_transaction(d["description"])
         if "activity_id" in d and d["activity_id"]:
             t.trip_id = d["activity_id"]
+        if "balance_list_id" in d and d["balance_list_id"]:
+            t.balance_list_id = d["balance_list_id"]
         db.session.add(t)
         db.session.flush()
         for s_data in d["splits"]:
@@ -403,6 +797,8 @@ def update_transaction(current_user, tx_id):
             t.category = d["category"] or classify_transaction(d["description"])
         if "activity_id" in d:
             t.trip_id = d["activity_id"] if d["activity_id"] else None
+        if "balance_list_id" in d:
+            t.balance_list_id = d["balance_list_id"] if d["balance_list_id"] else None
         TransactionSplit.query.filter_by(transaction_id=tx_id).delete()
         for s_data in d["splits"]:
             split = TransactionSplit()
@@ -521,9 +917,18 @@ def delete_transaction_permanent(current_user, tx_id):
 @token_required
 def suggest_settlement(current_user):
     activity_id = request.args.get("activity_id", type=int)
-    users = User.query.all()
+    balance_list_id = request.args.get("balance_list_id", type=int)
+    
+    if balance_list_id:
+        members = BalanceListMember.query.filter_by(balance_list_id=balance_list_id).all()
+        users = [m.user for m in members if m.user]
+    else:
+        users = User.query.all()
+    
     query = Transaction.query.filter_by(settlement_session_id=None)
     query = _tx_not_deleted(query)
+    if balance_list_id is not None:
+        query = query.filter_by(balance_list_id=balance_list_id)
     if activity_id is not None:
         query = query.filter_by(trip_id=activity_id)
     txs = query.all()
@@ -577,14 +982,24 @@ def commit_settlement(current_user):
     try:
         d = request.json or {}
         activity_id = d.get("activity_id") or request.args.get("activity_id", type=int)
+        balance_list_id = d.get("balance_list_id") or request.args.get("balance_list_id", type=int)
+        
         query = Transaction.query.filter_by(settlement_session_id=None)
         query = _tx_not_deleted(query)
+        if balance_list_id is not None:
+            query = query.filter_by(balance_list_id=balance_list_id)
         if activity_id is not None:
             query = query.filter_by(trip_id=activity_id)
         unsettled = query.all()
         if not unsettled:
             return jsonify({"message": "Nothing to settle"}), 400
-        users = User.query.all()
+        
+        if balance_list_id:
+            members = BalanceListMember.query.filter_by(balance_list_id=balance_list_id).all()
+            users = [m.user for m in members if m.user]
+        else:
+            users = User.query.all()
+        
         bals = {u.id: 0.0 for u in users}
         for t in unsettled:
             amt = t.amount
@@ -635,6 +1050,8 @@ def commit_settlement(current_user):
         )
         if activity_id:
             sess.trip_id = activity_id
+        if balance_list_id:
+            sess.balance_list_id = balance_list_id
         db.session.add(sess)
         db.session.flush()
         for t in unsettled:
@@ -648,7 +1065,7 @@ def commit_settlement(current_user):
             db.session.add(hs)
         db.session.commit()
         return jsonify(
-            {"status": "success", "session_id": sess.id, "activity_id": activity_id}
+            {"status": "success", "session_id": sess.id, "activity_id": activity_id, "balance_list_id": balance_list_id}
         )
     except Exception as e:
         db.session.rollback()
@@ -659,11 +1076,15 @@ def commit_settlement(current_user):
 @token_required
 def get_settlement_history(current_user):
     deleted = request.args.get("deleted", "false").lower() == "true"
+    balance_list_id = request.args.get("balance_list_id", type=int)
+    
     query = SettlementSession.query
     if deleted:
         query = query.filter(SettlementSession.deleted_at.isnot(None))
     else:
         query = query.filter(SettlementSession.deleted_at.is_(None))
+    if balance_list_id is not None:
+        query = query.filter_by(balance_list_id=balance_list_id)
     sessions = query.order_by(SettlementSession.date.desc()).all()
     res = []
     for s in sessions:
@@ -686,6 +1107,7 @@ def get_settlement_history(current_user):
                 "date": s.date.isoformat(),
                 "description": s.description,
                 "total_amount": round(total, 2),
+                "balance_list_id": s.balance_list_id,
                 "deleted_at": s.deleted_at.isoformat() if s.deleted_at else None,
                 "results": [
                     {
@@ -820,9 +1242,13 @@ def process_receipt(current_user):
 @token_required
 def get_activities(current_user):
     include_archived = request.args.get("include_archived", "false").lower() == "true"
+    balance_list_id = request.args.get("balance_list_id", type=int)
+    
     query = Trip.query
     if not include_archived:
         query = query.filter((Trip.is_active == True) | (Trip.archived_at == None))
+    if balance_list_id is not None:
+        query = query.filter_by(balance_list_id=balance_list_id)
     trips = query.order_by(Trip.created_at.desc()).all()
     res = []
     for t in trips:
@@ -841,6 +1267,7 @@ def get_activities(current_user):
                 "icon": t.icon,
                 "is_active": t.is_active,
                 "archived_at": t.archived_at.isoformat() if t.archived_at else None,
+                "balance_list_id": t.balance_list_id,
                 "transaction_count": len(txs),
                 "total_amount": round(total, 2),
             }
@@ -863,6 +1290,8 @@ def create_activity(current_user):
         t.color = d.get("color", "#E30613")
         t.icon = d.get("icon", "📋")
         t.is_active = True
+        if d.get("balance_list_id"):
+            t.balance_list_id = d["balance_list_id"]
         db.session.add(t)
         db.session.commit()
         return jsonify(
@@ -878,6 +1307,7 @@ def create_activity(current_user):
                     "color": t.color,
                     "icon": t.icon,
                     "is_active": t.is_active,
+                    "balance_list_id": t.balance_list_id,
                 },
             }
         )
