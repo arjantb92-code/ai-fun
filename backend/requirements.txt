@@ -1,6 +1,6 @@
 gunicorn
 flask
-flask-limiter
+flask-limiter[redis]
 flask-sqlalchemy
 flask-cors
 flask-migrate
