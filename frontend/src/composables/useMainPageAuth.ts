@@ -37,8 +37,7 @@ export function useMainPageAuth(
       const res = await store.apiFetch('/users/profile', { method: 'PUT', body: JSON.stringify({ name, email }) })
       if (res.ok) {
         const data = await res.json() as { user: import('@/types').User }
-        store.currentUser = data.user
-        localStorage.setItem('wbw_user', JSON.stringify(data.user))
+        store.setCurrentUser(data.user)
         isProfileModalOpen.value = false
       }
     } catch {
