@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue'
+import { ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { API_BASE as apiBase } from '@/config/api'
 import { useMainPage } from '@/composables/useMainPage'
