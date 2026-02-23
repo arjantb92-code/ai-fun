@@ -14,6 +14,11 @@ const router = createRouter({
       name: 'join',
       component: App,
       props: true
+    },
+    {
+      path: '/activate',
+      name: 'activate',
+      component: App,
     }
   ],
 })

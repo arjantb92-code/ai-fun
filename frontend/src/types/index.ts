@@ -13,6 +13,7 @@ export interface User {
   email: string
   avatar_url: string | null
   is_group_member: boolean
+  email_verified?: boolean
 }
 
 export interface CurrentUser extends User {
