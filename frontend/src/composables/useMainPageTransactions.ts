@@ -36,6 +36,7 @@ export function useMainPageTransactions(
       type: 'EXPENSE',
       category: 'overig',
       activity_id: selectedActivityId.value,
+      balance_list_id: store.currentBalanceListId,
       splits: store.groupMembers.map(u => ({ user_id: u.id, weight: 1 }))
     }
     isEditModalOpen.value = true
@@ -153,6 +154,7 @@ export function useMainPageTransactions(
           type: 'EXPENSE' as const,
           category: null as CategoryKey | null,
           activity_id: selectedActivityId.value,
+          balance_list_id: store.currentBalanceListId,
           splits: store.groupMembers.map(u => ({ user_id: u.id, weight: 1 }))
         }
         const res = await store.apiFetch('/transactions', { method: 'POST', body: JSON.stringify(payload) })

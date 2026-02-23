@@ -3,7 +3,7 @@
 To connect via DBeaver or any other SQL client:
 
 - **Host**: localhost
-- **Port**: 5432
+- **Port**: 5433 (host; container blijft 5432)
 - **Database**: better_wbw
 - **Username**: wbw_admin
 - **Password**: secure_wbw_password_2026

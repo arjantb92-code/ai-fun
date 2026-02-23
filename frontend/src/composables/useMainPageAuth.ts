@@ -60,7 +60,8 @@ export function useMainPageAuth(
       const isNew = !selectedActivity.value
       const endpoint = isNew ? '/activities' : `/activities/${selectedActivity.value?.id}`
       const method = isNew ? 'POST' : 'PUT'
-      const res = await store.apiFetch(endpoint, { method, body: JSON.stringify(data) })
+      const payload = isNew ? { ...data, balance_list_id: store.currentBalanceListId } : data
+      const res = await store.apiFetch(endpoint, { method, body: JSON.stringify(payload) })
       if (res.ok) {
         await store.fetchData(selectedActivityId.value)
         isActivityModalOpen.value = false

@@ -1,104 +1,222 @@
-# Ticket: Meerdere balansen per account + eerste scherm + uitnodigen
+# Multiple Balance Lists Feature Specification
 
-**Status:** Concept (wacht op akkoord voor Linear)  
-**Type:** Feature  
-**Scope:** Backend (models, API), Frontend (routing, eerste scherm, uitnodigen)
-
----
-
-## Doel
-
-- Een **account** kan aan **meerdere balansen (lijsten)** gekoppeld zijn.
-- Het **eerste scherm** na login is een overzicht van “mijn balansen” (naam, valuta, deelnemers). Pas na een klik op een balans zie je de balans/transacties.
-- Uitnodigen voor een balans moet **makkelijk** kunnen via **link en/of QR-code**.
-- Elke balans heeft: **naam**, **valuta**, **deelnemers** (en blijft WBW-compatibel: splits, vereffening).
+**Original ticket:** Meerdere balansen per account + eerste scherm + uitnodigen  
+**Linear (optional):** Title `Feature: Meerdere balansen per account, eerste scherm + uitnodigen link/QR` · Labels: feature, backend, frontend, wbw. Script: `python scripts/create_linear_ticket_balance_lists.py` (requires `LINEAR_API_KEY`).
 
 ---
 
-## Huidige situatie (kort)
+## Overview
 
-- **Users** en **Trip** (Activity) bestaan; er is geen “groep” of “balanslijst” als eerste-laag concept.
-- Balansen worden nu per activity berekend; users zijn globaal (`is_group_member`).
-- Eerste scherm is nu activity/transactie-gericht, niet “kies een balans”.
+This document specifies the implementation of multiple balance lists per account for the Better WBW application. Each user can belong to multiple balance lists, and each balance list has its own transactions, balances, and settlements.
 
-Zie: `backend/models.py` (User, Trip, Transaction, TransactionSplit, SettlementSession), `docs/PINIA_AUDIT.md`, `.cursorrules` (WBW splits + settlement).
+## Goals
 
----
+1. Account linked to **multiple balance lists** (lists with name, currency, participants)
+2. **First screen** after login = overview "My Balance Lists"; click on a list → balance/transactions
+3. **Invite** via link and/or QR code per balance list
 
-## Gewenste situatie
+## Data Model
 
-1. **Balans (lijst)** = eerste-laag concept  
-   - Eigenschappen: **naam**, **valuta** (bijv. EUR, USD), **deelnemers** (users die bij deze balans horen).
-2. **Account ↔ balansen**  
-   - Een user kan in meerdere balansen zitten (many-to-many).
-3. **Eerste scherm na login**  
-   - Overzicht “Mijn balansen”: lijst met per balans o.a. naam, valuta, deelnemers. Geen balans/transacties zichtbaar tot je op een rij klikt.
-4. **Na klik op een balans**  
-   - Bestaande flow (transacties, balans, vereffening) maar dan **scoped op die balans**. WBW-logica (splits, gewichten, minimalisatie transacties) blijft gelden binnen die balans.
-5. **Uitnodigen**  
-   - Per balans: uitnodigings-**link** en **QR-code** waarmee iemand (eventueel na registratie/login) bij die balans wordt toegevoegd.
+### New Entity: BalanceList
 
----
+```python
+class BalanceList(db.Model):
+    __tablename__ = "balance_lists"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    currency = db.Column(db.String(3), default='EUR')  # ISO 4217 code
+    invite_code = db.Column(db.String(32), unique=True, nullable=False)
+    created_by_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    created_by = db.relationship("User", foreign_keys=[created_by_id])
+    members = db.relationship("BalanceListMember", back_populates="balance_list")
+```
 
-## Data model (voorstel)
+### New Entity: BalanceListMember (Many-to-Many)
 
-- **BalanceList** (of `Group`):  
-  - `id`, `name`, `currency` (string, bijv. `EUR`), `invite_code` (uniek, voor link/QR), `created_at`, `owner_id` (FK User) optioneel.
-- **BalanceListMember** (user ↔ balans, many-to-many):  
-  - `balance_list_id`, `user_id`, rol indien nodig (bijv. admin).
-- **Trip/Activity** koppelen aan balans:  
-  - `trip.balance_list_id` (FK naar BalanceList). Bestaande Trip/Transaction/Settlement-logica blijft; scope wordt “binnen deze balans”.
-- **User** blijft zoals nu; geen “global group” meer nodig voor WBW-scope: scope = balans.
+```python
+class BalanceListMember(db.Model):
+    __tablename__ = "balance_list_members"
+    id = db.Column(db.Integer, primary_key=True)
+    balance_list_id = db.Column(db.Integer, db.ForeignKey("balance_lists.id"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    role = db.Column(db.String(20), default='member')  # 'owner', 'admin', 'member'
+    joined_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    balance_list = db.relationship("BalanceList", back_populates="members")
+    user = db.relationship("User")
+    
+    __table_args__ = (
+        db.UniqueConstraint('balance_list_id', 'user_id', name='unique_membership'),
+    )
+```
 
-Uitnodigingslink: bijv. `/{base}/join/{invite_code}` of `?invite=CODE`. QR-code = zelfde URL.
+### Updated Entities
 
----
+**Trip (Activity)** - Link to BalanceList:
+```python
+# Add to Trip model:
+balance_list_id = db.Column(db.Integer, db.ForeignKey("balance_lists.id"), nullable=True)
+```
 
-## UX (kort)
+**Transaction** - Link to BalanceList:
+```python
+# Add to Transaction model:
+balance_list_id = db.Column(db.Integer, db.ForeignKey("balance_lists.id"), nullable=True)
+```
 
-| Stap | Wat |
-|------|-----|
-| 1 | Login → **eerste scherm: “Mijn balansen”** (lijst met naam, valuta, deelnemers). |
-| 2 | Klik op een balans → **detail: balans + transacties/activiteiten** (bestaande flows, nu per balans). |
-| 3 | Uitnodigen: knop “Nodig uit” → toon **link + QR-code**; kopieer link / toon QR. |
-| 4 | Nieuwe user opent link (of scant QR) → **join-flow**: registreren/login + toevoegen aan die balans. |
+**SettlementSession** - Link to BalanceList:
+```python
+# Add to SettlementSession model:
+balance_list_id = db.Column(db.Integer, db.ForeignKey("balance_lists.id"), nullable=True)
+```
 
----
+## API Endpoints
 
-## WBW-aansluiting
+### Balance List CRUD
 
-- Transacties en splits blijven **per balans** (via Trip/Activity die aan een balans hangen).  
-- Settlement (vereffening) blijft binnen de **deelnemers van die balans**; bestaande “minimaliseer aantal transacties”-logica ongewijzigd toepassen binnen die set.  
-- Gewichten (splits) blijven ondersteund zoals in `.cursorrules`.
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/balance-lists` | Get all balance lists for current user |
+| POST | `/balance-lists` | Create new balance list |
+| GET | `/balance-lists/<id>` | Get balance list details |
+| PUT | `/balance-lists/<id>` | Update balance list |
+| DELETE | `/balance-lists/<id>` | Delete balance list (owner only) |
 
----
+### Balance List Members
 
-## Acceptatiecriteria
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/balance-lists/<id>/members` | Get all members of a balance list |
+| POST | `/balance-lists/<id>/members` | Add member (by user_id) |
+| DELETE | `/balance-lists/<id>/members/<user_id>` | Remove member |
 
-- [ ] Model: BalanceList (naam, valuta, invite_code) + BalanceListMember; Trip gekoppeld aan BalanceList.
-- [ ] API: CRUD balansen, join via invite_code, lijst “mijn balansen” voor ingelogde user.
-- [ ] Eerste scherm na login = “Mijn balansen” (naam, valuta, deelnemers per rij).
-- [ ] Klik op een balans opent de bestaande balans/transactie-flow, nu scoped op die balans.
-- [ ] Per balans: uitnodigingslink + QR-code; link werkt (na login/registratie) om user aan balans toe te voegen.
-- [ ] Bestaande WBW-logica (splits, settlement) werkt binnen een gekozen balans.
+### Invite Flow
 
----
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/balance-lists/<id>/invite-code` | Get/regenerate invite code |
+| POST | `/balance-lists/join/<invite_code>` | Join balance list via invite code |
 
-## Technische notities
+### Scoped Endpoints
 
-- **Migraties:** nieuwe tabellen + `trip.balance_list_id` (of gelijkwaardig); bestaande data: één default BalanceList aanmaken en huidige trips daaraan koppelen.
-- **Frontend:** routing aanpassen (eerste route na login = balansoverzicht); store/state uitbreiden voor “huidige balans” en “mijn balansen” (zie PINIA_AUDIT voor store-aanbevelingen).
-- **Invite:** `invite_code` uniek, voldoende lang/random; rate limiting op join-endpoint (zie bestaande limiter).
+All existing endpoints that deal with transactions, balances, settlements, and activities will be scoped by `balance_list_id`:
 
----
+- `GET /transactions?balance_list_id=<id>`
+- `GET /balances?balance_list_id=<id>`
+- `GET /settlements/suggest?balance_list_id=<id>`
+- `GET /settlements/history?balance_list_id=<id>`
+- `GET /activities?balance_list_id=<id>`
 
-## Linear (na akkoord)
+## Request/Response Examples
 
-- **Titel:** `Feature: Meerdere balansen per account, eerste scherm + uitnodigen link/QR`
-- **Description:** Kopieer de inhoud van dit document (of de secties Doel t/m Acceptatiecriteria).
-- **Labels:** feature, backend, frontend, wbw.
+### Create Balance List
+```json
+POST /balance-lists
+{
+  "name": "Vakantie Griekenland 2026",
+  "currency": "EUR"
+}
 
-**In Linear zetten na akkoord:**
+Response:
+{
+  "id": 1,
+  "name": "Vakantie Griekenland 2026",
+  "currency": "EUR",
+  "invite_code": "abc123def456",
+  "created_by": { "id": 1, "name": "Arjan" },
+  "member_count": 1
+}
+```
 
-1. **Handmatig:** Linear → New issue → bovenstaande titel + description (of kopieer uit dit doc).
-2. **Via script:** `python scripts/create_linear_ticket_balance_lists.py` (vereist `LINEAR_API_KEY` in `.env`; optioneel `LINEAR_TEAM_ID`).
+### Get My Balance Lists
+```json
+GET /balance-lists
+
+Response:
+[
+  {
+    "id": 1,
+    "name": "Vakantie Griekenland 2026",
+    "currency": "EUR",
+    "member_count": 3,
+    "total_transactions": 45,
+    "total_amount": 1234.56,
+    "my_balance": -42.50,
+    "created_at": "2026-02-15T10:30:00Z"
+  },
+  {
+    "id": 2,
+    "name": "Huishouden",
+    "currency": "EUR",
+    "member_count": 2,
+    "total_transactions": 128,
+    "total_amount": 4567.89,
+    "my_balance": 150.00,
+    "created_at": "2026-01-01T00:00:00Z"
+  }
+]
+```
+
+### Join via Invite Code
+```json
+POST /balance-lists/join/abc123def456
+
+Response:
+{
+  "status": "success",
+  "balance_list": {
+    "id": 1,
+    "name": "Vakantie Griekenland 2026",
+    "currency": "EUR"
+  }
+}
+```
+
+## Frontend Components
+
+### New Components
+
+1. **BalanceListsView.vue** - First screen after login showing all balance lists
+2. **BalanceListCard.vue** - Card component showing balance list summary
+3. **BalanceListModal.vue** - Modal for creating/editing balance lists
+4. **InviteModal.vue** - Modal showing invite link and QR code
+
+### Updated Components
+
+1. **App.vue** - Add balance list selection state
+2. **Router** - Add routes for balance list views
+3. **appStore.ts** - Add balance list state and actions
+
+## UI Flow
+
+```
+Login → BalanceListsView (My Balance Lists)
+           ↓
+      Select Balance List
+           ↓
+      Main App (scoped to selected balance list)
+           - Activities
+           - Transactions  
+           - Balances
+           - Settlements
+```
+
+## Acceptance Criteria
+
+- [ ] Model + API: BalanceList with name, currency, invite_code
+- [ ] Model + API: Many-to-many User ↔ BalanceList relationship
+- [ ] Model + API: Join via invite_code
+- [ ] First screen = my balance lists (name, currency, member count, my balance)
+- [ ] Click on balance list → existing flow scoped to that list
+- [ ] Per balance list: invite link + QR code
+- [ ] Invite link adds user to balance list (after login/registration)
+
+## Migration Strategy
+
+1. Create new tables (balance_lists, balance_list_members)
+2. Add balance_list_id column to transactions, trips, settlement_sessions
+3. Create a "Default" balance list for existing data
+4. Migrate existing users as members of the default list
+5. Assign existing transactions/activities to the default list

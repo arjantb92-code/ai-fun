@@ -1,7 +1,14 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+import secrets
 
 db = SQLAlchemy()
+
+
+def generate_invite_code():
+    """Generate a unique 12-character invite code."""
+    return secrets.token_urlsafe(9)  # 12 chars base64
+
 
 class User(db.Model):
     __tablename__ = "users"
@@ -13,6 +20,8 @@ class User(db.Model):
     password_hash = db.Column(db.String(255), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
+    balance_list_memberships = db.relationship("BalanceListMember", back_populates="user")
+
     def to_dict(self):
         """Serialize user to dictionary."""
         return {
@@ -21,6 +30,64 @@ class User(db.Model):
             "email": self.email,
             "avatar_url": self.avatar_url,
             "is_group_member": self.is_group_member
+        }
+
+
+class BalanceList(db.Model):
+    """A balance list groups users, transactions, activities for expense splitting."""
+    __tablename__ = "balance_lists"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    currency = db.Column(db.String(3), default='EUR')
+    invite_code = db.Column(db.String(32), unique=True, nullable=False, default=generate_invite_code)
+    created_by_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    created_by = db.relationship("User", foreign_keys=[created_by_id])
+    members = db.relationship("BalanceListMember", back_populates="balance_list", cascade="all, delete-orphan")
+    transactions = db.relationship("Transaction", backref="balance_list", lazy="dynamic")
+    trips = db.relationship("Trip", backref="balance_list", lazy="dynamic")
+    settlement_sessions = db.relationship("SettlementSession", backref="balance_list_ref", lazy="dynamic")
+
+    def to_dict(self, include_members=False):
+        """Serialize balance list to dictionary."""
+        data = {
+            "id": self.id,
+            "name": self.name,
+            "currency": self.currency,
+            "invite_code": self.invite_code,
+            "created_by": self.created_by.to_dict() if self.created_by else None,
+            "member_count": len(self.members),
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+        }
+        if include_members:
+            data["members"] = [m.to_dict() for m in self.members]
+        return data
+
+
+class BalanceListMember(db.Model):
+    """Many-to-many relationship between users and balance lists."""
+    __tablename__ = "balance_list_members"
+    id = db.Column(db.Integer, primary_key=True)
+    balance_list_id = db.Column(db.Integer, db.ForeignKey("balance_lists.id"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    role = db.Column(db.String(20), default='member')  # 'owner', 'admin', 'member'
+    joined_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    balance_list = db.relationship("BalanceList", back_populates="members")
+    user = db.relationship("User", back_populates="balance_list_memberships")
+
+    __table_args__ = (
+        db.UniqueConstraint('balance_list_id', 'user_id', name='unique_membership'),
+    )
+
+    def to_dict(self):
+        """Serialize member to dictionary."""
+        return {
+            "user_id": self.user_id,
+            "user": self.user.to_dict() if self.user else None,
+            "role": self.role,
+            "joined_at": self.joined_at.isoformat() if self.joined_at else None,
         }
 
 class Trip(db.Model):
@@ -36,6 +103,7 @@ class Trip(db.Model):
     is_active = db.Column(db.Boolean, default=True)
     archived_at = db.Column(db.DateTime, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    balance_list_id = db.Column(db.Integer, db.ForeignKey("balance_lists.id"), nullable=True)
     
     transactions = db.relationship("Transaction", backref="trip", lazy="dynamic")
 
@@ -65,6 +133,7 @@ class SettlementSession(db.Model):
     date = db.Column(db.DateTime, default=datetime.utcnow)
     description = db.Column(db.String(255), nullable=True)
     trip_id = db.Column(db.Integer, db.ForeignKey("trips.id"), nullable=True)
+    balance_list_id = db.Column(db.Integer, db.ForeignKey("balance_lists.id"), nullable=True)
     deleted_at = db.Column(db.DateTime, nullable=True)
     
     trip = db.relationship("Trip", backref="settlement_sessions")
@@ -117,6 +186,7 @@ class Transaction(db.Model):
     receipt_url = db.Column(db.String(255), nullable=True)
     settlement_session_id = db.Column(db.Integer, db.ForeignKey("settlement_sessions.id"), nullable=True)
     trip_id = db.Column(db.Integer, db.ForeignKey("trips.id"), nullable=True)
+    balance_list_id = db.Column(db.Integer, db.ForeignKey("balance_lists.id"), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     deleted_at = db.Column(db.DateTime, nullable=True)
 

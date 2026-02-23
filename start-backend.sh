@@ -31,7 +31,7 @@ if [ -z "$DATABASE_URL" ]; then
         exit 1
     fi
     docker compose up -d
-    export DATABASE_URL="postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@127.0.0.1:5432/${POSTGRES_DB}"
+    export DATABASE_URL="postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@127.0.0.1:5433/${POSTGRES_DB}"
     export DIRECT_URL="$DATABASE_URL"
 else
     echo "DB: remote (Supabase/prod)"
