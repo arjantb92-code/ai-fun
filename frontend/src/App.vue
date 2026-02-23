@@ -181,7 +181,8 @@ const handleGoogleCallback = async () => {
       toast.show('Registration requires an invite link')
       router.replace('/')
     } else {
-      toast.show(data.error || 'Google login failed')
+      const msg = data.detail ? `${data.error}: ${data.detail}` : (data.error || 'Google login failed')
+      toast.show(msg)
       router.replace('/')
     }
   } catch {
@@ -239,6 +240,17 @@ const handleLoginWithActivationCheck = async (credentials: { username: string; p
 watch(() => route.query.code, (code) => {
   if (code && !store.isAuthenticated) {
     handleGoogleCallback()
+  }
+}, { immediate: true })
+
+// Show toast when redirected from backend after Google callback error (e.g. 403 needs_invite)
+watch(() => [route.query.google_error, route.query.google_message], ([err, msg]) => {
+  if (err && msg) {
+    toast.show(typeof msg === 'string' ? msg : 'Google login failed')
+    const q = { ...route.query }
+    delete q.google_error
+    delete q.google_message
+    router.replace({ path: route.path, query: q })
   }
 }, { immediate: true })
 

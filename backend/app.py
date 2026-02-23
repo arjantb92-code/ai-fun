@@ -1,9 +1,11 @@
 from datetime import datetime, timedelta
+import logging
 import os
+import time
 import json
 import jwt
 from functools import wraps
-from flask import Flask, jsonify, request, send_from_directory
+from flask import Flask, g, jsonify, request, send_from_directory, redirect
 from flask_cors import CORS
 from dotenv import load_dotenv
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -31,6 +33,21 @@ from flask_limiter.util import get_remote_address
 load_dotenv(os.path.join(os.path.dirname(os.path.dirname(__file__)), ".env"))
 
 app = Flask(__name__)
+
+# Request logging to console
+logging.basicConfig(level=logging.INFO)
+app.logger.setLevel(logging.INFO)
+if not app.logger.handlers:
+    h = logging.StreamHandler()
+    h.setFormatter(logging.Formatter("%(asctime)s %(levelname)s [%(name)s] %(message)s"))
+    app.logger.addHandler(h)
+
+
+@app.before_request
+def before_request():
+    g.request_start = time.perf_counter()
+
+
 _frontend_origin = (os.getenv("FRONTEND_URL") or "").strip()
 if _frontend_origin:
     CORS(app, origins=[_frontend_origin])
@@ -76,11 +93,20 @@ limiter = Limiter(get_remote_address, app=app, default_limits=None)
 
 
 @app.after_request
-def security_headers(response):
+def after_request(response):
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["X-Frame-Options"] = "DENY"
     response.headers["X-XSS-Protection"] = "1; mode=block"
     response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    # Request log
+    elapsed = (time.perf_counter() - getattr(g, "request_start", time.perf_counter())) * 1000
+    app.logger.info(
+        "%s %s %s %.0fms",
+        request.method,
+        request.path,
+        response.status_code,
+        elapsed,
+    )
     return response
 
 
@@ -435,6 +461,7 @@ def google_auth():
         f"redirect_uri={redirect_uri}&"
         "response_type=code&"
         "scope=openid%20email%20profile&"
+        "prompt=consent&"  # Altijd consent/accountkeuze tonen na uitloggen
         f"state={state}"
     )
     
@@ -455,7 +482,7 @@ def google_callback():
     state = request.args.get("state") or (request.json or {}).get("state")
     
     if not code:
-        return jsonify({"error": "Missing authorization code"}), 400
+        return _google_callback_error("Missing authorization code", 400)
     
     # Decode state to get invite_code
     invite_code = None
@@ -479,17 +506,24 @@ def google_callback():
                 "client_secret": google_client_secret,
                 "redirect_uri": redirect_uri,
                 "grant_type": "authorization_code"
-            }
+            },
+            headers={"Content-Type": "application/x-www-form-urlencoded"},
         )
         
         if not token_response.ok:
-            return jsonify({"error": "Failed to exchange code for token"}), 400
+            try:
+                err_body = token_response.json()
+                msg = err_body.get("error_description") or err_body.get("error") or "Failed to exchange code for token"
+            except Exception:
+                msg = token_response.text or "Failed to exchange code for token"
+            app.logger.warning("Google token exchange failed: %s %s", token_response.status_code, msg)
+            return _google_callback_error("Failed to exchange code for token", 400, detail=msg)
         
         tokens = token_response.json()
         id_token = tokens.get("id_token")
         
         if not id_token:
-            return jsonify({"error": "No ID token received"}), 400
+            return _google_callback_error("No ID token received", 400)
         
         # Decode ID token to get user info (without verification for simplicity)
         # In production, should verify with Google's public keys
@@ -505,7 +539,7 @@ def google_callback():
         picture = user_info.get("picture")
         
         if not google_id or not email:
-            return jsonify({"error": "Invalid user info from Google"}), 400
+            return _google_callback_error("Invalid user info from Google", 400)
         
         # Find or create user
         user = User.query.filter(
@@ -523,15 +557,16 @@ def google_callback():
             else:
                 # Create new user - but only if invite_code provided
                 if not invite_code:
-                    return jsonify({
-                        "error": "Registration requires an invite link",
-                        "needs_invite": True
-                    }), 403
+                    return _google_callback_error(
+                        "Registration requires an invite link",
+                        403,
+                        needs_invite=True,
+                    )
                 
                 # Verify invite code
                 bl = BalanceList.query.filter_by(invite_code=invite_code).first()
                 if not bl:
-                    return jsonify({"error": "Invalid invite code"}), 404
+                    return _google_callback_error("Invalid invite code", 404)
                 
                 user = User()
                 user.name = name
@@ -573,7 +608,22 @@ def google_callback():
     except Exception as e:
         db.session.rollback()
         app.logger.exception("google callback failed")
-        return jsonify({"error": str(e)}), 500
+        return _google_callback_error(str(e), 500)
+
+
+def _google_callback_error(message: str, status: int, *, detail: str = None, needs_invite: bool = False):
+    """Return error for Google callback. If browser GET, redirect to frontend with error param."""
+    payload = {"error": message}
+    if detail:
+        payload["detail"] = detail
+    if needs_invite:
+        payload["needs_invite"] = True
+    frontend_url = os.getenv("FRONTEND_URL", "").rstrip("/")
+    if request.method == "GET" and frontend_url:
+        from urllib.parse import urlencode
+        params = {"google_error": "needs_invite" if needs_invite else "error", "google_message": message}
+        return redirect(f"{frontend_url}/?{urlencode(params)}", code=302)
+    return jsonify(payload), status
 
 
 @app.route("/users", methods=["GET"])
