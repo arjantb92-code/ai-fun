@@ -8,6 +8,12 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: App,
+    },
+    {
+      path: '/join/:inviteCode',
+      name: 'join',
+      component: App,
+      props: true
     }
   ],
 })

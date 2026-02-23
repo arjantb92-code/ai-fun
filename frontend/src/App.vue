@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { API_BASE as apiBase } from '@/config/api'
 import { useMainPage } from '@/composables/useMainPage'
 import AppHeader from '@/components/layouts/AppHeader.vue'
@@ -17,6 +18,8 @@ import ConfirmModal from '@/components/common/ConfirmModal.vue'
 import BalanceListsView from '@/components/features/balance-lists/BalanceListsView.vue'
 import InviteModal from '@/components/features/balance-lists/InviteModal.vue'
 
+const route = useRoute()
+const router = useRouter()
 
 const {
   store,
@@ -54,10 +57,47 @@ const {
 } = useMainPage()
 
 const isInviteModalOpen = ref(false)
+const pendingInviteCode = ref<string | null>(null)
 
 const handleBackToBalanceLists = () => {
   store.selectBalanceList(null)
 }
+
+const handleJoinFromUrl = async () => {
+  if (!pendingInviteCode.value || !store.isAuthenticated) return
+  
+  const code = pendingInviteCode.value
+  pendingInviteCode.value = null
+  
+  const result = await store.joinBalanceList(code)
+  if (result.success && result.balanceList) {
+    store.selectBalanceList(result.balanceList.id)
+    store.fetchData()
+    toast.show(result.message)
+  } else {
+    toast.show(result.message || 'Kon niet deelnemen aan balans')
+  }
+  
+  // Clear the URL
+  router.replace('/')
+}
+
+// Handle invite code from URL
+watch(() => route.params.inviteCode, (inviteCode) => {
+  if (inviteCode && typeof inviteCode === 'string') {
+    pendingInviteCode.value = inviteCode
+    if (store.isAuthenticated) {
+      handleJoinFromUrl()
+    }
+  }
+}, { immediate: true })
+
+// When user logs in, check for pending invite
+watch(() => store.isAuthenticated, (isAuth) => {
+  if (isAuth && pendingInviteCode.value) {
+    handleJoinFromUrl()
+  }
+})
 </script>
 
 <template>
