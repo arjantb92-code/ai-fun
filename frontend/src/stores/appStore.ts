@@ -9,6 +9,7 @@ import type {
   SettlementSuggestion, 
   SettlementSession, 
   Activity,
+  BalanceList,
   BackendStatus,
   LoginResponse,
   CategoryKey
@@ -28,6 +29,12 @@ export const useAppStore = defineStore('app', () => {
   const settlementsSuggestions = ref<SettlementSuggestion[]>([])
   const settlementHistory = ref<SettlementSession[]>([])
   const activities = ref<Activity[]>([])
+  const balanceLists = ref<BalanceList[]>([])
+  const currentBalanceListId = ref<number | null>(
+    localStorage.getItem('wbw_balance_list_id') 
+      ? parseInt(localStorage.getItem('wbw_balance_list_id')!) 
+      : null
+  )
   const categories = ref<Category[]>([
     { key: 'boodschappen', label: 'Boodschappen' },
     { key: 'huishoudelijk', label: 'Huishoudelijk' },
@@ -43,6 +50,10 @@ export const useAppStore = defineStore('app', () => {
 
   // --- Computed ---
   const isAuthenticated = computed(() => !!token.value && !!currentUser.value)
+  const hasSelectedBalanceList = computed(() => !!currentBalanceListId.value)
+  const currentBalanceList = computed(() => 
+    balanceLists.value.find(bl => bl.id === currentBalanceListId.value) || null
+  )
   const groupMembers = computed(() => users.value.filter(u => u.is_group_member))
   const totalGroupSpend = computed(() => {
     return transactions.value.reduce((sum, t) => sum + t.amount, 0)
@@ -64,20 +75,39 @@ export const useAppStore = defineStore('app', () => {
     return response
   }
 
+  const fetchBalanceLists = async (): Promise<void> => {
+    if (!token.value) return
+    try {
+      const r = await apiFetch('/balance-lists')
+      balanceLists.value = await r.json() as BalanceList[]
+    } catch {
+      balanceLists.value = []
+    }
+  }
+
   const fetchData = async (activityId: number | null = null): Promise<void> => {
     if (!token.value) return
     isLoading.value = true
     try {
+      // Build query params based on current balance list
+      const blParam = currentBalanceListId.value ? `balance_list_id=${currentBalanceListId.value}` : ''
+      const actParam = activityId ? `activity_id=${activityId}` : ''
+      const buildUrl = (base: string, ...params: string[]) => {
+        const filtered = params.filter(Boolean)
+        return filtered.length ? `${base}?${filtered.join('&')}` : base
+      }
+
       const results = await Promise.all([
-        apiFetch('/users'), 
-        apiFetch(activityId ? `/balances?activity_id=${activityId}` : '/balances'), 
-        apiFetch(activityId ? `/transactions?activity_id=${activityId}` : '/transactions'), 
-        apiFetch(activityId ? `/settlements/suggest?activity_id=${activityId}` : '/settlements/suggest'),
-        apiFetch('/settlements/history'),
-        apiFetch('/activities')
+        apiFetch(buildUrl('/users', blParam)), 
+        apiFetch(buildUrl('/balances', blParam, actParam)), 
+        apiFetch(buildUrl('/transactions', blParam, actParam)), 
+        apiFetch(buildUrl('/settlements/suggest', blParam, actParam)),
+        apiFetch(buildUrl('/settlements/history', blParam)),
+        apiFetch(buildUrl('/activities', blParam)),
+        apiFetch('/balance-lists')
       ])
       
-      const [uR, bR, tR, sS, sH, aR] = results
+      const [uR, bR, tR, sS, sH, aR, blR] = results
       
       users.value = await uR.json() as User[]
       balances.value = await bR.json() as Balance[]
@@ -85,6 +115,7 @@ export const useAppStore = defineStore('app', () => {
       settlementsSuggestions.value = await sS.json() as SettlementSuggestion[]
       settlementHistory.value = await sH.json() as SettlementSession[]
       activities.value = await aR.json() as Activity[]
+      balanceLists.value = await blR.json() as BalanceList[]
       backendStatus.value = 'Online'
       
       const savedUserStr = localStorage.getItem('wbw_user')
@@ -99,7 +130,10 @@ export const useAppStore = defineStore('app', () => {
   const fetchTrash = async (activityId: number | null = null): Promise<void> => {
     if (!token.value) return
     try {
-      const url = activityId ? `/transactions?deleted=true&activity_id=${activityId}` : '/transactions?deleted=true'
+      const params = ['deleted=true']
+      if (currentBalanceListId.value) params.push(`balance_list_id=${currentBalanceListId.value}`)
+      if (activityId) params.push(`activity_id=${activityId}`)
+      const url = `/transactions?${params.join('&')}`
       const r = await apiFetch(url)
       deletedTransactions.value = await r.json() as Transaction[]
     } catch {
@@ -120,7 +154,10 @@ export const useAppStore = defineStore('app', () => {
     token.value = data.token
     setCurrentUser(data.user)
     localStorage.setItem('wbw_token', data.token)
-    fetchData()
+    // Clear balance list selection on new login
+    currentBalanceListId.value = null
+    localStorage.removeItem('wbw_balance_list_id')
+    fetchBalanceLists()
   }
 
   const $reset = (): void => {
@@ -131,12 +168,73 @@ export const useAppStore = defineStore('app', () => {
     settlementsSuggestions.value = []
     settlementHistory.value = []
     activities.value = []
+    balanceLists.value = []
+    currentBalanceListId.value = null
     currentUser.value = null
     token.value = null
     backendStatus.value = 'Connecting...'
     isLoading.value = false
     localStorage.removeItem('wbw_token')
     localStorage.removeItem('wbw_user')
+    localStorage.removeItem('wbw_balance_list_id')
+  }
+
+  const selectBalanceList = (id: number | null): void => {
+    currentBalanceListId.value = id
+    if (id) {
+      localStorage.setItem('wbw_balance_list_id', id.toString())
+    } else {
+      localStorage.removeItem('wbw_balance_list_id')
+    }
+  }
+
+  const createBalanceList = async (data: { name: string; currency: string }): Promise<BalanceList | null> => {
+    try {
+      const r = await apiFetch('/balance-lists', {
+        method: 'POST',
+        body: JSON.stringify(data)
+      })
+      const json = await r.json()
+      if (json.balance_list) {
+        balanceLists.value.push(json.balance_list)
+        return json.balance_list
+      }
+      return null
+    } catch {
+      return null
+    }
+  }
+
+  const joinBalanceList = async (inviteCode: string): Promise<{ success: boolean; message: string; balanceList?: BalanceList }> => {
+    try {
+      const r = await apiFetch(`/balance-lists/join/${inviteCode}`, {
+        method: 'POST'
+      })
+      const json = await r.json()
+      if (json.status === 'success' || json.status === 'already_member') {
+        await fetchBalanceLists()
+        return { 
+          success: true, 
+          message: json.status === 'already_member' ? 'Je bent al lid van deze balans.' : 'Je bent toegevoegd!',
+          balanceList: json.balance_list 
+        }
+      }
+      return { success: false, message: json.error || 'Onbekende fout' }
+    } catch {
+      return { success: false, message: 'Kon niet verbinden' }
+    }
+  }
+
+  const lookupBalanceList = async (inviteCode: string): Promise<{ id: number; name: string; currency: string; member_count: number; is_member: boolean } | null> => {
+    try {
+      const r = await apiFetch(`/balance-lists/lookup/${inviteCode}`)
+      if (r.ok) {
+        return await r.json()
+      }
+      return null
+    } catch {
+      return null
+    }
   }
 
   const logout = (): void => {
@@ -163,6 +261,8 @@ export const useAppStore = defineStore('app', () => {
     settlementsSuggestions, 
     settlementHistory, 
     activities,
+    balanceLists,
+    currentBalanceListId,
     categories,
     deletedTransactions, 
     currentUser, 
@@ -171,11 +271,14 @@ export const useAppStore = defineStore('app', () => {
     isLoading,
     // Computed
     isAuthenticated, 
+    hasSelectedBalanceList,
+    currentBalanceList,
     groupMembers, 
     totalGroupSpend,
     // Actions
     apiFetch, 
     fetchData, 
+    fetchBalanceLists,
     fetchTrash, 
     login, 
     logout,
@@ -183,6 +286,10 @@ export const useAppStore = defineStore('app', () => {
     $reset,
     getUserName,
     getBalanceForUser,
-    getActivityInfo
+    getActivityInfo,
+    selectBalanceList,
+    createBalanceList,
+    joinBalanceList,
+    lookupBalanceList
   }
 })

@@ -52,12 +52,44 @@ export interface Transaction {
   type: TransactionType
   category?: CategoryKey | null
   activity_id: number | null
+  balance_list_id?: number | null
   splits: TransactionSplit[]
   deleted_at?: string | null
 }
 
 export interface DeletedTransaction extends Transaction {
   deleted_at: string
+}
+
+// ============================================================================
+// Balance List Types
+// ============================================================================
+
+export interface BalanceListMember {
+  user_id: number
+  user: User | null
+  role: 'owner' | 'admin' | 'member'
+  joined_at: string | null
+}
+
+export interface BalanceList {
+  id: number
+  name: string
+  currency: string
+  invite_code: string
+  created_by: User | null
+  member_count: number
+  created_at: string | null
+  members?: BalanceListMember[]
+  total_transactions?: number
+  total_amount?: number
+  my_balance?: number
+  my_role?: 'owner' | 'admin' | 'member'
+}
+
+export interface BalanceListFormData {
+  name: string
+  currency: string
 }
 
 // ============================================================================
@@ -73,6 +105,7 @@ export interface Activity {
   start_date?: string | null
   end_date?: string | null
   is_active: boolean
+  balance_list_id?: number | null
   transaction_count?: number
   total_amount?: number
 }

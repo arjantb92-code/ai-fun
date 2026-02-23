@@ -61,7 +61,9 @@ export function useMainPageSettlements(
   const handleSettle = async (): Promise<void> => {
     settleLoading.value = true
     try {
-      const body = selectedActivityId.value ? { activity_id: selectedActivityId.value } : {}
+      const body: { activity_id?: number; balance_list_id?: number | null } = {}
+      if (selectedActivityId.value) body.activity_id = selectedActivityId.value
+      if (store.currentBalanceListId) body.balance_list_id = store.currentBalanceListId
       const res = await store.apiFetch('/settlements/commit', { method: 'POST', body: JSON.stringify(body) })
       if (res.ok) {
         await store.fetchData(selectedActivityId.value)
