@@ -27,13 +27,18 @@ const emit = defineEmits<{
 
 const searchQuery = ref('')
 const selectedCategoryFilter = ref<CategoryKey | null>(null)
+const selectedPersonFilter = ref<number | null>(null)
 const showFilterDropdown = ref(false)
+const showPersonDropdown = ref(false)
 const showTrash = ref(false)
 
 const filteredTransactions = computed(() => {
   let result = props.transactions
   if (selectedCategoryFilter.value) {
     result = result.filter(t => t.category === selectedCategoryFilter.value)
+  }
+  if (selectedPersonFilter.value !== null) {
+    result = result.filter(t => t.payer_id === selectedPersonFilter.value)
   }
   if (searchQuery.value) {
     const q = searchQuery.value.toLowerCase()
@@ -154,17 +159,58 @@ const getActivityName = (id: number | null) => store.getActivityInfo(id)
           placeholder="Zoek transactie of persoon..."
         >
       </div>
+      <!-- Persoon filter -->
+      <div v-if="!showTrash" class="relative">
+        <button
+          type="button"
+          class="bg-industrial-gray border border-zinc-800 p-4 font-black uppercase italic text-sm transition-all hover:border-brand-red flex items-center gap-2"
+          :class="selectedPersonFilter !== null ? 'border-brand-red text-brand-red' : 'text-zinc-500'"
+          @click="showPersonDropdown = !showPersonDropdown; showFilterDropdown = false"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+          </svg>
+          <span class="hidden md:inline">{{ selectedPersonFilter !== null ? store.getUserName(selectedPersonFilter) : 'Persoon' }}</span>
+        </button>
+        <Transition name="fade">
+          <div v-if="showPersonDropdown">
+            <div class="fixed inset-0 z-40" @click="showPersonDropdown = false" />
+            <div class="absolute top-full right-0 mt-2 bg-industrial-gray border border-zinc-800 shadow-xl z-50 min-w-[180px]">
+              <button
+                type="button"
+                class="w-full text-left px-4 py-3 font-black uppercase italic text-xs transition-all hover:bg-zinc-900"
+                :class="selectedPersonFilter === null ? 'text-brand-red bg-zinc-900' : 'text-zinc-400'"
+                @click="selectedPersonFilter = null; showPersonDropdown = false"
+              >
+                Alle personen
+              </button>
+              <button
+                v-for="user in store.groupMembers"
+                :key="user.id"
+                type="button"
+                class="w-full text-left px-4 py-3 font-black uppercase italic text-xs transition-all hover:bg-zinc-900"
+                :class="selectedPersonFilter === user.id ? 'text-brand-red bg-zinc-900' : 'text-zinc-400'"
+                @click="selectedPersonFilter = user.id; showPersonDropdown = false"
+              >
+                {{ user.name }}
+              </button>
+            </div>
+          </div>
+        </Transition>
+      </div>
+
+      <!-- Categorie filter -->
       <div v-if="!showTrash" class="relative">
         <button
           type="button"
           class="bg-industrial-gray border border-zinc-800 p-4 font-black uppercase italic text-sm transition-all hover:border-brand-red flex items-center gap-2"
           :class="selectedCategoryFilter ? 'border-brand-red text-brand-red' : 'text-zinc-500'"
-          @click="showFilterDropdown = !showFilterDropdown"
+          @click="showFilterDropdown = !showFilterDropdown; showPersonDropdown = false"
         >
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
           </svg>
-          <span class="hidden md:inline">{{ selectedCategoryFilter ? getCategoryLabel(selectedCategoryFilter) : 'Filter' }}</span>
+          <span class="hidden md:inline">{{ selectedCategoryFilter ? getCategoryLabel(selectedCategoryFilter) : 'Categorie' }}</span>
         </button>
         <Transition name="fade">
           <div v-if="showFilterDropdown">
