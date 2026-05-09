@@ -8,6 +8,7 @@ from functools import wraps
 from flask import Flask, g, jsonify, request, send_from_directory, redirect
 from flask_cors import CORS
 from dotenv import load_dotenv
+from werkzeug.middleware.proxy_fix import ProxyFix
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from models import (
@@ -33,6 +34,7 @@ from flask_limiter.util import get_remote_address
 load_dotenv(os.path.join(os.path.dirname(os.path.dirname(__file__)), ".env"))
 
 app = Flask(__name__)
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 
 # Request logging to console
 logging.basicConfig(level=logging.INFO)
@@ -88,8 +90,16 @@ app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
 db.init_app(app)
 migrate = Migrate(app, db)
 
-# Geen default_limits: alleen /login heeft @limiter.limit. Minder kans dat limiter cold start blokkeert.
-limiter = Limiter(get_remote_address, app=app, default_limits=None)
+# Rate limiter: only active when RATELIMIT_STORAGE_URI is configured (e.g. Redis).
+# Without it, in-memory storage would spam warnings on multi-worker/restart deploys.
+_ratelimit_storage = os.getenv("RATELIMIT_STORAGE_URI")
+limiter = Limiter(
+    get_remote_address,
+    app=app,
+    default_limits=None,
+    storage_uri=_ratelimit_storage or "memory://",
+    enabled=bool(_ratelimit_storage),
+)
 
 
 @app.after_request
@@ -555,19 +565,7 @@ def google_callback():
                 user.oauth_id = google_id
                 user.email_verified = True
             else:
-                # Create new user - but only if invite_code provided
-                if not invite_code:
-                    return _google_callback_error(
-                        "Registration requires an invite link",
-                        403,
-                        needs_invite=True,
-                    )
-                
-                # Verify invite code
-                bl = BalanceList.query.filter_by(invite_code=invite_code).first()
-                if not bl:
-                    return _google_callback_error("Invalid invite code", 404)
-                
+                # No existing account — auto-create from Google profile
                 user = User()
                 user.name = name
                 user.email = email
@@ -578,13 +576,16 @@ def google_callback():
                 user.email_verified = True  # Google emails are pre-verified
                 db.session.add(user)
                 db.session.flush()
-                
-                # Auto-join balance list
-                member = BalanceListMember()
-                member.balance_list_id = bl.id
-                member.user_id = user.id
-                member.role = "member"
-                db.session.add(member)
+
+                # If invite_code provided, also auto-join the balance list
+                if invite_code:
+                    bl = BalanceList.query.filter_by(invite_code=invite_code).first()
+                    if bl:
+                        member = BalanceListMember()
+                        member.balance_list_id = bl.id
+                        member.user_id = user.id
+                        member.role = "member"
+                        db.session.add(member)
         
         # Update avatar if changed
         if picture and user.avatar_url != picture:
@@ -598,7 +599,17 @@ def google_callback():
             app.config["SECRET_KEY"],
             algorithm="HS256",
         )
-        
+
+        # Browser GET (Google redirected here directly) → redirect to frontend with token + user.
+        # The frontend picks up ?google_token=... and ?google_user=... and calls store.login() directly.
+        frontend_url = os.getenv("FRONTEND_URL", "").rstrip("/")
+        if request.method == "GET" and frontend_url:
+            import base64 as _b64
+            user_b64 = _b64.urlsafe_b64encode(json.dumps(user.to_dict()).encode()).decode()
+            resp = redirect(f"{frontend_url}/?google_token={tk}&google_user={user_b64}", code=302)
+            resp.headers["Access-Control-Allow-Origin"] = frontend_url
+            return resp
+
         return jsonify({
             "status": "success",
             "token": tk,
@@ -627,6 +638,13 @@ def _google_callback_error(message: str, status: int, *, detail: str = None, nee
         resp.headers["Access-Control-Allow-Origin"] = frontend_url
         return resp
     return jsonify(payload), status
+
+
+@app.route("/auth/me", methods=["GET"])
+@token_required
+def auth_me(current_user):
+    """Return the authenticated user's profile."""
+    return jsonify(current_user.to_dict())
 
 
 @app.route("/users", methods=["GET"])
@@ -874,18 +892,43 @@ def delete_balance_list(current_user, bl_id):
 @app.route("/balance-lists/<int:bl_id>/members", methods=["GET"])
 @token_required
 def get_balance_list_members(current_user, bl_id):
-    """Get all members of a balance list."""
+    """Get all members of a balance list, including their net unsettled balance."""
     bl = db.session.get(BalanceList, bl_id)
     if not bl:
         return jsonify({"error": "Not found"}), 404
-    
+
     membership = BalanceListMember.query.filter_by(
         balance_list_id=bl_id, user_id=current_user.id
     ).first()
     if not membership:
         return jsonify({"error": "Access denied"}), 403
-    
-    return jsonify([m.to_dict() for m in bl.members])
+
+    # Compute per-member unsettled balance
+    txs = Transaction.query.filter_by(
+        balance_list_id=bl_id,
+        settlement_session_id=None,
+    ).filter(Transaction.deleted_at.is_(None)).all()
+
+    member_ids = [m.user_id for m in bl.members]
+    bals = {uid: 0.0 for uid in member_ids}
+    for t in txs:
+        tp = t.type or "EXPENSE"
+        sign = 1 if tp in ["EXPENSE", "TRANSFER"] else -1
+        if t.payer_id in bals:
+            bals[t.payer_id] += sign * t.amount
+        tw = sum(s.weight for s in t.splits if s.user_id in member_ids)
+        if tw > 0:
+            ppw = t.amount / tw
+            for s in t.splits:
+                if s.user_id in bals:
+                    bals[s.user_id] -= sign * ppw * s.weight
+
+    result = []
+    for m in bl.members:
+        d = m.to_dict()
+        d["balance"] = round(bals.get(m.user_id, 0.0), 2)
+        result.append(d)
+    return jsonify(result)
 
 
 @app.route("/balance-lists/<int:bl_id>/members", methods=["POST"])
@@ -933,31 +976,64 @@ def add_balance_list_member(current_user, bl_id):
 @app.route("/balance-lists/<int:bl_id>/members/<int:user_id>", methods=["DELETE"])
 @token_required
 def remove_balance_list_member(current_user, bl_id, user_id):
-    """Remove a member from a balance list."""
+    """Remove a member from a balance list.
+    
+    Only allowed when the target member's net balance is exactly zero
+    (all unsettled transactions have been accounted for). Owner/admin can
+    remove others; any member can remove themselves.
+    """
     bl = db.session.get(BalanceList, bl_id)
     if not bl:
         return jsonify({"error": "Not found"}), 404
-    
+
     membership = BalanceListMember.query.filter_by(
         balance_list_id=bl_id, user_id=current_user.id
     ).first()
-    
-    # Can remove yourself, or owner/admin can remove others
+
     is_self = current_user.id == user_id
     is_admin = membership and membership.role in ["owner", "admin"]
     if not is_self and not is_admin:
         return jsonify({"error": "Permission denied"}), 403
-    
+
     target = BalanceListMember.query.filter_by(
         balance_list_id=bl_id, user_id=user_id
     ).first()
     if not target:
         return jsonify({"error": "Member not found"}), 404
-    
-    # Cannot remove the owner
+
+    # Owner cannot be removed by others (only by themselves, i.e. leaving)
     if target.role == "owner" and not is_self:
-        return jsonify({"error": "Cannot remove owner"}), 403
-    
+        return jsonify({"error": "Cannot remove the owner"}), 403
+
+    # Compute the target user's net unsettled balance in this list
+    txs = Transaction.query.filter_by(
+        balance_list_id=bl_id,
+        settlement_session_id=None,
+    ).filter(Transaction.deleted_at.is_(None)).all()
+
+    member_ids = [m.user_id for m in bl.members]
+    bals = {uid: 0.0 for uid in member_ids}
+    for t in txs:
+        tp = t.type or "EXPENSE"
+        sign = 1 if tp in ["EXPENSE", "TRANSFER"] else -1
+        if t.payer_id in bals:
+            bals[t.payer_id] += sign * t.amount
+        tw = sum(s.weight for s in t.splits if s.user_id in member_ids)
+        if tw > 0:
+            ppw = t.amount / tw
+            for s in t.splits:
+                if s.user_id in bals:
+                    bals[s.user_id] -= sign * ppw * s.weight
+
+    net_balance = round(bals.get(user_id, 0.0), 2)
+    if net_balance != 0.0:
+        direction = "nog te ontvangen" if net_balance > 0 else "nog te betalen"
+        return jsonify({
+            "error": f"Lid heeft nog een openstaand saldo van €{abs(net_balance):.2f} ({direction}). "
+                     "Vereffening vereist voor verwijdering.",
+            "balance": net_balance,
+        }), 409
+
     try:
         db.session.delete(target)
         db.session.commit()

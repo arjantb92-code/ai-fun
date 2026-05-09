@@ -35,12 +35,16 @@
      `gunicorn -b 0.0.0.0:$PORT app:app`
 
 4. **Environment Variables** (Render Dashboard → Environment):
+   - `PORT` = `10000` (voorkomt "New primary port detected" restart-loop; Render gebruikt 10000 als default).
    - `DATABASE_URL` = Supabase connection string (pooler, poort 6543)
    - `DIRECT_URL` = Supabase direct connection (poort 5432)
    - `SECRET_KEY` = **sterke random string, min. 32 tekens** (bijv. `openssl rand -hex 32`). Zonder dit weigert de app te starten in productie.
    - `FRONTEND_URL` = je Cloudflare Pages URL (zie stap 3), bijv. `https://jouw-project.pages.dev` (geen trailing slash). Voor CORS.
    - (optioneel) `FLASK_ENV` = `production`
    - (optioneel) **Rate limit storage**: Zet `REDIS_URL` of `RATELIMIT_STORAGE_URL` (bijv. van een Render Redis-add-on) om de in-memory limiter-warning te vermijden. Zonder Redis blijft limiter in-memory (ok voor één instance).
+
+4b. **Health Check** (Render Dashboard → Settings → Health Check Path):
+   - Zet op `/` zodat Render GET / gebruikt (de app heeft daar een `{"status":"ok"}` endpoint). Anders kan Render de service ten onrechte als unhealthy zien en herstarten.
 
 5. **Deploy**: Save → Render bouwt en start de service.  
    - URL wordt iets als: `https://better-wbw-api.onrender.com`  

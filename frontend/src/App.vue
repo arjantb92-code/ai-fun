@@ -19,6 +19,7 @@ import BulkSplitsModal from '@/components/features/bulk/BulkSplitsModal.vue'
 import ConfirmModal from '@/components/common/ConfirmModal.vue'
 import BalanceListsView from '@/components/features/balance-lists/BalanceListsView.vue'
 import InviteModal from '@/components/features/balance-lists/InviteModal.vue'
+import MembersModal from '@/components/features/balance-lists/MembersModal.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -59,6 +60,7 @@ const {
 } = useMainPage()
 
 const isInviteModalOpen = ref(false)
+const isMembersModalOpen = ref(false)
 const pendingInviteCode = ref<string | null>(null)
 const requiresActivation = ref(false)
 const activationEmail = ref('')
@@ -243,6 +245,42 @@ watch(() => route.query.code, (code) => {
   }
 }, { immediate: true })
 
+// Handle ?google_token=...&google_user=... when backend redirects back to frontend after OAuth
+watch(() => route.query.google_token, async (googleToken) => {
+  if (!googleToken || store.isAuthenticated) return
+
+  const googleUserB64 = route.query.google_user as string | undefined
+
+  if (googleUserB64) {
+    // Fast path: user data embedded in redirect, no extra /auth/me call needed
+    try {
+      const user = JSON.parse(atob(googleUserB64.replace(/-/g, '+').replace(/_/g, '/')))
+      store.login({ token: googleToken as string, user })
+      toast.show('Logged in with Google!')
+    } catch {
+      toast.show('Google login failed')
+    }
+  } else {
+    // Fallback: fetch /auth/me (older redirects without google_user param)
+    try {
+      const res = await fetch(`${API_BASE}/auth/me`, {
+        headers: { Authorization: `Bearer ${googleToken}` }
+      })
+      if (res.ok) {
+        const user = await res.json()
+        store.login({ token: googleToken as string, user })
+        toast.show('Logged in with Google!')
+      } else {
+        toast.show('Google login failed')
+      }
+    } catch {
+      toast.show('Google login failed')
+    }
+  }
+
+  router.replace({ path: '/', query: {} })
+}, { immediate: true })
+
 // Show toast when redirected from backend after Google callback error (e.g. 403 needs_invite)
 watch(() => [route.query.google_error, route.query.google_message], ([err, msg]) => {
   if (err && msg) {
@@ -328,6 +366,13 @@ watch(() => store.isAuthenticated, (isAuth) => {
               <button
                 type="button"
                 class="text-gray-400 hover:text-white transition-colors text-sm"
+                @click="isMembersModalOpen = true"
+              >
+                Leden
+              </button>
+              <button
+                type="button"
+                class="text-gray-400 hover:text-white transition-colors text-sm"
                 @click="isInviteModalOpen = true"
               >
                 Uitnodigen
@@ -403,6 +448,12 @@ watch(() => store.isAuthenticated, (isAuth) => {
           :is-open="isInviteModalOpen"
           :balance-list="store.currentBalanceList"
           @close="isInviteModalOpen = false"
+        />
+        <MembersModal
+          :is-open="isMembersModalOpen"
+          :balance-list="store.currentBalanceList"
+          @close="isMembersModalOpen = false"
+          @member-removed="store.fetchBalanceLists()"
         />
         <ConfirmModal />
 
