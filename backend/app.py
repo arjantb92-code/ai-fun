@@ -108,15 +108,18 @@ def after_request(response):
     response.headers["X-Frame-Options"] = "DENY"
     response.headers["X-XSS-Protection"] = "1; mode=block"
     response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
-    # Request log
     elapsed = (time.perf_counter() - getattr(g, "request_start", time.perf_counter())) * 1000
-    app.logger.info(
-        "%s %s %s %.0fms",
-        request.method,
-        request.path,
-        response.status_code,
-        elapsed,
-    )
+    status = response.status_code
+    log = app.logger.warning if status >= 400 else app.logger.info
+    log("%s %s %s %.0fms", request.method, request.path, status, elapsed)
+    if status >= 400 and response.content_type == "application/json":
+        try:
+            body = response.get_json(silent=True) or {}
+            detail = body.get("error") or body.get("message") or ""
+            if detail:
+                app.logger.warning("  → %s", detail)
+        except Exception:
+            pass
     return response
 
 

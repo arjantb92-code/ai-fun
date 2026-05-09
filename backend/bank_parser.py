@@ -68,20 +68,27 @@ class BankParser:
 
     @staticmethod
     def parse_ing_csv(file_content):
-        df = pd.read_csv(io.StringIO(file_content))
-        
+        df = pd.read_csv(io.StringIO(file_content), sep=';', quotechar='"', dtype=str)
+
         parsed_data = []
         for _, row in df.iterrows():
             raw_amount = str(row['Bedrag (EUR)']).replace(',', '.')
             amount = float(raw_amount)
-            if row['Af Bij'] == 'Af':
+            if str(row['Af Bij']).strip() == 'Af':
                 amount = -amount
-            
+
             raw_desc = f"{row['Naam / Omschrijving']} - {row['Mededelingen']}"
             cleaned_desc = BankParser.clean_description(raw_desc)
-            
+
+            # Date is YYYYMMDD → YYYY-MM-DD
+            date_raw = str(row['Datum']).strip()
+            if len(date_raw) == 8 and date_raw.isdigit():
+                date_str = f"{date_raw[:4]}-{date_raw[4:6]}-{date_raw[6:]}"
+            else:
+                date_str = date_raw
+
             parsed_data.append({
-                'date': str(row['Datum']),
+                'date': date_str,
                 'time': BankParser.extract_time(raw_desc),
                 'description': cleaned_desc,
                 'raw_description': raw_desc,
