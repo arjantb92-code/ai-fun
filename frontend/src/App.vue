@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { API_BASE as apiBase, API_BASE } from '@/config/api'
+import { API_BASE } from '@/config/api'
 import { useMainPage } from '@/composables/useMainPage'
 import AppHeader from '@/components/layouts/AppHeader.vue'
 import TabNav from '@/components/layouts/TabNav.vue'
@@ -40,7 +40,6 @@ const {
   isBulkActivityModalOpen,
   isBulkSplitsModalOpen,
   loginError,
-  handleLogin,
   openTransaction,
   createNewEntry,
   handleSave,
@@ -166,31 +165,15 @@ const handleGoogleLogin = async (inviteCode?: string) => {
   }
 }
 
-// Handle Google callback (if code is in URL)
-const handleGoogleCallback = async () => {
+// Handle Google callback (if code is in URL).
+// GOOGLE_REDIRECT_URI may point to the frontend — Google drops ?code=...&state=... here.
+// We navigate the browser (not fetch) to the backend so it can exchange the code and
+// do a proper 302 back to us with ?google_token=...&google_user=... — no CORS issue.
+const handleGoogleCallback = () => {
   const code = route.query.code as string
   const state = route.query.state as string
   if (!code) return
-  
-  try {
-    const res = await fetch(`${API_BASE}/auth/google/callback?code=${code}&state=${state || ''}`)
-    const data = await res.json()
-    if (res.ok && data.token) {
-      store.login({ token: data.token, user: data.user })
-      toast.show('Logged in with Google!')
-      router.replace('/')
-    } else if (data.needs_invite) {
-      toast.show('Registration requires an invite link')
-      router.replace('/')
-    } else {
-      const msg = data.detail ? `${data.error}: ${data.detail}` : (data.error || 'Google login failed')
-      toast.show(msg)
-      router.replace('/')
-    }
-  } catch {
-    toast.show('Google login failed')
-    router.replace('/')
-  }
+  window.location.href = `${API_BASE}/auth/google/callback?code=${encodeURIComponent(code)}&state=${encodeURIComponent(state || '')}`
 }
 
 // Handle activation complete
@@ -214,9 +197,9 @@ const handleResendActivation = async (email: string) => {
   }
 }
 
-// Enhanced login handler with activation check
 const handleLoginWithActivationCheck = async (credentials: { username: string; password: string }) => {
   requiresActivation.value = false
+  loginError.value = ''
   try {
     const res = await fetch(`${API_BASE}/login`, {
       method: 'POST',
@@ -230,11 +213,10 @@ const handleLoginWithActivationCheck = async (credentials: { username: string; p
       requiresActivation.value = true
       activationEmail.value = data.email || ''
     } else {
-      // Use the original handleLogin for error handling
-      handleLogin(credentials)
+      loginError.value = data.message || 'Login failed'
     }
   } catch {
-    handleLogin(credentials)
+    loginError.value = 'Server Offline'
   }
 }
 
@@ -352,7 +334,7 @@ watch(() => store.isAuthenticated, (isAuth) => {
         <div v-if="store.backendStatus === 'Offline'" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
           <div class="bg-red-700 text-white p-8 rounded-lg shadow-2xl text-center">
             <h2 class="text-2xl font-bold mb-4">Verbinding Verbroken!</h2>
-            <p class="mb-4">De backend server is niet bereikbaar op <span class="font-mono bg-black/30 p-1 rounded">{{ apiBase }}</span>.</p>
+            <p class="mb-4">De backend server is niet bereikbaar op <span class="font-mono bg-black/30 p-1 rounded">{{ API_BASE }}</span>.</p>
             <p>Controleer of de server draait en probeer het opnieuw.</p>
           </div>
         </div>
