@@ -72,6 +72,15 @@ const updateActivityId = (id: number | null): void => {
 const setCategory = (key: CategoryKey): void => {
   if (localTx.value) localTx.value.category = key
 }
+
+const amountPerUser = (userId: number): string => {
+  if (!localTx.value) return ''
+  const totalWeight = localTx.value.splits.reduce((s, sp) => s + sp.weight, 0)
+  if (totalWeight === 0) return ''
+  const split = localTx.value.splits.find(s => s.user_id === userId)
+  if (!split) return ''
+  return (localTx.value.amount / totalWeight * split.weight).toFixed(2)
+}
 </script>
 
 <template>
@@ -166,17 +175,20 @@ const setCategory = (key: CategoryKey): void => {
               <div>
                 <label class="block text-[10px] uppercase opacity-40 font-black mb-6 tracking-[0.2em] italic border-b border-zinc-800 pb-2">Distribution</label>
                 <div class="space-y-2">
-                  <div v-for="u in groupMembers" :key="u.id" 
-                       class="flex items-center justify-between p-4 border border-zinc-800 transition-all" 
+                  <div v-for="u in groupMembers" :key="u.id"
+                       class="flex items-center justify-between p-4 border border-zinc-800 transition-all"
                        :class="localTx.splits.some(s => s.user_id === u.id) ? 'bg-zinc-900 border-brand-red/50 shadow-inner' : 'opacity-20'">
-                    <div @click="toggleUserInSplit(u.id)" class="flex items-center gap-4 cursor-pointer select-none">
-                      <div class="w-1.5 h-4" :class="localTx.splits.some(s => s.user_id === u.id) ? 'bg-brand-red shadow-glow' : 'bg-zinc-700'"></div>
-                      <span class="font-black uppercase text-[11px] italic">{{ u.name }}</span>
+                    <div @click="toggleUserInSplit(u.id)" class="flex items-center gap-4 cursor-pointer select-none flex-1 min-w-0">
+                      <div class="w-1.5 h-4 shrink-0" :class="localTx.splits.some(s => s.user_id === u.id) ? 'bg-brand-red shadow-glow' : 'bg-zinc-700'"></div>
+                      <span class="font-black uppercase text-[11px] italic truncate">{{ u.name }}</span>
                     </div>
-                    <div v-if="localTx.splits.some(s => s.user_id === u.id) && localTx.type !== 'TRANSFER'" class="flex items-center gap-3">
-                       <button type="button" @click="decrementWeight(u.id)" class="w-6 h-6 hover:text-brand-red transition-colors font-black text-xs">-</button>
-                       <span class="font-black text-brand-red italic text-sm w-4 text-center">{{ localTx.splits.find(s => s.user_id === u.id)?.weight }}</span>
-                       <button type="button" @click="incrementWeight(u.id)" class="w-6 h-6 hover:text-brand-red transition-colors font-black text-xs">+</button>
+                    <div v-if="localTx.splits.some(s => s.user_id === u.id)" class="flex items-center gap-3 shrink-0">
+                      <span class="text-zinc-400 font-black text-xs tabular-nums">€ {{ amountPerUser(u.id) }}</span>
+                      <template v-if="localTx.type !== 'TRANSFER'">
+                        <button type="button" @click="decrementWeight(u.id)" class="w-6 h-6 hover:text-brand-red transition-colors font-black text-xs">-</button>
+                        <span class="font-black text-brand-red italic text-sm w-4 text-center">{{ localTx.splits.find(s => s.user_id === u.id)?.weight }}</span>
+                        <button type="button" @click="incrementWeight(u.id)" class="w-6 h-6 hover:text-brand-red transition-colors font-black text-xs">+</button>
+                      </template>
                     </div>
                   </div>
                 </div>
