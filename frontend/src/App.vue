@@ -251,17 +251,22 @@ watch(() => route.query.google_token, async (googleToken) => {
 
   const googleUserB64 = route.query.google_user as string | undefined
 
+  let loggedIn = false
+
   if (googleUserB64) {
     // Fast path: user data embedded in redirect, no extra /auth/me call needed
     try {
       const user = JSON.parse(atob(googleUserB64.replace(/-/g, '+').replace(/_/g, '/')))
       store.login({ token: googleToken as string, user })
       toast.show('Logged in with Google!')
+      loggedIn = true
     } catch {
-      toast.show('Google login failed')
+      // atob/JSON.parse failed — fall through to /auth/me below
     }
-  } else {
-    // Fallback: fetch /auth/me (older redirects without google_user param)
+  }
+
+  if (!loggedIn) {
+    // Fallback: fetch /auth/me
     try {
       const res = await fetch(`${API_BASE}/auth/me`, {
         headers: { Authorization: `Bearer ${googleToken}` }

@@ -605,8 +605,10 @@ def google_callback():
         frontend_url = os.getenv("FRONTEND_URL", "").rstrip("/")
         if request.method == "GET" and frontend_url:
             import base64 as _b64
+            from urllib.parse import urlencode as _urlencode
             user_b64 = _b64.urlsafe_b64encode(json.dumps(user.to_dict()).encode()).decode()
-            resp = redirect(f"{frontend_url}/?google_token={tk}&google_user={user_b64}", code=302)
+            qs = _urlencode({"google_token": tk, "google_user": user_b64})
+            resp = redirect(f"{frontend_url}/?{qs}", code=302)
             resp.headers["Access-Control-Allow-Origin"] = frontend_url
             return resp
 
