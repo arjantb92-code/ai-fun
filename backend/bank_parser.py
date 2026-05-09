@@ -67,6 +67,19 @@ class BankParser:
         return match.group(1) if match else "00:00"
 
     @staticmethod
+    def _ing_transaction_date(mededelingen: str, datum_col: str) -> str:
+        """Return the actual transaction date from Mededelingen if present (DD-MM-YYYY),
+        otherwise fall back to the booking date in the Datum column (YYYYMMDD)."""
+        match = re.search(r'Datum:\s*(\d{2}-\d{2}-\d{4})', mededelingen)
+        if match:
+            d, m, y = match.group(1).split('-')
+            return f"{y}-{m}-{d}"
+        date_raw = str(datum_col).strip()
+        if len(date_raw) == 8 and date_raw.isdigit():
+            return f"{date_raw[:4]}-{date_raw[4:6]}-{date_raw[6:]}"
+        return date_raw
+
+    @staticmethod
     def parse_ing_csv(file_content):
         df = pd.read_csv(io.StringIO(file_content), sep=';', quotechar='"', dtype=str)
 
@@ -77,19 +90,17 @@ class BankParser:
             if str(row['Af Bij']).strip() == 'Af':
                 amount = -amount
 
-            raw_desc = f"{row['Naam / Omschrijving']} - {row['Mededelingen']}"
-            cleaned_desc = BankParser.clean_description(raw_desc)
-
-            # Date is YYYYMMDD → YYYY-MM-DD
-            date_raw = str(row['Datum']).strip()
-            if len(date_raw) == 8 and date_raw.isdigit():
-                date_str = f"{date_raw[:4]}-{date_raw[4:6]}-{date_raw[6:]}"
-            else:
-                date_str = date_raw
+            mededelingen = str(row.get('Mededelingen', ''))
+            naam = str(row['Naam / Omschrijving']).strip()
+            raw_desc = f"{naam} - {mededelingen}"
+            # For ING, the merchant/counterpart is always in 'Naam / Omschrijving' — use it directly.
+            # clean_description is designed for ABN's freeform strings, not ING's structured columns.
+            cleaned_desc = re.sub(r'\s+', ' ', naam).strip() or BankParser.clean_description(raw_desc)
+            date_str = BankParser._ing_transaction_date(mededelingen, row['Datum'])
 
             parsed_data.append({
                 'date': date_str,
-                'time': BankParser.extract_time(raw_desc),
+                'time': BankParser.extract_time(mededelingen),
                 'description': cleaned_desc,
                 'raw_description': raw_desc,
                 'category': BankParser.categorize(cleaned_desc),
