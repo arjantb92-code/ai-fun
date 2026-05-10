@@ -50,9 +50,7 @@ def before_request():
     g.request_start = time.perf_counter()
 
 
-_raw_origins = (os.getenv("CORS_ORIGINS") or os.getenv("FRONTEND_URL") or "*").strip()
-_cors_origins = [o.strip().rstrip("/") for o in _raw_origins.split(",") if o.strip()] or ["*"]
-CORS(app, origins=_cors_origins)
+CORS(app)
 
 _secret = os.getenv("SECRET_KEY", "dev-secret-key-12345")
 if os.getenv("FLASK_ENV") == "production" or os.getenv("DATABASE_URL"):

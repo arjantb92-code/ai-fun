@@ -13,6 +13,7 @@ const emit = defineEmits<{
   (e: 'update:currentTab', value: TabType): void
   (e: 'select-activity', id: number | null): void
   (e: 'new-activity'): void
+  (e: 'edit-activity', activity: import('@/types').Activity): void
 }>()
 </script>
 
@@ -40,6 +41,7 @@ const emit = defineEmits<{
         :selected-id="selectedActivityId"
         @select="emit('select-activity', $event)"
         @new="emit('new-activity')"
+        @edit="emit('edit-activity', $event)"
       />
     </div>
   </nav>

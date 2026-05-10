@@ -380,6 +380,7 @@ watch(() => store.isAuthenticated, (isAuth) => {
             @update:current-tab="currentTab = $event"
             @select-activity="selectActivity"
             @new-activity="openActivityModal()"
+            @edit-activity="openActivityModal"
           />
           <div class="lg:col-span-10">
             <ActivityTab
