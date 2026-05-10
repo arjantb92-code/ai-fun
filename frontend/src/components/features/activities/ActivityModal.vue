@@ -12,6 +12,7 @@ const props = defineProps<Props>()
 const emit = defineEmits<{
   (e: 'close'): void
   (e: 'save', data: ActivityFormData): void
+  (e: 'delete', id: number): void
 }>()
 
 const name = ref('')
@@ -107,6 +108,12 @@ const handleSave = (): void => {
               </div>
             </div>
             <div class="flex gap-4 pt-4">
+              <button
+                v-if="activity?.id"
+                type="button"
+                @click="$emit('delete', activity.id)"
+                class="py-4 px-6 font-black uppercase italic border border-zinc-800 text-zinc-600 hover:text-red-500 hover:border-red-500 transition-all"
+              >Verwijder</button>
               <button @click="$emit('close')" class="flex-1 py-4 font-black uppercase italic border border-zinc-700 text-zinc-400 hover:text-white hover:border-zinc-500 transition-all">Annuleren</button>
               <button @click="handleSave" :disabled="!name" class="flex-1 py-4 font-black uppercase italic bg-brand-red text-white hover:bg-red-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed">Opslaan</button>
             </div>

@@ -55,6 +55,7 @@ const {
   selectActivity,
   openActivityModal,
   handleActivitySave,
+  handleActivityDelete,
   handleSettle
 } = useMainPage()
 
@@ -417,7 +418,7 @@ watch(() => store.isAuthenticated, (isAuth) => {
         />
         <ProfileModal :is-open="isProfileModalOpen" :user="store.currentUser" @close="isProfileModalOpen = false" @save="handleProfileSave" @logout="isProfileModalOpen = false; store.logout()" />
         <BankImportModal :is-open="isImportModalOpen" @close="isImportModalOpen = false" @imported="handleBankImported" />
-        <ActivityModal :is-open="isActivityModalOpen" :activity="selectedActivity" @close="isActivityModalOpen = false; selectedActivity = null" @save="handleActivitySave" />
+        <ActivityModal :is-open="isActivityModalOpen" :activity="selectedActivity" @close="isActivityModalOpen = false; selectedActivity = null" @save="handleActivitySave" @delete="handleActivityDelete" />
         <BulkActivityModal
           :is-open="isBulkActivityModalOpen"
           :activities="store.activities"

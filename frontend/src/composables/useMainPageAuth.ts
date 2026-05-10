@@ -72,11 +72,29 @@ export function useMainPageAuth(
     }
   }
 
+  const handleActivityDelete = async (id: number): Promise<void> => {
+    try {
+      const res = await store.apiFetch(`/activities/${id}`, { method: 'DELETE' })
+      if (res.ok) {
+        isActivityModalOpen.value = false
+        selectedActivity.value = null
+        selectedActivityId.value = null
+        await store.fetchData(null)
+        toast.show('Activiteit gearchiveerd')
+      } else {
+        toast.show('Verwijderen mislukt')
+      }
+    } catch {
+      toast.show('Verwijderen mislukt')
+    }
+  }
+
   return {
     handleLogin,
     handleProfileSave,
     selectActivity,
     openActivityModal,
-    handleActivitySave
+    handleActivitySave,
+    handleActivityDelete
   }
 }

@@ -99,6 +99,7 @@ export function useMainPage() {
     selectActivity: auth.selectActivity,
     openActivityModal: auth.openActivityModal,
     handleActivitySave: auth.handleActivitySave,
+    handleActivityDelete: auth.handleActivityDelete,
     handleSettle: settlements.handleSettle
   }
 }
